@@ -1,0 +1,123 @@
+.videoRowSection {
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 2rem 1.5rem;
+}
+
+.sectionTitle {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.titleDecorator {
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+.controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.arrowButton {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 1;
+}
+
+.arrowButton:hover {
+    background: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.arrowButton.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.videoRowContainer {
+    overflow-x: auto;
+    padding: 0 2rem;
+    scrollbar-width: none;
+    position: relative;
+}
+
+.videoRowContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.videoRow {
+    display: inline-flex;
+    gap: 1.8rem;
+    padding-bottom: 1.5rem;
+}
+
+/* Gradient fade effect */
+.videoRowContainer {
+    mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 20px,
+            black calc(100% - 20px),
+            transparent
+    );
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.videoRowSection {
+    animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: calc(var(--row-index) * 0.1s);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header {
+        margin: 0 1rem 1rem;
+    }
+
+    .sectionTitle {
+        font-size: 1.3rem;
+    }
+
+    .videoRowContainer {
+        padding: 0 1rem;
+    }
+
+    .videoRow {
+        gap: 1rem;
+    }
+}

@@ -1,0 +1,100 @@
+.searchForm {
+    display: flex;
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.searchForm.focused {
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.searchContainer {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    background-color: var(--bg-secondary);
+    border-radius: 30px 0 0 30px;
+    padding-left: 1rem;
+    transition: all 0.3s ease;
+}
+
+.searchInput {
+    flex: 1;
+    padding: 0.8rem 1rem 0.8rem 0.5rem;
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    color: var(--text-primary);
+    outline: none;
+    width: 100%;
+}
+
+.searchInput::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.searchIcon {
+    color: var(--text-secondary);
+    margin-right: 0.5rem;
+    transition: color 0.2s;
+}
+
+.clearButton {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.clearButton:hover {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.searchButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0 30px 30px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.searchButton:disabled {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.searchButton:not(:disabled):hover {
+    background-color: var(--primary-dark);
+    transform: translateX(2px);
+}
+
+/* Анімація при фокусі */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+}
+
+.searchForm.focused {
+    animation: pulse 1.5s infinite;
+}
