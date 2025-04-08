@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import styles from './Home.module.css';
-import Header from '../../components/Header/Header';
-import VideoRow from '../../components/VideoRow/VideoRow';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import Header from '../../Components/Header/Header';
+import VideoRow from '../../Components/VideoRow/VideoRow';
+import LoadingSpinner from '../../Components/LoadingSpinner/LoadingSpinner';
 
 // Enhanced mock data with categories
 const videoCategories = [

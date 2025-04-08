@@ -1,6 +1,6 @@
 import styles from './Search.module.css';
-import Header from '../../components/Header/Header';
-import VideoRow from '../../components/VideoRow/VideoRow';
+import Header from '../../Components/Header/Header';
+import VideoRow from '../../Components/VideoRow/VideoRow';
 import { useLocation } from 'react-router-dom';
 
 const Search = () => {
