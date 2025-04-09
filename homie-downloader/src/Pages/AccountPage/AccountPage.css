@@ -1,8 +1,9 @@
 .account-page-container {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+  margin: 2rem auto;
+  padding: 50px;
+  font-family: 'Roboto', sans-serif;
+  color: #ffffff;
 }
 
 .account-header {
@@ -13,16 +14,22 @@
 }
 
 .sign-out-btn {
-  background-color: #ff6d00;
-  border: 1px solid #ccc;
+  background-color: #ff4757;
+  color: white;
+  border: none;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
+  transition: all 0.3s;
+}
+
+.sign-out-btn:hover {
+  background-color: #ff6b6b;
 }
 
 .divider {
   height: 1px;
-  background-color: #eee;
+  background-color: rgba(255, 255, 255, 0.1);
   margin: 20px 0;
 }
 
@@ -61,12 +68,21 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background-color: #f0f0f0;
+  background-color: #9d50ff;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.avatar-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .user-status {
@@ -77,7 +93,7 @@
   height: 20px;
   border-radius: 50%;
   background-color: #4caf50;
-  border: 3px solid white;
+  border: 3px solid #1a0a2a;
 }
 
 .avatar-info {
@@ -89,19 +105,19 @@
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: #ffffff;
 }
 
 .user-email {
   margin: 8px 0 0 0;
-  color: #666;
+  color: #c792ea;
   font-size: 16px;
 }
 
 .user-status-label {
   margin-top: 10px;
   padding: 4px 12px;
-  background-color: #ffa500;
+  background-color: #ff6d00;
   color: white;
   border-radius: 20px;
   font-size: 14px;
@@ -128,23 +144,26 @@
   border-radius: 6px;
   font-size: 15px;
   transition: all 0.2s ease;
-  color: #1a73e8; /* синій колір для звичайних елементів */
+  color: #c792ea;
 }
 
 .account-nav li:hover {
-  background-color: #f1f3f4;
-  color: #0d5fd9;
+  background-color: rgba(157, 80, 255, 0.2);
 }
 
 .account-nav li.active {
-  color: #ff6d00; /* оранжевий колір тексту */
+  background-color: rgba(157, 80, 255, 0.3);
+  color: #ffffff;
   font-weight: 600;
-  font-size: 16px;
 }
 
 .details-section {
   flex: 2;
   padding: 20px;
+  background-color: rgba(30, 0, 50, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(157, 80, 255, 0.2);
 }
 
 .details-header {
@@ -152,7 +171,7 @@
 }
 
 .section-description {
-  color: #666;
+  color: #a5a5a5;
   margin: 10px 0 0 0;
   font-size: 14px;
 }
@@ -164,11 +183,17 @@
 }
 
 .detail-item {
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
+  background-color: rgba(50, 0, 90, 0.5);
+  border: 1px solid rgba(157, 80, 255, 0.2);
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.detail-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .detail-item-header {
@@ -182,7 +207,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 600;
-  color: #333;
+  color: #c792ea;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -190,6 +215,7 @@
 .detail-icon {
   opacity: 0.7;
   transition: opacity 0.2s;
+  cursor: pointer;
 }
 
 .detail-icon:hover {
@@ -200,29 +226,25 @@
   margin: 0;
   font-size: 16px;
   font-weight: 400;
-  color: #666;
-}
-
-.detail-item p {
-  margin: 0;
-  font-size: 16px;
+  color: #ffffff;
 }
 
 .stats-container {
   width: 100%;
+  margin-top: 30px;
 }
 
 .stats-section {
-  margin-top: 30px;
   padding: 20px;
-  background: #fff;
+  background: rgba(50, 0, 90, 0.5);
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(157, 80, 255, 0.2);
 }
 
 .stats-title {
   margin-bottom: 20px;
-  color: #333;
+  color: #ffffff;
   font-size: 1.4rem;
 }
 
@@ -235,17 +257,23 @@
 .stat-card {
   flex: 1;
   padding: 15px;
-  background: #f8f9fa;
+  background: rgba(50, 0, 90, 0.7);
   border-radius: 8px;
   border-left: 4px solid #ff6d00;
-  color: black;
+  color: white;
+  transition: all 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .stat-value {
   font-size: 1.8rem;
   font-weight: 600;
   margin: 10px 0;
-  color: #333;
+  color: #ffffff;
 }
 
 .mini-chart {
@@ -253,19 +281,12 @@
   margin-top: 10px;
 }
 
-.chart-placeholder {
-  width: 100%;
-  height: 100%;
-  background: #e9ecef;
-  border-radius: 4px;
-}
-
 .monthly-chart-container {
   margin-top: 20px;
 }
 
 .monthly-chart-container h4 {
-  color: black;
+  color: #ffffff;
 }
 
 .chart-wrapper {
@@ -273,71 +294,21 @@
   height: 200px;
 }
 
-.main-chart-placeholder {
-  width: 100%;
-  height: 100%;
-  background: #e9ecef;
-  border-radius: 6px;
-}
-
-/* Анімація для плейсхолдерів графіків */
-.chart-placeholder,
-.main-chart-placeholder {
-  position: relative;
-  overflow: hidden;
-}
-
-.chart-placeholder::after,
-.main-chart-placeholder::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.5),
-    transparent
-  );
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
+@media (max-width: 768px) {
+  .account-content {
+    flex-direction: column;
+    gap: 20px;
   }
-  100% {
-    transform: translateX(100%);
+
+  .left-column {
+    max-width: 100%;
   }
-}
 
-/* Додайте ці стилі до вашого існуючого CSS */
-.recharts-surface {
-  overflow: visible;
-}
+  .details-content {
+    grid-template-columns: 1fr;
+  }
 
-.recharts-cartesian-axis-tick-value {
-  font-size: 12px;
-  fill: #666;
-}
-
-.recharts-tooltip {
-  background: #fff !important;
-  border: 1px solid #eee !important;
-  border-radius: 6px !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-  padding: 10px !important;
-}
-
-.recharts-tooltip-label {
-  color: #ff6d00 !important;
-  font-weight: bold !important;
-}
-
-.recharts-default-tooltip {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  .stats-cards {
+    flex-direction: column;
+  }
 }
