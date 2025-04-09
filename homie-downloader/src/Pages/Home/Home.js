@@ -3,6 +3,7 @@ import styles from './Home.module.css';
 import Header from '../../Components/Header/Header';
 import VideoRow from '../../Components/VideoRow/VideoRow';
 import LoadingSpinner from '../../Components/LoadingSpinner/LoadingSpinner';
+import SearchBar from '../../Components/SearchBar/SearchBar'; // Додано імпорт SearchBar
 
 const videoCategories = [
     {
@@ -80,7 +81,13 @@ const Home = () => {
             {/* Основний контент */}
             <div className={styles.contentWrapper}>
                 <Header />
+
                 <main className={styles.mainContent}>
+                    {/* Додано SearchBar під Header */}
+                    <div className={styles.searchBarContainer}>
+                        <SearchBar />
+                    </div>
+
                     {categories.map((category, index) => (
                         <VideoRow
                             key={category.id}
