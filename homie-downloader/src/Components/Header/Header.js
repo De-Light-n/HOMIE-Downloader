@@ -13,14 +13,13 @@ const Header = () => {
                     <FiMenu size={24} />
                 </button>
                 <div className={styles.logo}>
-                    <span className={styles.logoMain}>Stream</span>
-                    <span className={styles.logoAccent}>Hub</span>
+                    <span className={styles.logoMain}>Homie</span>
+                    <span className={styles.logoAccent}>Downloader</span>
                 </div>
             </div>
 
-            <SearchBar />
-
             <div className={styles.rightSection}>
+
                 <button className={styles.notificationButton}>
                     <FiBell size={20} />
                     <span className={styles.notificationBadge}>3</span>

@@ -98,3 +98,12 @@
         font-size: 1rem;
     }
 }
+.searchBarContainer {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    width: 100%;
+    position: relative;
+    top: 70px;
+    z-index: 10;
+}

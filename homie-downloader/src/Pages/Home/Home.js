@@ -3,6 +3,7 @@ import styles from './Home.module.css';
 import Header from '../../Components/Header/Header';
 import VideoRow from '../../Components/VideoRow/VideoRow';
 import LoadingSpinner from '../../Components/LoadingSpinner/LoadingSpinner';
+import SearchBar from "../../Components/SearchBar/SearchBar";
 
 // Enhanced mock data with categories
 const videoCategories = [
@@ -60,6 +61,9 @@ const Home = () => {
     return (
         <div className={styles.home}>
             <Header />
+            <div className={styles.searchBarContainer}>
+                <SearchBar />
+            </div>
             <main className={styles.mainContent}>
                 {categories.map((category, index) => (
                     <VideoRow

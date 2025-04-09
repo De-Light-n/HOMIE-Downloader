@@ -8,6 +8,7 @@
 
 .searchForm.focused {
     box-shadow: 0 0 0 2px var(--primary-color);
+    border-radius: 50vh;
 }
 
 .searchContainer {
