@@ -124,9 +124,18 @@
 }
 
 .dropdownItem {
+    display: block;
+    text-decoration: none;
     padding: 0.8rem 1rem;
     color: var(--text-primary);
     transition: background-color 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: inherit;
 }
 
 .dropdownItem:hover {
