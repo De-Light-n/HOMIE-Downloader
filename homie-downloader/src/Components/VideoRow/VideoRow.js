@@ -1,9 +1,10 @@
+// VideoRow.js
 import styles from './VideoRow.module.css';
 import VideoCard from '../VideoCard/VideoCard';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useRef, useState } from 'react';
 
-const VideoRow = ({ title, videos }) => {
+const VideoRow = ({ title, videos, index }) => {
     const rowRef = useRef(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
@@ -13,7 +14,6 @@ const VideoRow = ({ title, videos }) => {
         const scrollAmount = direction === 'left' ? -400 : 400;
         container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
 
-        // Update arrow visibility after scroll
         setTimeout(() => {
             setShowLeftArrow(container.scrollLeft > 0);
             setShowRightArrow(
@@ -23,10 +23,10 @@ const VideoRow = ({ title, videos }) => {
     };
 
     return (
-        <div className={styles.videoRowSection}>
+        <div className={styles.videoRowSection} style={{ '--row-index': index }}>
             <div className={styles.header}>
                 <h2 className={styles.sectionTitle}>
-                    <span className={styles.titleDecorator}>#</span>
+                    <span className={styles.titleDecorator}></span>
                     {title}
                 </h2>
                 <div className={styles.controls}>
@@ -47,11 +47,11 @@ const VideoRow = ({ title, videos }) => {
 
             <div className={styles.videoRowContainer} ref={rowRef}>
                 <div className={styles.videoRow}>
-                    {videos.map((video, index) => (
+                    {videos.map((video, idx) => (
                         <VideoCard
-                            key={`${video.id}-${index}`}
+                            key={`${video.id}-${idx}`}
                             video={video}
-                            index={index}
+                            index={idx}
                         />
                     ))}
                 </div>

@@ -1,3 +1,4 @@
+// SearchBar.js
 import styles from './SearchBar.module.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

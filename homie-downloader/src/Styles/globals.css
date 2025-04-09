@@ -1,14 +1,16 @@
 :root {
-    --bg-primary: #0f0f0f;
-    --header-bg: #181818;
-    --primary-dark: #cc0000;
-    --text-secondary: #aaaaaa;
-    --border-color: #303030;
-    --header-bg: rgba(15, 15, 15, 0.8);
-    --primary-color: #ff4757;
+    --bg-primary: #0a0a0a;
+    --header-bg: rgba(15, 5, 25, 0.95);
+    --primary-dark: #6a00ff;
+    --text-secondary: #c792ea;
+    --border-color: rgba(157, 80, 255, 0.4);
+    --primary-color: #9d50ff;
     --text-primary: #ffffff;
-    --user-icon-bg: #333333;
-    --bg-secondary: #1e1e1e;
+    --user-icon-bg: #1a0a2a;
+    --bg-secondary: rgba(50, 0, 90, 0.3);
+    --neon-purple: #9d50ff;
+    --neon-pink: #ff00ff;
+    --neon-blue: #6a00ff;
 }
 
 * {
@@ -21,4 +23,32 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 10px var(--neon-purple);
+    }
+    50% {
+        box-shadow: 0 0 30px var(--neon-purple);
+    }
+    100% {
+        box-shadow: 0 0 10px var(--neon-purple);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
 }

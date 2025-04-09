@@ -1,5 +1,5 @@
 .videoRowSection {
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
     position: relative;
 }
 
@@ -7,50 +7,62 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 2rem 1.5rem;
+    margin: 0 2.5rem 1.8rem;
 }
 
 .sectionTitle {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--text-primary);
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 1rem;
     margin: 0;
-    text-transform: uppercase;
     letter-spacing: 1px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #9d50ff, #ff00ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(157, 80, 255, 0.3);
 }
 
-.titleDecorator {
-    color: var(--primary-color);
-    font-size: 2rem;
+.sectionTitle::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: #9d50ff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #9d50ff;
 }
 
 .controls {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.8rem;
 }
 
 .arrowButton {
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: white;
+    background: rgba(157, 80, 255, 0.25);
+    border: 1px solid rgba(157, 80, 255, 0.6);
+    color: #e2c4ff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    opacity: 1;
+    backdrop-filter: blur(5px);
 }
 
 .arrowButton:hover {
-    background: var(--primary-color);
+    background: rgba(157, 80, 255, 0.5);
+    color: white;
     transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(157, 80, 255, 0.6);
 }
 
 .arrowButton.hidden {
@@ -60,9 +72,16 @@
 
 .videoRowContainer {
     overflow-x: auto;
-    padding: 0 2rem;
+    padding: 0 2.5rem;
     scrollbar-width: none;
     position: relative;
+    mask-image: linear-gradient(
+            to right,
+            transparent,
+            black 40px,
+            black calc(100% - 40px),
+            transparent
+    );
 }
 
 .videoRowContainer::-webkit-scrollbar {
@@ -71,26 +90,14 @@
 
 .videoRow {
     display: inline-flex;
-    gap: 1.8rem;
-    padding-bottom: 1.5rem;
+    gap: 2rem;
+    padding-bottom: 2rem;
 }
 
-/* Gradient fade effect */
-.videoRowContainer {
-    mask-image: linear-gradient(
-            to right,
-            transparent,
-            black 20px,
-            black calc(100% - 20px),
-            transparent
-    );
-}
-
-/* Animation */
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
     }
     to {
         opacity: 1;
@@ -103,21 +110,32 @@
     animation-delay: calc(var(--row-index) * 0.1s);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .header {
-        margin: 0 1rem 1rem;
+        margin: 0 1.5rem 1.2rem;
     }
 
     .sectionTitle {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .videoRowContainer {
-        padding: 0 1rem;
+        padding: 0 1.5rem;
+        mask-image: linear-gradient(
+                to right,
+                transparent,
+                black 20px,
+                black calc(100% - 20px),
+                transparent
+        );
     }
 
     .videoRow {
-        gap: 1rem;
+        gap: 1.2rem;
+    }
+
+    .arrowButton {
+        width: 38px;
+        height: 38px;
     }
 }

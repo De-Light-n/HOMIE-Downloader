@@ -1,3 +1,4 @@
+// VideoCard.js
 import styles from './VideoCard.module.css';
 import { FiEye, FiClock, FiMoreVertical } from 'react-icons/fi';
 import { useState } from 'react';
@@ -21,10 +22,10 @@ const VideoCard = ({ video }) => {
                     <div className={styles.hoverOverlay}>
                         <div className={styles.hoverButtons}>
                             <button className={styles.watchLaterBtn}>
-                                <FiClock size={16} />
+                                <FiClock size={18} />
                             </button>
                             <button className={styles.moreOptionsBtn}>
-                                <FiMoreVertical size={16} />
+                                <FiMoreVertical size={18} />
                             </button>
                         </div>
                     </div>
@@ -42,9 +43,9 @@ const VideoCard = ({ video }) => {
                     <div className={styles.metaData}>
                         <p className={styles.channel}>{video.channel}</p>
                         <div className={styles.stats}>
-              <span className={styles.views}>
-                <FiEye size={14} /> {video.views}
-              </span>
+                            <span className={styles.views}>
+                                <FiEye size={14} /> {video.views}
+                            </span>
                             <span className={styles.date}>{video.date}</span>
                         </div>
                     </div>
