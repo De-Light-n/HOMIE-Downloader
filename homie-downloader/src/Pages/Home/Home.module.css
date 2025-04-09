@@ -237,6 +237,7 @@
     position: relative;
     z-index: 3;
     justify-self: center;
+
 }
 
 @media (max-width: 768px) {
