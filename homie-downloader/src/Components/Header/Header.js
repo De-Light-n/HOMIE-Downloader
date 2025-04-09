@@ -29,9 +29,6 @@ const Header = () => {
     return (
         <header className={styles.header}>
             <div className={styles.leftSection}>
-                <button className={styles.menuButton}>
-                    <FiMenu size={24} />
-                </button>
                 <div className={styles.logo}>
                     <span className={styles.logoMain}>Homie</span>
                     <span className={styles.logoAccent}>Downloader</span>
