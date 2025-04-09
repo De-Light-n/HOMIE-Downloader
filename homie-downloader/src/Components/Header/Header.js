@@ -1,21 +1,32 @@
 import styles from './Header.module.css';
-import SearchBar from '../SearchBar/SearchBar';
 import { FiUser, FiBell, FiMenu } from 'react-icons/fi';
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../Firebase/AuthContext';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const mobileMenuRef = useRef(null);
+    const navigate = useNavigate();
+
+    const auth = useAuth();
+    const currentUser = auth?.currentUser;
+    const logout = auth?.logout;
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsMenuOpen(false);
             }
+            if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) &&
+                !event.target.closest(`.${styles.menuButton}`)) {
+                setIsMobileMenuOpen(false);
+            }
         };
 
-        if (isMenuOpen) {
+        if (isMenuOpen || isMobileMenuOpen) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -24,35 +35,119 @@ const Header = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isMenuOpen]);
+    }, [isMenuOpen, isMobileMenuOpen]);
+
+    const handleAvatarClick = () => {
+        if (currentUser) {
+            navigate('/account');
+        } else {
+            setIsMenuOpen(!isMenuOpen);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            if (logout) {
+                await logout();
+            }
+            setIsMenuOpen(false);
+            navigate('/');
+        } catch (error) {
+            console.error('Failed to log out', error);
+        }
+    };
 
     return (
         <header className={styles.header}>
             <div className={styles.leftSection}>
-                <button className={styles.menuButton}>
-                    <FiMenu size={24} />
+                <button
+                    className={styles.menuButton}
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
+                    <FiMenu size={20} />
                 </button>
-                <div className={styles.logo}>
+
+                <Link to="/" className={styles.logo}>
                     <span className={styles.logoMain}>Homie</span>
                     <span className={styles.logoAccent}>Downloader</span>
-                </div>
+                </Link>
             </div>
 
-            <div className={styles.rightSection}>
-                <button className={styles.notificationButton}>
-                    <FiBell size={20} />
-                    <span className={styles.notificationBadge}>3</span>
-                </button>
-                <div className={styles.userAvatar} onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                    <FiUser size={20} />
-                    {isMenuOpen && (
-                        <div className={styles.userDropdown} ref={dropdownRef}>
-                            <Link to="/account" className={styles.dropdownItem} onClick={() => setIsMenuOpen(false)}>Profile</Link>
-                            <div className={styles.dropdownItem}>Settings</div>
-                            <div className={styles.dropdownItem}>Logout</div>
-                        </div>
+            {/* Mobile Menu */}
+            {isMobileMenuOpen && (
+                <div className={styles.mobileMenu} ref={mobileMenuRef}>
+                    {currentUser ? (
+                        <>
+                            <Link
+                                to="/account"
+                                className={styles.mobileMenuItem}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Profile
+                            </Link>
+                            <div
+                                className={styles.mobileMenuItem}
+                                onClick={() => {
+                                    setIsMobileMenuOpen(false);
+                                    handleLogout();
+                                }}
+                            >
+                                Logout
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                to="/login"
+                                className={styles.mobileMenuItem}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Log In
+                            </Link>
+                            <Link
+                                to="/signup"
+                                className={styles.mobileMenuItem}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                                Sign Up
+                            </Link>
+                        </>
                     )}
                 </div>
+            )}
+
+            <div className={styles.rightSection}>
+                {currentUser ? (
+                    <>
+                        <button className={styles.notificationButton}>
+                            <FiBell size={20} />
+                            <span className={styles.notificationBadge}>3</span>
+                        </button>
+                        <div
+                            className={styles.userAvatar}
+                            onClick={handleAvatarClick}
+                        >
+                            {currentUser.photoURL ? (
+                                <img
+                                    src={currentUser.photoURL}
+                                    alt="User"
+                                    className={styles.avatarImage}
+                                />
+                            ) : (
+                                <FiUser size={20} />
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    <div className={styles.authButtons}>
+                        <Link to="/login" className={styles.loginButton}>
+                            Log In
+                        </Link>
+                        <Link to="/signup" className={styles.signupButton}>
+                            Sign Up
+                        </Link>
+                    </div>
+                )}
             </div>
         </header>
     );
