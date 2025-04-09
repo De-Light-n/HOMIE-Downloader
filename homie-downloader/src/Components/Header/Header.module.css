@@ -3,14 +3,20 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: var(--header-bg);
+    background-color: rgba(15, 10, 30, 0.85);
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 100;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(157, 80, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.header:hover {
+    background-color: rgba(20, 15, 40, 0.95);
+    border-bottom-color: rgba(157, 80, 255, 0.4);
 }
 
 .leftSection {
@@ -24,27 +30,35 @@
     border: none;
     color: var(--text-primary);
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: all 0.3s ease;
     padding: 0.5rem;
     border-radius: 50%;
     display: none;
+    background-color: rgba(157, 80, 255, 0.1);
 }
 
 .menuButton:hover {
     transform: scale(1.1);
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(157, 80, 255, 0.2);
+    box-shadow: 0 0 15px rgba(157, 80, 255, 0.3);
 }
+
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
     display: flex;
     align-items: center;
-    background: linear-gradient(90deg, var(--primary-color), #ff6b6b);
+    background: linear-gradient(90deg, #9d50ff, #6a00ff);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 2px 10px rgba(157, 80, 255, 0.4);
     text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    text-shadow: 0 2px 20px rgba(157, 80, 255, 0.6);
 }
 
 .logoMain {
@@ -69,19 +83,21 @@
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 50%;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .notificationButton:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(157, 80, 255, 0.2);
     transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(157, 80, 255, 0.2);
 }
 
 .notificationBadge {
     position: absolute;
     top: -2px;
     right: -2px;
-    background-color: var(--primary-color);
+    background: linear-gradient(45deg, #ff00ff, #9d50ff);
     color: white;
     border-radius: 50%;
     width: 18px;
@@ -91,25 +107,27 @@
     justify-content: center;
     font-size: 0.7rem;
     font-weight: bold;
+    box-shadow: 0 0 8px rgba(157, 80, 255, 0.6);
 }
 
 .userAvatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: var(--user-icon-bg);
+    background: linear-gradient(45deg, #6a00ff, #9d50ff);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 0 0 2px rgba(157, 80, 255, 0.3);
 }
 
 .userAvatar:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 0 2px var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-color), 0 0 20px rgba(157, 80, 255, 0.5);
 }
 
 .avatarImage {
@@ -122,13 +140,15 @@
     position: absolute;
     top: 50px;
     right: 0;
-    background-color: var(--bg-secondary);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: rgba(20, 15, 40, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     width: 200px;
     overflow: hidden;
     z-index: 1000;
     animation: fadeIn 0.2s ease-out;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(157, 80, 255, 0.2);
 }
 
 .dropdownItem {
@@ -136,7 +156,7 @@
     text-decoration: none;
     padding: 0.8rem 1rem;
     color: var(--text-primary);
-    transition: background-color 0.2s;
+    transition: all 0.2s;
     cursor: pointer;
     background: none;
     border: none;
@@ -147,11 +167,12 @@
 }
 
 .dropdownItem:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(157, 80, 255, 0.2);
+    color: white;
 }
 
 .dropdownItem:not(:last-child) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(157, 80, 255, 0.1);
 }
 
 .authButtons {
@@ -160,35 +181,42 @@
 }
 
 .loginButton {
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
     background: none;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
+    border: 1px solid #9d50ff;
+    color: #9d50ff;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .loginButton:hover {
     background: rgba(157, 80, 255, 0.1);
+    box-shadow: 0 0 15px rgba(157, 80, 255, 0.2);
+    transform: translateY(-1px);
 }
 
 .signupButton {
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    background: var(--primary-color);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #9d50ff, #6a00ff);
     color: white;
     border: none;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 0 15px rgba(157, 80, 255, 0.3);
 }
 
 .signupButton:hover {
-    background: var(--primary-color-dark);
+    background: linear-gradient(45deg, #8a2be2, #9d50ff);
+    box-shadow: 0 0 25px rgba(157, 80, 255, 0.5);
+    transform: translateY(-1px);
 }
 
 .mobileMenu {
@@ -196,26 +224,29 @@
     top: 70px;
     left: 0;
     width: 100%;
-    background-color: var(--bg-secondary);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background-color: rgba(20, 15, 40, 0.98);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     z-index: 999;
     display: flex;
     flex-direction: column;
     padding: 1rem;
     gap: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(157, 80, 255, 0.2);
+    backdrop-filter: blur(15px);
 }
 
 .mobileMenuItem {
-    padding: 0.8rem 1rem;
+    padding: 0.8rem 1.5rem;
     color: var(--text-primary);
     text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.2s;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
 .mobileMenuItem:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(157, 80, 255, 0.2);
+    color: white;
 }
 
 @keyframes fadeIn {
@@ -230,6 +261,10 @@
 }
 
 @media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+
     .menuButton {
         display: block;
     }
@@ -244,5 +279,15 @@
 
     .userAvatar {
         display: none;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.3rem;
     }
 }
