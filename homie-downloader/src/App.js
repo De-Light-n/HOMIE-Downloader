@@ -10,6 +10,7 @@ import './Styles/globals.css';
 
 function App() {
     return (
+
         <Router>
             <AuthProvider>
                 <Header />
