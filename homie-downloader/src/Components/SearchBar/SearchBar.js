@@ -11,10 +11,8 @@ const SearchBar = () => {
     const [selectedQuality, setSelectedQuality] = useState('720p');
     const navigate = useNavigate();
 
-
     useEffect(() => {
         const isVideoUrl = query.includes('youtube.com') || query.includes('youtu.be');
-
         if (isVideoUrl) {
             fetchVideoPreview(query);
         } else {
@@ -25,19 +23,15 @@ const SearchBar = () => {
     const fetchVideoPreview = async (url) => {
         setIsLoading(true);
         try {
-            // Mock data with additional stats
-            const mockResponse = {
-                title: "Приклад відео",
-                description: "Це опис відео, який буде відображатися у прев'ю. Тут може бути довгий текст з описом відео, його змістом та іншою корисною інформацією.",
-                thumbnail: "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
-                qualities: ['360p', '480p', '720p', '1080p'],
-                likes: "125K",
-                views: "2.5M",
-                duration: "10:30"
-            };
-            setVideoPreview(mockResponse);
+            const response = await fetch(`/api/video/preview?url=${encodeURIComponent(url)}`);
+            if (!response.ok) {
+                throw new Error("Не вдалося отримати прев'ю");
+            }
+            const data = await response.json();
+            setVideoPreview(data);
         } catch (error) {
             console.error("Помилка при отриманні прев'ю:", error);
+            setVideoPreview(null);
         } finally {
             setIsLoading(false);
         }
@@ -55,9 +49,36 @@ const SearchBar = () => {
         setVideoPreview(null);
     };
 
-    const handleDownload = () => {
-        console.log(`Завантаження відео у якості ${selectedQuality}`);
+    const handleDownload = async () => {
+        if (!query) return;
+        try {
+            const response = await fetch('/api/video/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: query,
+                    quality: selectedQuality
+                })
+            });
+
+            const data = await response.json();
+            if (data.success && data.download_url) {
+                const link = document.createElement('a');
+                link.href = `http://127.0.0.1:5000${data.download_url}`;
+                link.setAttribute('download', data.filename);  // опційно
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("Не вдалося завантажити відео");
+            }
+        } catch (error) {
+            console.error("Помилка при завантаженні відео:", error);
+        }
     };
+
 
     return (
         <div className={styles.searchWrapper}>
@@ -110,15 +131,15 @@ const SearchBar = () => {
                             <h3>{videoPreview.title}</h3>
                             <p>{videoPreview.description}</p>
                             <div className={styles.videoStats}>
-                            <span className={styles.videoStat}>
-                                <FiThumbsUp /> {videoPreview.likes}
-                            </span>
                                 <span className={styles.videoStat}>
-                                <FiEye /> {videoPreview.views}
-                            </span>
+                                    <FiThumbsUp /> {videoPreview.likes}
+                                </span>
                                 <span className={styles.videoStat}>
-                                {videoPreview.duration}
-                            </span>
+                                    <FiEye /> {videoPreview.views}
+                                </span>
+                                <span className={styles.videoStat}>
+                                    {videoPreview.duration}
+                                </span>
                             </div>
                         </div>
                     </div>
