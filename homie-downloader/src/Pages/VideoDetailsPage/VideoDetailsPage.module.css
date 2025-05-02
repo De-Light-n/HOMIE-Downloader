@@ -1,0 +1,220 @@
+.wrapper {
+    position: relative;
+    min-height: 100vh;
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    margin-top: 4rem;
+    color: var(--text-primary);
+}
+
+.neonBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(157, 80, 255, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(157, 80, 255, 0.3);
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.backButton:hover {
+    background: rgba(157, 80, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.contentWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.mediaSection {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.thumbnailContainer {
+    flex: 0 0 60%;
+    max-width: 600px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    aspect-ratio: 16/9;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.downloadSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.downloadTitle {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.downloadControls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.infoSection {
+    width: 100%;
+}
+
+.title {
+    font-size: 1.8rem;
+    margin: 0 0 1.5rem 0;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.statsContainer {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.statIcon {
+    color: var(--primary-color);
+}
+
+.descriptionContainer {
+    margin-bottom: 2rem;
+}
+
+.descriptionTitle {
+    font-size: 1.3rem;
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+}
+
+.descriptionText {
+    white-space: pre-line;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.qualitySelect {
+    padding: 0.9rem 1.2rem;
+    width: 300px;
+    border-radius: 8px;
+    background-color: rgba(30, 0, 50, 0.7);
+    color: white;
+    border: 1px solid rgba(157, 80, 255, 0.5);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.qualitySelect:hover {
+    border-color: #9d50ff;
+    box-shadow: 0 0 10px rgba(157, 80, 255, 0.5);
+}
+
+.downloadButton {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    width: 300px;
+    justify-content: center;
+}
+
+.downloadButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
+}
+
+@media (max-width: 992px) {
+    .mediaSection {
+        flex-direction: column;
+    }
+
+    .thumbnailContainer {
+        flex: 1 1 auto;
+        width: 100%;
+        max-width: none;
+    }
+
+    .downloadSection {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    .statsContainer {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .downloadControls {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .qualitySelect {
+        width: auto;
+        flex: 1;
+    }
+
+    .downloadButton {
+        width: auto;
+        flex: 1;
+    }
+}

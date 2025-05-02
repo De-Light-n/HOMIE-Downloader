@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app";
 import {
+    getFirestore,
+    collection,
+    query,
+    orderBy,
+    limit,
+    getDocs
+} from "firebase/firestore";
+import {
     getAuth,
     GoogleAuthProvider,
     signInWithEmailAndPassword,
@@ -20,12 +28,20 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+// Експортуємо всі необхідні функції Firestore
 export {
+    db,
     auth,
     provider,
+    collection,
+    query,
+    orderBy,
+    limit,
+    getDocs,
     signInWithEmailAndPassword,
     signInWithPopup,
     createUserWithEmailAndPassword,

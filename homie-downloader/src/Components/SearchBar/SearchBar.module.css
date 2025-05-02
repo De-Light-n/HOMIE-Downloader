@@ -142,9 +142,10 @@
 }
 
 .videoThumbnail {
-    flex: 0 0 280px;
+    flex: 0 1 280px;
     border-radius: 8px;
     overflow: hidden;
+    height: 150px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
 }
@@ -317,4 +318,95 @@
     color: #c792ea;
     font-weight: bold;
     padding: 0.5rem;
+}
+
+/* Додайте ці стилі в кінець файлу */
+
+.descriptionContainer {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.videoDescription {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    max-height: 6.4em; /* Обмеження висоти (приблизно 4 рядки) */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.videoDescription.expanded {
+    max-height: none;
+}
+
+.toggleDescriptionButton {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.2rem 0;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.toggleDescriptionButton:hover {
+    color: var(--primary-dark);
+}
+
+.toggleDescriptionButton svg {
+    transition: transform 0.3s ease;
+}
+
+.toggleDescriptionButton.expanded svg {
+    transform: rotate(180deg);
+}
+
+.fullDetailsButton {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 1.5rem;
+    background: rgba(157, 80, 255, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(157, 80, 255, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.fullDetailsButton:hover {
+    background: rgba(157, 80, 255, 0.2);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.downloadOptions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 1rem;
+}
+
+.downloadOptions > * {
+    flex: 1;
+}
+
+.downloadOptions > select {
+    flex: 1;
+    max-width: 150px;
+}
+
+.downloadOptions > button {
+    flex: 1;
+    max-width: 200px;
 }

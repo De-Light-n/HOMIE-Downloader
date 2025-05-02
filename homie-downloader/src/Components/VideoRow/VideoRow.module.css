@@ -139,3 +139,112 @@
         height: 38px;
     }
 }
+.videoCardSkeleton {
+    width: 300px;
+    height: 250px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: linear-gradient(
+            90deg,
+            rgba(30, 0, 50, 0.3),
+            rgba(157, 80, 255, 0.2),
+            rgba(30, 0, 50, 0.3)
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .videoCardSkeleton {
+        width: 260px;
+        height: 220px;
+    }
+}
+
+/* Додаємо нові стилі */
+.videoRowWrapper {
+    position: relative;
+    padding-right: 120px; /* Місце для кнопки */
+}
+
+.videoRowContainer {
+    overflow-x: auto;
+    scrollbar-width: none; /* Для Firefox */
+    -ms-overflow-style: none; /* Для IE/Edge */
+}
+
+.videoRowContainer::-webkit-scrollbar {
+    display: none; /* Для Chrome/Safari */
+}
+
+.loadMoreButton {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px 15px;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    min-width: 140px;
+    justify-content: center;
+}
+
+.loadMoreButton:hover {
+    background-color: #303f9f;
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+
+.loadMoreButton:disabled {
+    background-color: #9fa8da;
+    cursor: not-allowed;
+    transform: translateY(-50%);
+    box-shadow: none;
+}
+
+.loadMoreButton:active {
+    transform: translateY(-50%) scale(0.98);
+}
+
+.loadMoreIcon {
+    transition: transform 0.3s ease;
+}
+
+.loadMoreButton:hover .loadMoreIcon {
+    transform: translateY(2px);
+}
+
+/* Анімація завантаження */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loadingMore {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}

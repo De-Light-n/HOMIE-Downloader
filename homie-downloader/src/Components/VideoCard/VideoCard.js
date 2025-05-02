@@ -1,36 +1,48 @@
-// VideoCard.js
 import styles from './VideoCard.module.css';
 import { FiEye, FiClock, FiMoreVertical } from 'react-icons/fi';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const VideoCard = ({ video }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate('/video/details', {
+            state: {
+                videoData: {
+                    title: video.title,
+                    description: video.description || 'No description available',
+                    thumbnail: video.thumbnail,
+                    likes: video.likes || 'N/A',
+                    views: video.views || 'N/A',
+                    duration: video.duration || 'N/A',
+                    qualities: video.qualities || ['720p']
+                },
+                videoUrl: video.url || ''
+            }
+        });
+    };
 
     return (
         <div
             className={styles.videoCard}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onClick={handleClick}
+            style={{ cursor: 'pointer' }}
         >
             <div className={styles.thumbnailContainer}>
-                <img
-                    src={video.thumbnail}
-                    alt={video.title}
-                    className={styles.thumbnail}
-                />
-                {isHovered && (
-                    <div className={styles.hoverOverlay}>
-                        <div className={styles.hoverButtons}>
-                            <button className={styles.watchLaterBtn}>
-                                <FiClock size={18} />
-                            </button>
-                            <button className={styles.moreOptionsBtn}>
-                                <FiMoreVertical size={18} />
-                            </button>
-                        </div>
-                    </div>
+                {video.thumbnail && (
+                    <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className={styles.thumbnail}
+                    />
                 )}
-                <span className={styles.duration}>{video.duration}</span>
+                {video.duration && (
+                    <span className={styles.duration}>{video.duration}</span>
+                )}
             </div>
 
             <div className={styles.videoInfo}>
@@ -43,10 +55,14 @@ const VideoCard = ({ video }) => {
                     <div className={styles.metaData}>
                         <p className={styles.channel}>{video.channel}</p>
                         <div className={styles.stats}>
-                            <span className={styles.views}>
-                                <FiEye size={14} /> {video.views}
-                            </span>
-                            <span className={styles.date}>{video.date}</span>
+                            {video.views && (
+                                <span className={styles.views}>
+                                    <FiEye size={14} /> {video.views}
+                                </span>
+                            )}
+                            {video.date && (
+                                <span className={styles.date}>{video.date}</span>
+                            )}
                         </div>
                     </div>
                 </div>
