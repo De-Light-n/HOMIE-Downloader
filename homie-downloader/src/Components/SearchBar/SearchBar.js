@@ -15,49 +15,73 @@ const SearchBar = () => {
     const descriptionRef = useRef(null);
     const navigate = useNavigate();
 
-    // Функція для збереження пошукового запиту
-    const saveSearch = async (searchTerm) => {
-        if (!searchTerm.trim()) return;
+    // Функція для визначення категорії відео
+    const detectVideoCategory = (title, description) => {
+        if (!title && !description) return 'Other';
 
-        try {
-            const user = auth.currentUser;
-            const searchData = {
-                query: searchTerm,
-                timestamp: serverTimestamp(),
-                type: 'search',
-                userId: user?.uid || 'anonymous',
-                userEmail: user?.email || null,
-                isVideoUrl: searchTerm.includes('youtube.com') || searchTerm.includes('youtu.be')
-            };
+        const text = `${title} ${description}`.toLowerCase();
 
-            await addDoc(collection(db, 'searchHistory'), searchData);
-            console.log('Пошук збережено:', searchData);
-        } catch (error) {
-            console.error("Помилка збереження пошуку:", error);
+        const categories = {
+            'Music': ['музика', 'пісня', 'лірика', 'альбом', 'гурт', 'виконавець', 'кліп', 'music', 'song', 'lyric'],
+            'Gaming': ['гра', 'геймінг', 'прохідження', 'летсплей', 'кіберспорт', 'game', 'gaming', 'walkthrough'],
+            'Education': ['урок', 'навчання', 'курс', 'туторіал', 'як зробити', 'education', 'tutorial', 'how to'],
+            'Sports': ['спорт', 'футбол', 'баскетбол', 'теніс', 'тренування', 'sport', 'football', 'workout'],
+            'Entertainment': ['фільм', 'шоу', 'комедія', 'смішно', 'розваги', 'movie', 'comedy', 'entertainment'],
+            'Technology': ['технології', 'програмування', 'код', 'комп\'ютер', 'штучний інтелект', 'tech', 'programming', 'ai'],
+            'News': ['новини', 'події', 'політика', 'актуальне', 'news', 'politics', 'current events'],
+            'Podcasts': ['подкаст', 'аудіо', 'радіо', 'podcast', 'audio', 'interview'],
+            'Cooking': ['рецепт', 'кулінарія', 'приготування', 'їжа', 'страва', 'cooking', 'recipe', 'food'],
+            'Travel': ['подорож', 'туризм', 'країна', 'місто', 'travel', 'tourism', 'country'],
+            'Motivation': ['мотивація', 'успіх', 'історія', 'досягнення', 'motivation', 'success', 'inspiration'],
+            'Cinema': ['кіно', 'фільм', 'рецензія', 'актор', 'режисер', 'cinema', 'film', 'review'],
+            'Automotive': ['авто', 'машина', 'автомобіль', 'car', 'vehicle', 'driving'],
+            'Fashion': ['мода', 'стиль', 'одяг', 'fashion', 'style', 'clothing'],
+            'Science': ['наука', 'дослідження', 'відкриття', 'science', 'research', 'discovery'],
+            'Health': ['здоров\'я', 'медицина', 'лікування', 'health', 'medicine', 'fitness'],
+            'Cryptocurrency': ['криптовалюта', 'біткоін', 'блокчейн', 'crypto', 'bitcoin', 'blockchain']
+        };
+
+
+        for (const [category, keywords] of Object.entries(categories)) {
+            if (keywords.some(keyword => text.includes(keyword))) {
+                return category;
+            }
         }
+
+        return 'Other';
     };
 
-    // Функція для збереження завантаження
-    const saveDownload = async (url, quality) => {
-        if (!url) return;
-
+    const saveAction = async (actionData) => {
         try {
             const user = auth.currentUser;
-            const downloadData = {
-                url: url,
-                quality: quality,
+
+            // Визначаємо категорію, якщо є дані про відео
+            let category = 'Other';
+            if (actionData.videoTitle || actionData.videoDescription) {
+                category = detectVideoCategory(
+                    actionData.videoTitle || '',
+                    actionData.videoDescription || ''
+                );
+            }
+
+            // Створюємо об'єкт даних і видаляємо undefined поля
+            const data = Object.entries({
+                ...actionData,
+                category, // Додаємо визначену категорію
                 timestamp: serverTimestamp(),
-                type: 'download',
                 userId: user?.uid || 'anonymous',
                 userEmail: user?.email || null,
-                videoTitle: videoPreview?.title || '',
-                videoId: videoPreview?.id || ''
-            };
+            }).reduce((acc, [key, value]) => {
+                if (value !== undefined) {
+                    acc[key] = value;
+                }
+                return acc;
+            }, {});
 
-            await addDoc(collection(db, 'downloadHistory'), downloadData);
-            console.log('Завантаження збережено:', downloadData);
+            await addDoc(collection(db, 'userActions'), data);
+            console.log('Дія збережена:', data);
         } catch (error) {
-            console.error("Помилка збереження завантаження:", error);
+            console.error("Помилка збереження дії:", error);
         }
     };
 
@@ -80,8 +104,16 @@ const SearchBar = () => {
             setVideoPreview(data);
             setShowFullDescription(false);
 
-            // Зберігаємо факт перегляду прев'ю як пошуковий запит
-            await saveSearch(url);
+            await saveAction({
+                type: 'preview',
+                query: url,
+                videoTitle: data.title || '',
+                videoDescription: data.description || '',
+                thumbnail: data.thumbnail || '',
+                duration: data.duration || '',
+                views: data.views || '',
+                likes: data.likes || ''
+            });
         } catch (error) {
             console.error("Помилка отримання прев'ю:", error);
             setVideoPreview(null);
@@ -93,8 +125,11 @@ const SearchBar = () => {
     const handleSearch = async (e) => {
         e.preventDefault();
         if (query.trim()) {
-            await saveSearch(query);
-            console.log("Пошук виконано:", query);
+            await saveAction({
+                type: 'search',
+                query: query,
+                isVideoUrl: query.includes('youtube.com') || query.includes('youtu.be')
+            });
         }
     };
 
@@ -107,10 +142,18 @@ const SearchBar = () => {
         if (!query) return;
 
         try {
-            // Спочатку зберігаємо інформацію про завантаження
-            await saveDownload(query, selectedQuality);
+            await saveAction({
+                type: 'download',
+                url: query,
+                quality: selectedQuality,
+                videoTitle: videoPreview?.title || '',
+                videoDescription: videoPreview?.description || '',
+                thumbnail: videoPreview?.thumbnail || '',
+                duration: videoPreview?.duration || '',
+                views: videoPreview?.views || '',
+                likes: videoPreview?.likes || ''
+            });
 
-            // Потім виконуємо завантаження
             const response = await fetch('/api/video/download', {
                 method: 'POST',
                 headers: {
@@ -176,7 +219,7 @@ const SearchBar = () => {
                         onChange={(e) => setQuery(e.target.value)}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
-                        placeholder="Search videos, channels or paste video URL..."
+                        placeholder="Пошук відео, каналів або вставте посилання на відео..."
                         className={styles.searchInput}
                     />
                     {query && (
@@ -195,7 +238,7 @@ const SearchBar = () => {
                     disabled={!query.trim()}
                 >
                     <FiSearch size={18} />
-                    <span>Search</span>
+                    <span>Пошук</span>
                 </button>
             </form>
 
@@ -207,7 +250,7 @@ const SearchBar = () => {
                 <div className={styles.videoPreviewContainer}>
                     <div className={styles.videoPreviewContent}>
                         <div className={styles.videoThumbnail}>
-                            <img src={videoPreview.thumbnail} alt="Video thumbnail" />
+                            <img src={videoPreview.thumbnail} alt="Прев'ю відео" />
                         </div>
                         <div className={styles.videoInfo}>
                             <h3>{videoPreview.title}</h3>
@@ -224,7 +267,7 @@ const SearchBar = () => {
                                         className={styles.toggleDescriptionButton}
                                     >
                                         <FiChevronDown size={16} />
-                                        <span>{showFullDescription ? 'Show less' : 'Show more'}</span>
+                                        <span>{showFullDescription ? 'Згорнути' : 'Розгорнути'}</span>
                                     </button>
                                 )}
                             </div>
@@ -256,14 +299,14 @@ const SearchBar = () => {
                             className={styles.downloadButton}
                         >
                             <FiDownload size={18} />
-                            <span>Download</span>
+                            <span>Завантажити</span>
                         </button>
                         <button
                             onClick={handleViewFullDetails}
                             className={styles.fullDetailsButton}
                         >
                             <FiExternalLink size={18} />
-                            <span>Full Details</span>
+                            <span>Деталі</span>
                         </button>
                     </div>
                 </div>

@@ -1,46 +1,110 @@
 import styles from './VideoRow.module.css';
 import VideoCard from '../VideoCard/VideoCard';
-import {FiChevronDown, FiChevronLeft, FiChevronRight} from 'react-icons/fi';
+import { FiChevronDown, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useRef, useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy, limit, startAfter } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit, startAfter, where } from 'firebase/firestore';
 import { db } from '../Firebase/firebase';
 
-const VideoRow = ({ title, type, index }) => {
+const VideoRow = ({ title, type, index, category }) => {
     const rowRef = useRef(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
-    const [allVideos, setAllVideos] = useState([]); // Всі завантажені відео
-    const [visibleVideos, setVisibleVideos] = useState([]); // Відео для відображення
+    const [allVideos, setAllVideos] = useState([]);
+    const [visibleVideos, setVisibleVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [lastVisibleDoc, setLastVisibleDoc] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
-    // Завантажити початкові дані
+    // Функція для створення базового запиту з фільтруванням
+    const createBaseQuery = (collectionRef) => {
+        let baseQuery = query(
+            collectionRef,
+            orderBy('timestamp', 'desc')
+        );
+
+        // Фільтрувати за категорією, якщо вказано
+        if (category) {
+            baseQuery = query(
+                baseQuery,
+                where('category', '==', category)
+            );
+        }
+
+        return baseQuery;
+    };
+
+    // Визначення колекції для запиту на основі типу
+    const getCollectionForType = () => {
+        return collection(db, 'userActions');
+    };
+
+    // Додаткові фільтри для різних типів запитів
+    const getAdditionalFilters = (baseQuery) => {
+        if (type === 'recent-searches') {
+            return query(baseQuery, where('type', '==', 'preview'));
+        } else if (type === 'recent-downloads') {
+            return query(baseQuery, where('type', '==', 'download'));
+        }
+        return baseQuery;
+    };
+
+    // Обробка даних відео відповідно до структури Firebase
+    const processVideoData = async (querySnapshot) => {
+        // Створюємо мапу для відстеження унікальних відео
+        const uniqueVideos = new Map();
+
+        querySnapshot.docs.forEach(doc => {
+            const docData = doc.data();
+            const VideoName = docData.videoTitle;
+
+            // Якщо це відео вже є в нашій мапі - пропускаємо
+            if (uniqueVideos.has(VideoName)) return;
+
+            uniqueVideos.set(VideoName, {
+                id: doc.id,
+                videoTitle: docData.videoTitle || '',
+                videoThumbnail: docData.thumbnail || '',
+                channelName: docData.userEmail ? docData.userEmail.split('@')[0] : 'YouTube',
+                date: docData.timestamp?.toDate()?.toLocaleDateString() || '',
+                views: docData.views || '',
+                duration: docData.duration || '',
+                description: docData.videoDescription || '',
+                likes: docData.likes || '',
+                qualities: ['720p'], // Якість за замовчуванням
+                url: docData.query || '',
+                categories: docData.category ? [docData.category] : ['Other']
+            });
+        });
+
+        // Перетворюємо мапу назад у масив
+        return Array.from(uniqueVideos.values());
+    };
+
+    // Завантаження початкових даних
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
-                let collectionRef;
-                if (type === 'recent-searches') {
-                    collectionRef = collection(db, 'searchHistory');
-                } else if (type === 'recent-downloads') {
-                    collectionRef = collection(db, 'downloadHistory');
-                } else {
+                const collectionRef = getCollectionForType();
+                if (!collectionRef) {
                     setLoading(false);
                     return;
                 }
 
+                let baseQuery = createBaseQuery(collectionRef);
+                baseQuery = getAdditionalFilters(baseQuery);
+
                 const q = query(
-                    collectionRef,
-                    orderBy('timestamp', 'desc'),
-                    limit(5)
+                    baseQuery,
+                    limit(10)
                 );
+
                 const querySnapshot = await getDocs(q);
 
                 const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
                 setLastVisibleDoc(lastDoc);
-                setHasMore(querySnapshot.docs.length === 5);
+                setHasMore(querySnapshot.docs.length === 10);
 
                 const data = await processVideoData(querySnapshot);
                 setAllVideos(data);
@@ -54,90 +118,43 @@ const VideoRow = ({ title, type, index }) => {
         };
 
         fetchInitialData();
-    }, [type]);
+    }, [type, category]);
 
-    // Обробка даних відео
-    const processVideoData = async (querySnapshot) => {
-        return await Promise.all(
-            querySnapshot.docs.map(async (doc) => {
-                const docData = doc.data();
-                const isVideoUrl = docData.query?.includes('youtube.com') ||
-                    docData.query?.includes('youtu.be') ||
-                    docData.url?.includes('youtube.com') ||
-                    docData.url?.includes('youtu.be');
-
-                if (isVideoUrl) {
-                    try {
-                        const url = docData.query || docData.url;
-                        const response = await fetch(`/api/video/preview?url=${encodeURIComponent(url)}`);
-                        if (response.ok) {
-                            const videoData = await response.json();
-                            return {
-                                id: doc.id,
-                                ...docData,
-                                videoTitle: videoData.title || docData.videoTitle || docData.query || docData.url,
-                                videoThumbnail: videoData.thumbnail || docData.videoThumbnail || '',
-                                channelName: videoData.channel || docData.channelName || 'YouTube',
-                                date: docData.timestamp?.toDate()?.toLocaleDateString() || '',
-                                views: videoData.views || '',
-                                duration: videoData.duration || '',
-                                description: videoData.description,
-                                likes: videoData.likes,
-                                qualities: videoData.qualities || ['720p'],
-                                url: url
-                            };
-                        }
-                    } catch (err) {
-                        console.error("Помилка отримання даних відео:", err);
-                    }
-                }
-
-                return {
-                    id: doc.id,
-                    ...docData,
-                    videoTitle: docData.query || docData.videoTitle || docData.url,
-                    videoThumbnail: docData.videoThumbnail || '',
-                    channelName: docData.channelName || (type === 'recent-downloads' ? 'Channel' : 'Search'),
-                    date: docData.timestamp?.toDate()?.toLocaleDateString() || '',
-                    views: '',
-                    duration: '',
-                    qualities: ['720p'],
-                    url: docData.query || docData.url || ''
-                };
-            })
-        );
-    };
-
-    // Завантажити більше відео
+    // Завантаження додаткових відео
     const loadMoreVideos = async () => {
         if (!lastVisibleDoc || !hasMore || loadingMore) return;
 
         setLoadingMore(true);
         try {
-            let collectionRef;
-            if (type === 'recent-searches') {
-                collectionRef = collection(db, 'searchHistory');
-            } else if (type === 'recent-downloads') {
-                collectionRef = collection(db, 'downloadHistory');
-            } else {
+            const collectionRef = getCollectionForType();
+            if (!collectionRef) {
+                setLoadingMore(false);
                 return;
             }
 
+            let baseQuery = createBaseQuery(collectionRef);
+            baseQuery = getAdditionalFilters(baseQuery);
+
             const q = query(
-                collectionRef,
-                orderBy('timestamp', 'desc'),
+                baseQuery,
                 startAfter(lastVisibleDoc),
-                limit(5)
+                limit(10)
             );
+
             const querySnapshot = await getDocs(q);
 
             const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
             setLastVisibleDoc(lastDoc);
-            setHasMore(querySnapshot.docs.length === 5);
+            setHasMore(querySnapshot.docs.length === 10);
 
             const newData = await processVideoData(querySnapshot);
-            setAllVideos(prev => [...prev, ...newData]);
-            setVisibleVideos(prev => [...prev, ...newData.slice(0, 5)]);
+
+            // Перевіряємо на дублікати при додаванні нових відео
+            const existingVideoIds = new Set(allVideos.map(video => video.videoId));
+            const uniqueNewVideos = newData.filter(video => !existingVideoIds.has(video.videoId));
+
+            setAllVideos(prev => [...prev, ...uniqueNewVideos]);
+            setVisibleVideos(prev => [...prev, ...uniqueNewVideos.slice(0, 5)]);
         } catch (err) {
             console.error("Помилка завантаження додаткових відео:", err);
         } finally {
@@ -157,7 +174,7 @@ const VideoRow = ({ title, type, index }) => {
 
         const container = rowRef.current;
         const scrollAmount = direction === 'left' ? -400 : 400;
-        container.scrollBy({left: scrollAmount, behavior: 'smooth'});
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
 
         setTimeout(() => {
             setShowLeftArrow(container.scrollLeft > 0);
@@ -166,6 +183,17 @@ const VideoRow = ({ title, type, index }) => {
             );
         }, 300);
     };
+
+    // Оновлення стрілок прокрутки при початковому рендері
+    useEffect(() => {
+        if (rowRef.current) {
+            const container = rowRef.current;
+            setShowLeftArrow(container.scrollLeft > 0);
+            setShowRightArrow(
+                container.scrollWidth > container.clientWidth
+            );
+        }
+    }, [visibleVideos]);
 
     if (loading && allVideos.length === 0) {
         return (
@@ -203,12 +231,24 @@ const VideoRow = ({ title, type, index }) => {
         );
     }
 
-    if (allVideos.length === 0) {
-        return null;
+    if (allVideos.length === 0 && !loading) {
+        return (
+            <div className={styles.videoRowSection}>
+                <div className={styles.header}>
+                    <h2 className={styles.sectionTitle}>
+                        <span className={styles.titleDecorator}></span>
+                        {title}
+                    </h2>
+                </div>
+                <div className={styles.emptyMessage}>
+                    Відео не знайдено
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className={styles.videoRowSection} style={{'--row-index': index}}>
+        <div className={styles.videoRowSection} style={{ '--row-index': index }}>
             <div className={styles.header}>
                 <h2 className={styles.sectionTitle}>
                     <span className={styles.titleDecorator}></span>
@@ -219,13 +259,13 @@ const VideoRow = ({ title, type, index }) => {
                         className={`${styles.arrowButton} ${!showLeftArrow && styles.hidden}`}
                         onClick={() => scrollHandler('left')}
                     >
-                        <FiChevronLeft size={24}/>
+                        <FiChevronLeft size={24} />
                     </button>
                     <button
                         className={`${styles.arrowButton} ${!showRightArrow && styles.hidden}`}
                         onClick={() => scrollHandler('right')}
                     >
-                        <FiChevronRight size={24}/>
+                        <FiChevronRight size={24} />
                     </button>
                 </div>
             </div>
@@ -247,7 +287,8 @@ const VideoRow = ({ title, type, index }) => {
                                     description: item.description,
                                     likes: item.likes,
                                     qualities: item.qualities,
-                                    url: item.url
+                                    url: item.url,
+                                    categories: item.categories
                                 }}
                             />
                         ))}
@@ -265,7 +306,7 @@ const VideoRow = ({ title, type, index }) => {
                         ) : (
                             <>
                                 <span>Показати більше</span>
-                                <FiChevronDown className={styles.loadMoreIcon}/>
+                                <FiChevronDown className={styles.loadMoreIcon} />
                             </>
                         )}
                     </button>
@@ -273,6 +314,6 @@ const VideoRow = ({ title, type, index }) => {
             </div>
         </div>
     );
-}
+};
 
 export default VideoRow;

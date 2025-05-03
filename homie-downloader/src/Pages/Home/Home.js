@@ -7,9 +7,7 @@ import SearchBar from '../../Components/SearchBar/SearchBar';
 import '../../Styles/Background.css';
 
 const Home = () => {
-    const [isLoading, setIsLoading] = useState(false); // Змінили на false, оскільки VideoRow сам керує загрузкою
-
-    // Видалили useEffect, оскільки загрузка тепер відбувається в VideoRow
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <div className={styles.home}>
@@ -38,6 +36,61 @@ const Home = () => {
                         title="Недавні завантаження"
                         type="recent-downloads"
                         index={1}
+                    />
+
+                    {/* Виправлені рядки за категоріями - використовуємо проп category замість type */}
+                    <VideoRow
+                        title="Популярна музика"
+                        category="Music"
+                        index={2}
+                    />
+
+                    <VideoRow
+                        title="Топ ігри"
+                        category="gaming"
+                        index={3}
+                    />
+
+                    <VideoRow
+                        title="Навчальні матеріали"
+                        category="education"
+                        index={4}
+                    />
+
+                    <VideoRow
+                        title="Спортивні події"
+                        category="sports"
+                        index={5}
+                    />
+
+                    <VideoRow
+                        title="Подкасти"
+                        category="podcasts"
+                        index={6}
+                    />
+
+                    <VideoRow
+                        title="Кулінарні шедеври"
+                        category="cooking"
+                        index={7}
+                    />
+
+                    <VideoRow
+                        title="Подорожі"
+                        category="travel"
+                        index={8}
+                    />
+
+                    <VideoRow
+                        title="Мотивація"
+                        category="motivation"
+                        index={9}
+                    />
+
+                    <VideoRow
+                        title="Кіно та серіали"
+                        category="movies"
+                        index={10}
                     />
 
                     <div className={styles.ctaSection}>

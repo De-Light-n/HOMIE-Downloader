@@ -2,10 +2,18 @@ import { initializeApp } from "firebase/app";
 import {
     getFirestore,
     collection,
+    doc,
+    setDoc,
+    addDoc,
+    getDoc,
+    getDocs,
     query,
+    where,
     orderBy,
     limit,
-    getDocs
+    serverTimestamp,
+    updateDoc,
+    deleteDoc
 } from "firebase/firestore";
 import {
     getAuth,
@@ -14,8 +22,14 @@ import {
     signInWithPopup,
     createUserWithEmailAndPassword,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    sendPasswordResetEmail,
+    updateProfile,
+    updateEmail,
+    updatePassword,
+    sendEmailVerification
 } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCyYPyMikhSkpMdA_qzFNnB7KsQuhXTUTQ",
@@ -30,21 +44,51 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 
-// Експортуємо всі необхідні функції Firestore
+// Додаткові налаштування провайдера Google
+provider.setCustomParameters({
+    prompt: 'select_account'
+});
+
+// Експортуємо всі необхідні функції
 export {
+    // Основні експорти
     db,
     auth,
+    storage,
     provider,
+    serverTimestamp,
+
+    // Функції Firestore
     collection,
+    doc,
+    setDoc,
+    addDoc,
+    getDoc,
+    getDocs,
     query,
+    where,
     orderBy,
     limit,
-    getDocs,
+    updateDoc,
+    deleteDoc,
+
+    // Функції автентифікації
     signInWithEmailAndPassword,
     signInWithPopup,
     createUserWithEmailAndPassword,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    sendPasswordResetEmail,
+    updateProfile,
+    updateEmail,
+    updatePassword,
+    sendEmailVerification,
+
+    // Функції Storage
+    ref,
+    uploadBytes,
+    getDownloadURL
 };
