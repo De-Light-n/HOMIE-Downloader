@@ -4,6 +4,7 @@ import { FiSearch, FiX, FiDownload, FiThumbsUp, FiEye, FiChevronDown, FiExternal
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../Firebase/firebase';
 import styles from './SearchBar.module.css';
+import Loader from './Loader'; // Import the Loader component
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');
@@ -40,7 +41,6 @@ const SearchBar = () => {
             'Health': ['здоров\'я', 'медицина', 'лікування', 'health', 'medicine', 'fitness'],
             'Cryptocurrency': ['криптовалюта', 'біткоін', 'блокчейн', 'crypto', 'bitcoin', 'blockchain']
         };
-
 
         for (const [category, keywords] of Object.entries(categories)) {
             if (keywords.some(keyword => text.includes(keyword))) {
@@ -243,7 +243,9 @@ const SearchBar = () => {
             </form>
 
             {isLoading && (
-                <div className={styles.loadingPreview}>Завантаження даних...</div>
+                <div className={styles.loadingPreview}>
+                    <Loader /> {/* Replaced text with Loader component */}
+                </div>
             )}
 
             {videoPreview && !isLoading && (
