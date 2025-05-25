@@ -17,6 +17,9 @@ import './Styles/globals.css';
 // TODO: IF we have time, add more themes
 // TODO: Перевести сайт на одну мову
 // TODO: в сторінці акаунта надпис My account без стилю
+// TODO: Забрати останній візит на сайт з акаунта 
+// TODO: Доробити аналітику
+
 
 function App() {
     return (
