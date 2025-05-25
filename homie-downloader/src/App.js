@@ -8,6 +8,14 @@ import Header from './Components/Header/Header';
 import VideoDetailsPage from './Pages/VideoDetailsPage/VideoDetailsPage';
 import './Styles/globals.css';
 
+
+// TODO: Maybe Footer
+// TODO: Validation for login and signup forms
+// TODO: Info about us
+// TODO: Sorting and filtering videos
+// TODO: Maybe coments under video
+// TODO: IF we have time, add more themes
+
 function App() {
     return (
         <Router>
