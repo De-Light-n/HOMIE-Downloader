@@ -15,6 +15,8 @@ import './Styles/globals.css';
 // TODO: Sorting and filtering videos
 // TODO: Maybe coments under video
 // TODO: IF we have time, add more themes
+// TODO: Перевести сайт на одну мову
+// TODO: в сторінці акаунта надпис My account без стилю
 
 function App() {
     return (

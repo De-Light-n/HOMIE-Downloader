@@ -4,7 +4,7 @@ import { FiSearch, FiX, FiDownload, FiThumbsUp, FiEye, FiChevronDown, FiExternal
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../Firebase/firebase';
 import styles from './SearchBar.module.css';
-import Loader from './Loader'; // Import the Loader component
+import Loader from './Loader';
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');
@@ -13,10 +13,11 @@ const SearchBar = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedQuality, setSelectedQuality] = useState('720p');
     const [showFullDescription, setShowFullDescription] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
     const descriptionRef = useRef(null);
     const navigate = useNavigate();
 
-    // Функція для визначення категорії відео
+    // Function to detect video category
     const detectVideoCategory = (title, description) => {
         if (!title && !description) return 'Other';
 
@@ -55,7 +56,6 @@ const SearchBar = () => {
         try {
             const user = auth.currentUser;
 
-            // Визначаємо категорію, якщо є дані про відео
             let category = 'Other';
             if (actionData.videoTitle || actionData.videoDescription) {
                 category = detectVideoCategory(
@@ -64,10 +64,9 @@ const SearchBar = () => {
                 );
             }
 
-            // Створюємо об'єкт даних і видаляємо undefined поля
             const data = Object.entries({
                 ...actionData,
-                category, // Додаємо визначену категорію
+                category,
                 timestamp: serverTimestamp(),
                 userId: user?.uid || 'anonymous',
                 userEmail: user?.email || null,
@@ -136,11 +135,13 @@ const SearchBar = () => {
     const clearInput = () => {
         setQuery('');
         setVideoPreview(null);
+        setIsDownloading(false);
     };
 
     const handleDownload = async () => {
         if (!query) return;
 
+        setIsDownloading(true);
         try {
             await saveAction({
                 type: 'download',
@@ -178,6 +179,9 @@ const SearchBar = () => {
             }
         } catch (error) {
             console.error("Помилка завантаження:", error);
+            alert("Помилка при завантаженні відео");
+        } finally {
+            setIsDownloading(false);
         }
     };
 
@@ -244,11 +248,17 @@ const SearchBar = () => {
 
             {isLoading && (
                 <div className={styles.loadingPreview}>
-                    <Loader /> {/* Replaced text with Loader component */}
+                    <Loader />
                 </div>
             )}
 
-            {videoPreview && !isLoading && (
+            {isDownloading && (
+                <div className={styles.downloadLoader}>
+                    <DownloadLoader />
+                </div>
+            )}
+
+            {videoPreview && !isLoading && !isDownloading && (
                 <div className={styles.videoPreviewContainer}>
                     <div className={styles.videoPreviewContent}>
                         <div className={styles.videoThumbnail}>
@@ -299,6 +309,7 @@ const SearchBar = () => {
                         <button
                             onClick={handleDownload}
                             className={styles.downloadButton}
+                            disabled={isDownloading}
                         >
                             <FiDownload size={18} />
                             <span>Завантажити</span>
