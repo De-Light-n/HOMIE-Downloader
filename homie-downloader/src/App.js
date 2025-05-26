@@ -5,7 +5,9 @@ import AccountPage from './Pages/AccountPage/AccountPage';
 import Login from './Components/Auth/Login';
 import Signup from './Components/Auth/Signup';
 import Header from './Components/Header/Header';
+import Footer from './Components/Footer/Footer';
 import VideoDetailsPage from './Pages/VideoDetailsPage/VideoDetailsPage';
+import AboutUs from './Pages/AboutUs/AboutUs';
 import './Styles/globals.css';
 
 
@@ -32,7 +34,9 @@ function App() {
                     <Route path="/account" element={<AccountPage />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/aboutus" element={<AboutUs />} />
                 </Routes>
+                <Footer />
             </AuthProvider>
         </Router>
     );

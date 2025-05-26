@@ -1,0 +1,256 @@
+/* Загальний стиль футера */
+.footer {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    padding-bottom: 0; /* Removed bottom padding to let footer-bottom handle it */
+    position: relative;
+    overflow: hidden;
+    font-family: 'Inter', Arial, sans-serif;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto; /* Ensure footer sticks to bottom in flex layout */
+}
+
+/* Верхній рядок футера */
+.footer-top {
+    background: var(--header-bg);
+    padding: 40px 0;
+    text-align: center;
+    font-weight: bold;
+    color: var(--neon-purple);
+    font-size: 28px;
+    text-shadow: 0 0 10px var(--neon-purple);
+    transition: all 0.3s ease;
+}
+
+.footer-top:hover {
+    color: var(--neon-pink);
+    text-shadow: 0 0 15px var(--neon-pink);
+    box-shadow: 0 0 20px var(--neon-pink);
+}
+
+/* Контент футера */
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 40px;
+    position: relative;
+    z-index: 2;
+}
+
+.footer-title {
+    font-size: 28px;
+    color: var(--neon-blue);
+    font-weight: bold;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding-right: 20px;
+    max-width: 100%;
+    line-height: 1.2;
+    text-shadow: 0 0 8px var(--neon-blue);
+}
+
+/* Ліва частина футера */
+.footer-left {
+    max-width: 300px;
+    margin-bottom: 20px;
+}
+
+.footer-left h2 {
+    color: var(--neon-blue);
+    font-size: 28px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--neon-blue);
+}
+
+/* Стилі для посилань з анімацією підкреслення */
+.footer-nav ul li a,
+.footer-services ul li a,
+.footer-contact p a {
+    position: relative;
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: inline-block;
+    padding-bottom: 3px;
+    transition: all 0.3s ease;
+}
+
+.footer-nav ul li a:hover,
+.footer-services ul li a:hover,
+.footer-contact p a:hover {
+    color: var(--neon-pink);
+    text-shadow: 0 0 5px var(--neon-pink);
+}
+
+.footer-nav ul li a::after,
+.footer-services ul li a::after,
+.footer-contact p a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--neon-pink);
+    transition: width 0.3s ease;
+}
+
+.footer-nav ul li a:hover::after,
+.footer-services ul li a:hover::after,
+.footer-contact p a:hover::after {
+    width: 100%;
+}
+
+/* Кнопка чату */
+.chat-btn {
+    background: transparent;
+    border: 2px solid var(--neon-purple);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 10px var(--neon-purple);
+}
+
+.chat-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.chat-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 20px var(--neon-pink);
+}
+
+.chat-btn:hover::before {
+    left: 0;
+}
+
+/* Колонки навігації */
+.footer-nav,
+.footer-services,
+.footer-contact {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 20px;
+}
+
+.footer-nav h4,
+.footer-services h4,
+.footer-contact h4 {
+    color: var(--neon-purple);
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 0 5px var(--neon-purple);
+}
+
+.footer-nav h4::after,
+.footer-services h4::after,
+.footer-contact h4::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background-color: var(--neon-blue);
+    box-shadow: 0 0 5px var(--neon-blue);
+}
+
+/* Списки */
+.footer-nav ul,
+.footer-services ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-nav ul li,
+.footer-services ul li {
+    margin-bottom: 10px;
+}
+
+/* Контактні дані */
+.footer-contact p {
+    margin: 8px 0;
+    color: var(--text-secondary);
+}
+
+/* Нижня частина футера */
+.footer-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+    font-size: 14px;
+    border-top: 1px solid var(--border-color);
+    background: var(--header-bg);
+    margin-top: 20px; /* Ensure separation from content */
+    width: 100%;
+}
+
+/* Великий текст на фоні */
+.footer-bg-text {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    font-size: 180px;
+    font-weight: bold;
+    color: rgba(157, 80, 255, 0.05);
+    text-align: center;
+    z-index: 1;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 0 15px;
+    }
+
+    .footer-left {
+        margin-bottom: 30px;
+        max-width: 100%;
+    }
+
+    .footer-nav h4::after,
+    .footer-services h4::after,
+    .footer-contact h4::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .footer-bg-text {
+        font-size: 100px;
+        bottom: -10px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+}

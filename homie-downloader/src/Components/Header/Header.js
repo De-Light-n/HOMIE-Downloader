@@ -1,5 +1,6 @@
 import styles from './Header.module.css';
-import { FiUser, FiBell, FiMenu } from 'react-icons/fi';
+import { FiUser, FiMenu } from 'react-icons/fi';
+import { FaQuestionCircle } from 'react-icons/fa'; // Imported question mark icon
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../Firebase/AuthContext';
@@ -119,10 +120,9 @@ const Header = () => {
             <div className={styles.rightSection}>
                 {currentUser ? (
                     <>
-                        <button className={styles.notificationButton}>
-                            <FiBell size={20} />
-                            <span className={styles.notificationBadge}>3</span>
-                        </button>
+                        <Link to="/aboutus" className={styles.aboutButton}>
+                            <FaQuestionCircle size={20} />
+                        </Link>
                         <div
                             className={styles.userAvatar}
                             onClick={handleAvatarClick}

@@ -75,8 +75,7 @@
     gap: 1.5rem;
 }
 
-.notificationButton {
-    position: relative;
+.aboutButton {
     background: none;
     border: none;
     color: var(--text-primary);
@@ -85,29 +84,16 @@
     border-radius: 50%;
     transition: all 0.3s ease;
     background-color: rgba(255, 255, 255, 0.05);
-}
-
-.notificationButton:hover {
-    background-color: rgba(157, 80, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 2px 10px rgba(157, 80, 255, 0.2);
-}
-
-.notificationBadge {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    background: linear-gradient(45deg, #ff00ff, #9d50ff);
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
-    font-weight: bold;
-    box-shadow: 0 0 8px rgba(157, 80, 255, 0.6);
+}
+
+.aboutButton:hover {
+    background-color: rgba(157, 80, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(157, 80, 255, 0.2);
 }
 
 .userAvatar {
@@ -273,7 +259,7 @@
         display: none;
     }
 
-    .notificationButton {
+    .aboutButton {
         display: none;
     }
 
