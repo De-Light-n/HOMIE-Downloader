@@ -12,7 +12,6 @@ import './Styles/globals.css';
 import Guide from './Pages/Guide/Guide';
 
 
-// TODO: Maybe Footer
 // TODO: Validation for login and signup forms
 // TODO: Info about us
 // TODO: Sorting and filtering videos
@@ -22,6 +21,7 @@ import Guide from './Pages/Guide/Guide';
 // TODO: в сторінці акаунта надпис My account без стилю
 // TODO: Забрати останній візит на сайт з акаунта 
 // TODO: Доробити аналітику
+// TODO: ДОРОБИТИ ФУТЕР
 
 
 function App() {
