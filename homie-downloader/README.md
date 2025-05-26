@@ -12,6 +12,7 @@
     ```
 
 2.  **Створіть та активуйте віртуальне оточення:**
+3. ЗАЙТИ В ПАПКУ ДЛЯ СЕРВЕРА server_python
     ```bash
     python -m venv .venv
     # Windows PowerShell:
