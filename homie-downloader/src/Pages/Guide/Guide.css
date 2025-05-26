@@ -1,0 +1,113 @@
+.guide-page {
+    font-family: "Inter", Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+    padding-top: 80px;
+    background-color: transparent;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+.guide-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+}
+
+.guide-section {
+    margin-bottom: 60px;
+    max-width: 800px;
+    padding-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--neon-pink);
+    position: relative;
+    padding-bottom: 10px;
+    text-shadow: 0 0 8px var(--neon-pink);
+}
+
+.section-title:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--neon-blue);
+    box-shadow: 0 0 5px var(--neon-blue);
+}
+
+.text-holder {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.text-holder h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--neon-purple);
+    text-shadow: 0 0 5px var(--neon-purple);
+}
+
+.features-list,
+.faq-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-item,
+.faq-item {
+    background: var(--header-bg);
+    padding: 25px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.feature-item:hover,
+.faq-item:hover {
+    transform: translateY(-5px);
+    background: var(--primary-dark);
+    box-shadow: 0 0 15px var(--neon-purple);
+    color: var(--text-primary);
+}
+
+.feature-item h3,
+.faq-item h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--neon-pink);
+}
+
+@media (max-width: 768px) {
+    .guide-section {
+        max-width: 100%;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .text-holder {
+        font-size: 1rem;
+    }
+
+    .features-list,
+    .faq-list {
+        grid-template-columns: 1fr;
+    }
+}

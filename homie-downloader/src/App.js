@@ -9,6 +9,7 @@ import Footer from './Components/Footer/Footer';
 import VideoDetailsPage from './Pages/VideoDetailsPage/VideoDetailsPage';
 import AboutUs from './Pages/AboutUs/AboutUs';
 import './Styles/globals.css';
+import Guide from './Pages/Guide/Guide';
 
 
 // TODO: Maybe Footer
@@ -35,6 +36,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/aboutus" element={<AboutUs />} />
+                    <Route path="/guide" element={<Guide />} />
                 </Routes>
                 <Footer />
             </AuthProvider>

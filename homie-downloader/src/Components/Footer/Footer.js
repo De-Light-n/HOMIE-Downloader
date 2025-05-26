@@ -29,10 +29,10 @@ function Footer() {
                     <h4>НАВІГАЦІЯ</h4>
                     <ul>
                         <li><Link to="/aboutus">Про нас</Link></li>
-                        <li><Link to="/features">Можливості</Link></li>
-                        <li><Link to="/faq">FAQ</Link></li>
-                        <li><Link to="/platforms">Підтримувані платформи</Link></li>
-                        <li><Link to="/guides">Інструкції</Link></li>
+                        <li><Link to="/guide#features">Можливості</Link></li>
+                        <li><Link to="/guide#faq">FAQ</Link></li>
+                        <li><Link to="/guide#platforms">Підтримувані платформи</Link></li>
+                        <li><Link to="/guide#how-to-use">Інструкції</Link></li>
                         <li><Link to="/letschat">Контакти</Link></li>
                     </ul>
                 </div>
@@ -40,12 +40,12 @@ function Footer() {
                 <div className="footer-services">
                     <h4>ЩО МИ ПРОПОНУЄМО</h4>
                     <ul>
-                        <li><Link to="/guides">Як завантажувати відео</Link></li>
-                        <li><Link to="/guides">Завантаження музики в MP3</Link></li>
-                        <li><Link to="/platforms">YouTube та TikTok</Link></li>
-                        <li><Link to="/platforms">SoundCloud та інші</Link></li>
-                        <li><Link to="/features">Висока якість</Link></li>
-                        <li><Link to="/features">Безкоштовний доступ</Link></li>
+                        <li><Link to="/guide#how-to-use">Як завантажувати відео</Link></li>
+                        <li><Link to="/guide#how-to-use">Завантаження музики в MP3</Link></li>
+                        <li><Link to="/guide#platforms">YouTube та TikTok</Link></li>
+                        <li><Link to="/guide#platforms">SoundCloud та інші</Link></li>
+                        <li><Link to="/guide#features">Висока якість</Link></li>
+                        <li><Link to="/guide#features">Безкоштовний доступ</Link></li>
                     </ul>
                 </div>
 
