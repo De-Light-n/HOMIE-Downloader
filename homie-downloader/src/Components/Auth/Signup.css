@@ -1,0 +1,346 @@
+/* Signup.css */
+:root {
+    --primary: #8a2be2;
+    --primary-light: #9d50ff;
+    --primary-soft: rgba(157, 80, 255, 0.2);
+    --accent: #ff66ff;
+    --accent-light: #ff99ff;
+    --dark: #1e0032;
+    --dark-soft: rgba(30, 0, 50, 0.8);
+    --light: #e2c2ff;
+    --light-soft: rgba(226, 194, 255, 0.3);
+    --error: #ff6b81;
+    --error-soft: rgba(255, 107, 129, 0.15);
+}
+
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+}
+
+.signup-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, var(--primary-soft) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, var(--accent-soft) 0%, transparent 40%);
+    animation: float 25s infinite alternate ease-in-out;
+    z-index: 0;
+}
+
+.signup-card {
+    background: var(--dark-soft);
+    padding: 2.5rem;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 440px;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--light-soft);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    border: 1px solid var(--light-soft);
+    box-shadow: 0 0 15px rgba(157, 80, 255, 0.3);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.signup-card:hover {
+    border: 1px solid #c24bff;
+    box-shadow:
+            0 0 25px #b13dff,
+            0 0 50px rgba(157, 80, 255, 0.7),
+            0 0 75px rgba(157, 80, 255, 0.5);
+    animation: neon-glow 1.5s infinite alternate;
+}
+
+@keyframes neon-glow {
+    from {
+        box-shadow:
+                0 0 15px #b13dff,
+                0 0 30px rgba(157, 80, 255, 0.7),
+                0 0 45px rgba(157, 80, 255, 0.5);
+    }
+    to {
+        box-shadow:
+                0 0 25px #c24bff,
+                0 0 50px rgba(204, 102, 255, 0.8),
+                0 0 75px rgba(204, 102, 255, 0.6);
+    }
+}
+
+/* Оновлені кольори для більш яскравого ефекту */
+:root {
+    --primary: #c24bff;
+    --primary-light: #d16bff;
+    --primary-soft: rgba(210, 107, 255, 0.4);
+    --accent: #ff79ff;
+    --accent-light: #ffa3ff;
+}
+.signup-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+            to bottom right,
+            transparent 0%,
+            transparent 50%,
+            var(--primary-soft) 100%
+    );
+    transform: rotate(30deg);
+    z-index: -1;
+    opacity: 0.3;
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.signup-header h2 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--light);
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, var(--light), var(--accent-light));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.signup-header p {
+    color: var(--light-soft);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 1.2rem 1rem 0.8rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--light-soft);
+    color: var(--light);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-bottom-color: var(--primary-light);
+}
+
+.form-group label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: var(--light-soft);
+    font-size: 1rem;
+    font-weight: 400;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    transform-origin: left top;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+    transform: translateY(-0.8rem) scale(0.8);
+    color: var(--primary-light);
+}
+
+.input-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-light), var(--accent));
+    transition: width 0.4s ease;
+}
+
+.form-group input:focus ~ .input-border {
+    width: 100%;
+}
+
+.error-message {
+    color: var(--error);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background: var(--error-soft);
+    border-radius: 12px;
+    animation: fadeIn 0.4s ease-out;
+    text-align: center;
+}
+
+.signup-button, .google-signup-button {
+    width: 100%;
+    padding: 1.1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.signup-button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    box-shadow: 0 4px 20px var(--primary-soft);
+}
+
+.google-signup-button {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    box-shadow: 0 4px 20px var(--primary-soft);
+}
+
+.signup-button::before, .google-signup-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.signup-button:hover, .google-signup-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--primary-soft);
+}
+
+.signup-button:hover::before, .google-signup-button:hover::before {
+    opacity: 1;
+}
+
+.button-loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 1.8rem 0;
+    color: var(--light-soft);
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--light-soft);
+}
+
+.divider::before {
+    margin-right: 1rem;
+}
+
+.divider::after {
+    margin-left: 1rem;
+}
+
+.signup-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    color: var(--light-soft);
+    font-size: 0.95rem;
+}
+
+.signup-footer a {
+    color: var(--primary-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.signup-footer a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.google-icon {
+    font-size: 1.1rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, 20px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes shine {
+    0% { transform: rotate(30deg) translate(-30%, -30%); }
+    100% { transform: rotate(30deg) translate(30%, 30%); }
+}
+
+@media (max-width: 480px) {
+    .signup-card {
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+    }
+
+    .signup-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .form-group input {
+        padding: 1rem 1rem 0.6rem;
+    }
+
+    .signup-button, .google-signup-button {
+        padding: 1rem;
+    }
+}
