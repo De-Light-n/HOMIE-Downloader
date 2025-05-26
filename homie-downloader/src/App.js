@@ -17,6 +17,7 @@ import Background from './Components/Background';
 import ScrollToTop from './Components/ScrollToTop';
 import {ThemeProvider} from './Components/ThemeContext';
 
+
 import './Styles/themes.css';
 // TODO: Maybe Footer
 // TODO: Validation for login and signup forms
@@ -28,6 +29,7 @@ import './Styles/themes.css';
 // TODO: в сторінці акаунта надпис My account без стилю
 // TODO: Забрати останній візит на сайт з акаунта 
 // TODO: Доробити аналітику
+// TODO: ДОРОБИТИ ФУТЕР
 
 
 function App() {
