@@ -8,10 +8,10 @@ import Header from './Components/Header/Header';
 import Footer from './Components/Footer/Footer';
 import VideoDetailsPage from './Pages/VideoDetailsPage/VideoDetailsPage';
 import AboutUs from './Pages/AboutUs/AboutUs';
-import './Styles/globals.css';
 import Guide from './Pages/Guide/Guide';
+import './Styles/globals.css';
 
-
+import ScrollToTop from './Components/ScrollToTop/ScrollToTop';
 // TODO: Maybe Footer
 // TODO: Validation for login and signup forms
 // TODO: Info about us
@@ -27,6 +27,7 @@ import Guide from './Pages/Guide/Guide';
 function App() {
     return (
         <Router>
+            <ScrollToTop />
             <AuthProvider>
                 <Header />
                 <Routes>
