@@ -196,19 +196,6 @@
     color: var(--text-secondary);
 }
 
-/* Нижня частина футера */
-.footer-bottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 20px;
-    font-size: 14px;
-    border-top: 1px solid var(--border-color);
-    background: var(--header-bg);
-    margin-top: 20px; /* Ensure separation from content */
-    width: 100%;
-}
-
 /* Великий текст на фоні */
 .footer-bg-text {
     position: absolute;
