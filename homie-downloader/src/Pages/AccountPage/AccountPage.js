@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Components/Firebase/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../Components/ThemeContext";
 import "./AccountPage.css";
 import {
   BarChart,
@@ -14,9 +15,9 @@ import {
 
 const AccountPage = () => {
   const { currentUser, logout } = useAuth();
+  const { theme, themes, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("personal");
-  const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
     if (!currentUser) {
@@ -120,7 +121,7 @@ const AccountPage = () => {
                           <BarChart data={monthlyData.slice(0, 2)}>
                             <Bar
                                 dataKey="videos"
-                                fill="#ff6d00"
+                                fill="var(--primary-color)"
                                 radius={[4, 4, 0, 0]}
                             />
                           </BarChart>
@@ -136,7 +137,7 @@ const AccountPage = () => {
                           <BarChart data={monthlyData.slice(2, 4)}>
                             <Bar
                                 dataKey="videos"
-                                fill="#1a73e8"
+                                fill="var(--primary-dark)"
                                 radius={[4, 4, 0, 0]}
                             />
                           </BarChart>
@@ -153,13 +154,13 @@ const AccountPage = () => {
                             data={monthlyData}
                             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                          <XAxis dataKey="name" stroke="var(--text-secondary)" />
+                          <YAxis stroke="var(--text-secondary)" />
+                          <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} />
                           <Bar
                               dataKey="videos"
-                              fill="#ff6d00"
+                              fill="var(--primary-color)"
                               radius={[4, 4, 0, 0]}
                           />
                         </BarChart>
@@ -293,44 +294,23 @@ const AccountPage = () => {
               </div>
 
               <div className="details-content themes-content">
-                <div
-                    className={`theme-item ${theme === "dark" ? "active-theme" : ""}`}
-                    onClick={() => setTheme("dark")}
-                >
-                  <div className="theme-header">
-                    <h4>Dark Theme</h4>
-                    {theme === "dark" && <span className="active-indicator">✓ Active</span>}
+                {themes.map((themeName) => (
+                  <div
+                      key={themeName}
+                      className={`theme-item ${theme === themeName ? "active-theme" : ""}`}
+                      onClick={() => toggleTheme(themeName)}
+                  >
+                    <div className="theme-header">
+                      <h4>{themeName.charAt(0).toUpperCase() + themeName.slice(1)} Theme</h4>
+                      {theme === themeName && <span className="active-indicator">✓ Active</span>}
+                    </div>
+                    <p className="detail-value">
+                      {themeName === 'light' ? 'Light interface with soft colors' :
+                       themeName === 'dark' ? 'Default dark interface with neon accents' :
+                       'High-contrast interface for accessibility'}
+                    </p>
                   </div>
-                  <p className="detail-value">
-                    Default dark interface with neon accents
-                  </p>
-                </div>
-
-                <div
-                    className={`theme-item ${theme === "light" ? "active-theme" : ""}`}
-                    onClick={() => setTheme("light")}
-                >
-                  <div className="theme-header">
-                    <h4>Light Theme</h4>
-                    {theme === "light" && <span className="active-indicator">✓ Active</span>}
-                  </div>
-                  <p className="detail-value">
-                    Light interface with soft colors
-                  </p>
-                </div>
-
-                <div
-                    className={`theme-item ${theme === "amoled" ? "active-theme" : ""}`}
-                    onClick={() => setTheme("amoled")}
-                >
-                  <div className="theme-header">
-                    <h4>AMOLED Black</h4>
-                    {theme === "amoled" && <span className="active-indicator">✓ Active</span>}
-                  </div>
-                  <p className="detail-value">
-                    Pure black interface for AMOLED screens
-                  </p>
-                </div>
+                ))}
               </div>
             </>
         );
@@ -367,7 +347,7 @@ const AccountPage = () => {
                         { id: 4, name: "Gaming Channel", videos: 210, newVideos: 4, lastUpdate: "1 day ago" },
                       ].map(channel => (
                           <div key={channel.id} className="video-item">
-                            <div className="video-thumbnail" style={{ backgroundColor: `#${Math.floor(Math.random()*16777215).toString(16)}` }}>
+                            <div className="video-thumbnail" style={{ backgroundColor: `var(--user-icon-bg)` }}>
                               {channel.name.charAt(0)}
                             </div>
                             <div className="video-info">
@@ -584,13 +564,6 @@ const AccountPage = () => {
 
   return (
       <div className="account-page-container">
-        <div className="neonBackground">
-          <div className={`glowEffect purpleGlow`}></div>
-          <div className={`glowEffect pinkGlow`}></div>
-          <div className={`glowEffect blueGlow`}></div>
-          <div className="gridOverlay"></div>
-        </div>
-
         <div className="account-content-wrapper">
           <header className="account-header">
             <h1>My Account</h1>
