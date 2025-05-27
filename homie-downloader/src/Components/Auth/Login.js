@@ -3,8 +3,13 @@ import { useAuth } from '../Firebase/AuthContext'; // Переконайтеся
 import { useNavigate, Link } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import './Login.css';
-// Відеофон видалено
-// import backgroundVideo from './176434-855480487_small.mp4';
+
+// Допоміжна функція для валідації email
+const isValidEmail = (email) => {
+    // Простий регулярний вираз для перевірки формату email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -16,6 +21,20 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Валідація email
+        if (!isValidEmail(email)) {
+            setError('Please enter a valid email address.');
+            setTimeout(() => setError(''), 3000);
+            return;
+        }
+        // Мінімальна довжина пароля (можна додати більш складні перевірки, якщо потрібно для логіну)
+        if (password.length < 6) { // Firebase за замовчуванням вимагає мінімум 6 символів
+            setError('Password should be at least 6 characters long.');
+            setTimeout(() => setError(''), 3000);
+            return;
+        }
+
         try {
             setError('');
             setLoading(true);
@@ -43,8 +62,7 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            {/* Елемент video видалено */}
-            <div className="login-background"></div> {/* Для радіальних градієнтів за карткою */}
+            <div className="login-background"></div>
             <div className="login-card">
                 <div className="login-header">
                     <h2>Welcome Back</h2>
@@ -62,7 +80,7 @@ const Login = () => {
                             required
                             placeholder="Enter your email"
                         />
-                        <label></label> {/* Напис для анімації, якщо placeholder не використовується */}
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 
@@ -74,7 +92,7 @@ const Login = () => {
                             required
                             placeholder="Enter your password"
                         />
-                        <label></label> {/* Напис для анімації */}
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 

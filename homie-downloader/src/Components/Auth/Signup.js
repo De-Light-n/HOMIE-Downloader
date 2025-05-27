@@ -3,8 +3,19 @@ import { useAuth } from '../Firebase/AuthContext'; // Переконайтеся
 import { useNavigate, Link } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import './Signup.css';
-// Відеофон видалено
-// import backgroundVideo from './176434-855480487_small.mp4';
+
+// Допоміжна функція для валідації email
+const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
+// Допоміжна функція для валідації пароля
+const isValidPassword = (password) => {
+    // Мінімум 8 символів, принаймні одна велика літера, одна мала літера, одна цифра та один спеціальний символ
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_#-])[A-Za-z\d@$!%*?&_#-]{8,}$/;
+    return passwordRegex.test(password);
+};
 
 const Signup = () => {
     const [email, setEmail] = useState('');
@@ -17,9 +28,26 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Валідація email
+        if (!isValidEmail(email)) {
+            setError('Please enter a valid email address.');
+            setTimeout(() => setError(''), 3000);
+            return;
+        }
+
+        // Валідація складності пароля
+        if (!isValidPassword(password)) {
+            setError(
+                'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character (e.g., @$!%*?&_#-).'
+            );
+            setTimeout(() => setError(''), 7000); // Довший час для складнішого повідомлення
+            return;
+        }
+
         if (password !== confirmPassword) {
             setError('Passwords do not match');
-            setTimeout(() => setError(''), 3000); // Повідомлення зникає через 3 секунди
+            setTimeout(() => setError(''), 3000);
             return;
         }
 
@@ -50,8 +78,7 @@ const Signup = () => {
 
     return (
         <div className="signup-container">
-            {/* Елемент video видалено */}
-            <div className="signup-background"></div> {/* Для радіальних градієнтів за карткою */}
+            <div className="signup-background"></div>
             <div className="signup-card">
                 <div className="signup-header">
                     <h2>Create Account</h2>
@@ -69,7 +96,7 @@ const Signup = () => {
                             required
                             placeholder="Enter your email"
                         />
-                        <label></label> {/* Напис для анімації, якщо placeholder не використовується */}
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 
@@ -81,7 +108,7 @@ const Signup = () => {
                             required
                             placeholder="Enter your password"
                         />
-                        <label></label> {/* Напис для анімації */}
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 
@@ -93,7 +120,7 @@ const Signup = () => {
                             required
                             placeholder="Enter your password again"
                         />
-                        <label></label> {/* Напис для анімації */}
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 
