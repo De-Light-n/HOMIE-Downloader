@@ -118,11 +118,11 @@ const Header = () => {
             )}
 
             <div className={styles.rightSection}>
+                <Link to="/aboutus" className={styles.aboutButton}>
+                    <FaQuestionCircle size={20} />
+                </Link>
                 {currentUser ? (
                     <>
-                        <Link to="/aboutus" className={styles.aboutButton}>
-                            <FaQuestionCircle size={20} />
-                        </Link>
                         <div
                             className={styles.userAvatar}
                             onClick={handleAvatarClick}
