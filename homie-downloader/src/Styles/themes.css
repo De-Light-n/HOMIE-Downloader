@@ -1,6 +1,3 @@
-
-
-
 :root[data-theme="oceanic-bliss"] {
     --bg-primary: #F0F8FF;
     --bg-secondary: #E0FFFF;
@@ -11,7 +8,7 @@
     --primary-color: #20A4F3;
     --primary-dark: #187BCD;
     --user-icon-bg: #B2DFDB;
-    --font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif; /* Oceanic Bliss font */
+    --font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif;
 }
 
 :root[data-theme="crimson-night"] {
@@ -24,10 +21,9 @@
     --primary-color: #DC143C;
     --primary-dark: #B22222;
     --user-icon-bg: #2B2B2B;
-    --font-family: 'Georgia', Times, 'Times New Roman', serif; /* Crimson Night font */
+    --font-family: 'Georgia', Times, 'Times New Roman', serif;
 }
 
-/* --- NEW THEMES CSS START --- */
 :root[data-theme="halloween"] {
     --bg-primary: #1A1A1A;
     --bg-secondary: #0D0D0D;
@@ -38,7 +34,7 @@
     --primary-color: #FF6600;
     --primary-dark: #CC5200;
     --user-icon-bg: #262626;
-    --font-family: 'Oswald', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; /* Halloween font */
+    --font-family: 'Creepster', cursive;
 }
 
 :root[data-theme="horror"] {
@@ -51,7 +47,7 @@
     --primary-color: #FF0000;
     --primary-dark: #B30000;
     --user-icon-bg: #1C1C1C;
-    --font-family: 'Special Elite', 'Courier New', Courier, monospace; /* Horror font */
+    --font-family: 'Special Elite', 'Courier New', Courier, monospace;
 }
 
 :root[data-theme="hello-kitty"] {
@@ -64,7 +60,7 @@
     --primary-color: #FF1493;
     --primary-dark: #DB7093;
     --user-icon-bg: #FFE4E1;
-    --font-family: 'Pacifico', 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif; /* Hello Kitty font */
+    --font-family: 'Pacifico', 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
 }
 
 :root[data-theme="cyberpunk-neon"] {
@@ -77,9 +73,91 @@
     --primary-color: #39FF14;
     --primary-dark: #2FDD0D;
     --user-icon-bg: #20003B;
-    --font-family: 'Orbitron', 'Share Tech Mono', 'Lucida Console', Monaco, monospace, sans-serif; /* Cyberpunk Neon font */
+    --font-family: 'Orbitron', 'Share Tech Mono', 'Lucida Console', Monaco, monospace, sans-serif;
 }
-/* --- NEW THEMES CSS END --- */
+
+:root[data-theme="noir-cinema"] {
+    --bg-primary: #0A0A0A;
+    --bg-secondary: #141414;
+    --header-bg: #0A0A0A;
+    --text-primary: #C8C8C8;
+    --text-secondary: #666666;
+    --border-color: #222222;
+    --primary-color: #E0E0E0;
+    --primary-dark: #B0B0B0;
+    --user-icon-bg: #1F1F1F;
+    --font-family: 'Times New Roman', Times, serif;
+}
+
+:root[data-theme="sunset-glow"] {
+    --bg-primary: #2B1B3D;
+    --bg-secondary: #4A2A4D;
+    --header-bg: #2B1B3D;
+    --text-primary: #FFDAB9;
+    --text-secondary: #E6A4B4;
+    --border-color: #C7758E;
+    --primary-color: #FF8C69;
+    --primary-dark: #E07B60;
+    --user-icon-bg: #523055;
+    --font-family: 'Merriweather', serif;
+}
+
+:root[data-theme="vintage-paper"] {
+    --bg-primary: #F5F5DC;
+    --bg-secondary: #EDE0C8;
+    --header-bg: #F5F5DC;
+    --text-primary: #5D4037;
+    --text-secondary: #8D6E63;
+    --border-color: #A1887F;
+    --primary-color: #795548;
+    --primary-dark: #5D4037;
+    --user-icon-bg: #D7CCC8;
+    --font-family: 'Crimson Text', serif;
+}
+
+:root[data-theme="deep-forest"] {
+    --bg-primary: #1A2E24;
+    --bg-secondary: #2F4239;
+    --header-bg: #1A2E24;
+    --text-primary: #B0C4B1;
+    --text-secondary: #829086;
+    --border-color: #4A5D51;
+    --primary-color: #6B8E23;
+    --primary-dark: #557C00;
+    --user-icon-bg: #3C5242;
+    --font-family: 'Cabin', sans-serif;
+}
+
+
+
+/* --- HORROR THEMES ROUND 2 CSS START --- */
+:root[data-theme="static-void"] {
+    --bg-primary: #050505;
+    --bg-secondary: #101010;
+    --header-bg: #080808;
+    --text-primary: #99FF99;
+    --text-secondary: #66BB66;
+    --border-color: #333333;
+    --primary-color: #FF0033;
+    --primary-dark: #CC0022;
+    --user-icon-bg: #1A1A1A;
+    --font-family: 'VT323', monospace;
+}
+
+:root[data-theme="eldritch-depths"] {
+    --bg-primary: #0D1A1C;
+    --bg-secondary: #14252A;
+    --header-bg: #0D1A1C;
+    --text-primary: #76B3A1;
+    --text-secondary: #4D7C7A;
+    --border-color: #2A3F43;
+    --primary-color: #8B008B; /* DarkMagenta */
+    --primary-dark: #6A006A;
+    --user-icon-bg: #1F3034;
+    --font-family: 'IM Fell English SC', serif;
+}
+/* --- HORROR THEMES ROUND 2 CSS END --- */
+
 
 /* Глобальні стилі */
 * {
@@ -89,70 +167,65 @@
 }
 
 html {
-    height: 100%; /* Важливо для overflow: hidden на body */
+    height: 100%;
 }
 
 body {
-    font-family: var(--font-family, 'Roboto', sans-serif); /* Основний шрифт тіла, з підтримкою тем та fallback */
-    background-color: var(--bg-primary); /* Основний фон тіла */
+    font-family: var(--font-family, 'Roboto', sans-serif);
+    background-color: var(--bg-primary);
     color: var(--text-primary);
-    min-height: 100%; /* Забезпечуємо, що body займає всю висоту */
-    overflow-x: hidden; /* Запобігаємо горизонтальному скролу */
-    position: relative; /* Для правильного позиціонування дочірніх елементів з z-index */
-    /* Застосовуємо градієнт безпосередньо до body */
+    min-height: 100%;
+    overflow-x: hidden;
+    position: relative;
     background-image: linear-gradient(45deg, var(--bg-primary), var(--bg-secondary));
-    background-attachment: fixed; /* Щоб градієнт не скролився з контентом */
+    background-attachment: fixed;
 }
 
 
 /* --- Рухомі елементи фону --- */
 .background-animation-container {
-    position: fixed; /* Фіксоване положення відносно viewport */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Обрізаємо кулі, що виходять за межі */
-    z-index: -1; /* Розміщуємо позаду основного контенту */
-    pointer-events: none; /* Не перехоплюють події миші */
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .floating-element {
     position: absolute;
     border-radius: 50%;
-    opacity: 0.15; /* Базова прозорість, буде переписана в анімації */
-    will-change: transform, opacity; /* Оптимізація анімації */
+    opacity: 0.15;
+    will-change: transform, opacity;
 }
 
-/* Перша куля */
 .orb1 {
-    width: 35vw; /* Розмір відносно ширини екрану */
+    width: 35vw;
     height: 35vw;
-    max-width: 550px; /* Максимальний розмір */
+    max-width: 550px;
     max-height: 550px;
     background: var(--primary-color);
-    filter: blur(100px); /* Розмиття для м'якості */
+    filter: blur(100px);
     animation: driftAndPulse 40s infinite linear alternate;
     left: 5%;
     top: 10%;
-    /* --base-opacity задається через style в HTML */
 }
 
-/* Друга куля */
 .orb2 {
     width: 25vw;
     height: 25vw;
     max-width: 400px;
     max-height: 400px;
-    background: var(--primary-dark); /* Використовуємо темніший відтінок теми */
+    background: var(--primary-dark);
     filter: blur(80px);
     animation: driftAndPulse 30s infinite linear alternate;
-    animation-delay: -15s; /* Зсув початку анімації */
+    animation-delay: -15s;
     right: 10%;
     bottom: 5%;
 }
 
-/* Третя куля */
 .orb3 {
     width: 18vw;
     height: 18vw;
@@ -164,63 +237,29 @@ body {
     animation-delay: -5s;
     left: 45%;
     top: 40%;
-    /* --base-opacity для orb3 буде нижчою, тому використовуємо style в HTML */
 }
 
-
-/* Видаляємо старі ефекти світіння, якщо вони більше не потрібні */
 .glowEffect, .purpleGlow, .pinkGlow, .blueGlow, .neonBackground {
-    display: none; /* .neonBackground тепер не використовується як окремий div */
+    display: none;
 }
 
 
-@keyframes glow { /* Залишено, якщо використовується для інших елементів */
-    0% {
-        box-shadow: 0 0 5px var(--primary-color);
-    }
-    50% {
-        box-shadow: 0 0 10px var(--primary-color);
-    }
-    100% {
-        box-shadow: 0 0 5px var(--primary-color);
-    }
+@keyframes glow {
+    0% { box-shadow: 0 0 5px var(--primary-color); }
+    50% { box-shadow: 0 0 10px var(--primary-color); }
+    100% { box-shadow: 0 0 5px var(--primary-color); }
 }
 
-@keyframes pulse { /* Залишено, якщо використовується для інших елементів */
-    0% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-    50% {
-        transform: scale(1.05);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
 }
 
-/* Анімація для плавного руху та пульсації фонових куль */
 @keyframes driftAndPulse {
-    0% {
-        transform: translate(0px, 0px) scale(0.9) rotate(0deg);
-        opacity: calc(var(--base-opacity, 0.15) * 0.6); /* Трохи темніше на початку/кінці */
-    }
-    25% {
-        transform: translate(3vw, -5vh) scale(1) rotate(30deg);
-        opacity: calc(var(--base-opacity, 0.15) * 0.9);
-    }
-    50% {
-        transform: translate(-2vw, 4vh) scale(1.1) rotate(-20deg);
-        opacity: var(--base-opacity, 0.15); /* Повна базова прозорість в піку */
-    }
-    75% {
-        transform: translate(-4vw, -3vh) scale(0.95) rotate(15deg);
-        opacity: calc(var(--base-opacity, 0.15) * 0.9);
-    }
-    100% {
-        transform: translate(0px, 0px) scale(0.9) rotate(0deg);
-        opacity: calc(var(--base-opacity, 0.15) * 0.6);
-    }
+    0% { transform: translate(0px, 0px) scale(0.9) rotate(0deg); opacity: calc(var(--base-opacity, 0.15) * 0.6); }
+    25% { transform: translate(3vw, -5vh) scale(1) rotate(30deg); opacity: calc(var(--base-opacity, 0.15) * 0.9); }
+    50% { transform: translate(-2vw, 4vh) scale(1.1) rotate(-20deg); opacity: var(--base-opacity, 0.15); }
+    75% { transform: translate(-4vw, -3vh) scale(0.95) rotate(15deg); opacity: calc(var(--base-opacity, 0.15) * 0.9); }
+    100% { transform: translate(0px, 0px) scale(0.9) rotate(0deg); opacity: calc(var(--base-opacity, 0.15) * 0.6); }
 }

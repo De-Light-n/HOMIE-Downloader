@@ -1,13 +1,19 @@
 import React from "react";
 import {
-
     oceanicBlissTheme,
     crimsonNightTheme,
-    // --- NEW THEME IMPORTS ---
     halloweenTheme,
     horrorTheme,
     helloKittyTheme,
-    cyberpunkNeonTheme
+    cyberpunkNeonTheme,
+    noirCinemaTheme,
+    sunsetGlowTheme,
+    vintagePaperTheme,
+    deepForestTheme,
+
+    // --- HORROR THEMES ROUND 2 IMPORTS ---
+    staticVoidTheme,
+    eldritchDepthsTheme
 } from "../../../../Styles/theme";
 
 const ThemesComponent = ({ theme, themes, toggleTheme }) => {
@@ -15,11 +21,17 @@ const ThemesComponent = ({ theme, themes, toggleTheme }) => {
     const themesData = {
         'oceanic-bliss': oceanicBlissTheme,
         'crimson-night': crimsonNightTheme,
-        // --- NEW THEMES ADDED TO themesData ---
         'halloween': halloweenTheme,
         'horror': horrorTheme,
         'hello-kitty': helloKittyTheme,
         'cyberpunk-neon': cyberpunkNeonTheme,
+        'noir-cinema': noirCinemaTheme,
+        'sunset-glow': sunsetGlowTheme,
+        'vintage-paper': vintagePaperTheme,
+        'deep-forest': deepForestTheme,
+        // --- HORROR THEMES ROUND 2 ADDED TO themesData ---
+        'static-void': staticVoidTheme,
+        'eldritch-depths': eldritchDepthsTheme,
     };
 
     return (
