@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LetsChat.css';
+
+
 function LetsChat() {
     const navigate = useNavigate();
 
@@ -13,11 +15,10 @@ function LetsChat() {
 
     return (
         <div className="lets-chat-page">
-            <div className="neonBackground">
-                <div className={`glowEffect purpleGlow`}></div>
-                <div className={`glowEffect pinkGlow`}></div>
-                <div className={`glowEffect blueGlow`}></div>
-                <div className="gridOverlay"></div>
+            <div className="background-animation-container">
+                <div className="floating-element orb1" style={{ '--base-opacity': '0.2' }}></div>
+                <div className="floating-element orb2" style={{ '--base-opacity': '0.15' }}></div>
+                <div className="floating-element orb3" style={{ '--base-opacity': '0.12' }}></div>
             </div>
             <div className="lets-chat-container">
                 <h1 className="lets-chat-title">Написати нам</h1>

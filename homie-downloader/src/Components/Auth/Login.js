@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useAuth } from '../Firebase/AuthContext';
+import { useAuth } from '../Firebase/AuthContext'; // Переконайтеся, що шлях правильний
 import { useNavigate, Link } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import './Login.css';
-import backgroundVideo from './176434-855480487_small.mp4';
+// Відеофон видалено
+// import backgroundVideo from './176434-855480487_small.mp4';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -42,17 +43,8 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="login-video-background"
-            >
-                <source src={backgroundVideo} type="video/mp4" />
-                Your browser does not support the video tag.
-            </video>
-            <div className="login-background"></div>
+            {/* Елемент video видалено */}
+            <div className="login-background"></div> {/* Для радіальних градієнтів за карткою */}
             <div className="login-card">
                 <div className="login-header">
                     <h2>Welcome Back</h2>
@@ -70,7 +62,7 @@ const Login = () => {
                             required
                             placeholder="Enter your email"
                         />
-                        <label></label>
+                        <label></label> {/* Напис для анімації, якщо placeholder не використовується */}
                         <span className="input-border"></span>
                     </div>
 
@@ -82,7 +74,7 @@ const Login = () => {
                             required
                             placeholder="Enter your password"
                         />
-                        <label></label>
+                        <label></label> {/* Напис для анімації */}
                         <span className="input-border"></span>
                     </div>
 

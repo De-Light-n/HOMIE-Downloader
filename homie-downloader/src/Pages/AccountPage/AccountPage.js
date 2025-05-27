@@ -5,11 +5,7 @@ import { useTheme } from "../../Components/ThemeContext";
 import "./AccountPage.css";
 import PersonalComponent from "./AccountPageComponents/PersonalComponent/PersonalComponent";
 import BillingComponent from "./AccountPageComponents/BillingComponent/BillingComponent";
-import VideosComponent from "./AccountPageComponents/VideosComponent/VideosComponent";
 import ThemesComponent from "./AccountPageComponents/ThemesComponent/ThemesComponent";
-import SubscriptionsComponent from "./AccountPageComponents/SubscriptionsComponent/SubscriptionComponent";
-import WatchLaterComponent from "./AccountPageComponents/WatchLaterComponent/WatchLaterComponent";
-import NotificationsComponent from "./AccountPageComponents/NotificationsComponent/NotificationComponent";
 import SettingsComponent from "./AccountPageComponents/SettingsComponent/SettingsComponent";
 
 const AccountPage = () => {
@@ -36,11 +32,7 @@ const AccountPage = () => {
   const tabComponents = {
     personal: <PersonalComponent currentUser={currentUser} />,
     billing: <BillingComponent />,
-    videos: <VideosComponent />,
     themes: <ThemesComponent theme={theme} themes={themes} toggleTheme={toggleTheme} />,
-    subscriptions: <SubscriptionsComponent />,
-    watchlater: <WatchLaterComponent />,
-    notifications: <NotificationsComponent />,
     settings: <SettingsComponent />,
   };
 
@@ -48,6 +40,11 @@ const AccountPage = () => {
 
   return (
     <div className="account-page-container">
+      <div className="background-animation-container">
+        <div className="floating-element orb1" style={{ '--base-opacity': '0.2' }}></div>
+        <div className="floating-element orb2" style={{ '--base-opacity': '0.15' }}></div>
+        <div className="floating-element orb3" style={{ '--base-opacity': '0.12' }}></div>
+      </div>
       <div className="account-content-wrapper">
         <header className="account-header">
           <h1>My Account</h1>
@@ -99,34 +96,10 @@ const AccountPage = () => {
                   Billing & Payments
                 </li>
                 <li
-                  className={activeTab === "videos" ? "active" : ""}
-                  onClick={() => setActiveTab("videos")}
-                >
-                  My Videos
-                </li>
-                <li
                   className={activeTab === "themes" ? "active" : ""}
                   onClick={() => setActiveTab("themes")}
                 >
                   Themes
-                </li>
-                <li
-                  className={activeTab === "subscriptions" ? "active" : ""}
-                  onClick={() => setActiveTab("subscriptions")}
-                >
-                  Subscriptions
-                </li>
-                <li
-                  className={activeTab === "watchlater" ? "active" : ""}
-                  onClick={() => setActiveTab("watchlater")}
-                >
-                  Watch Later
-                </li>
-                <li
-                  className={activeTab === "notifications" ? "active" : ""}
-                  onClick={() => setActiveTab("notifications")}
-                >
-                  Notifications
                 </li>
                 <li
                   className={activeTab === "settings" ? "active" : ""}
