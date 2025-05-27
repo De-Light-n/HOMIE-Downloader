@@ -1,5 +1,18 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { lightTheme, darkTheme, highContrastTheme, ecoTheme, floralTheme } from '../Styles/theme';
+import {
+    lightTheme,
+    darkTheme,
+    highContrastTheme,
+    ecoTheme,
+    floralTheme,
+    oceanicBlissTheme,
+    crimsonNightTheme,
+    // --- NEW THEME IMPORTS ---
+    halloweenTheme,
+    horrorTheme,
+    helloKittyTheme,
+    cyberpunkNeonTheme
+} from '../Styles/theme';
 
 const themes = [
     { name: 'light', styles: lightTheme },
@@ -7,6 +20,13 @@ const themes = [
     { name: 'high-contrast', styles: highContrastTheme },
     { name: 'eco', styles: ecoTheme },
     { name: 'floral', styles: floralTheme },
+    { name: 'oceanic-bliss', styles: oceanicBlissTheme },
+    { name: 'crimson-night', styles: crimsonNightTheme },
+    // --- NEW THEMES ADDED TO THEMES ARRAY ---
+    { name: 'halloween', styles: halloweenTheme },
+    { name: 'horror', styles: horrorTheme },
+    { name: 'hello-kitty', styles: helloKittyTheme },
+    { name: 'cyberpunk-neon', styles: cyberpunkNeonTheme },
 ];
 
 const getSystemTheme = () => {
@@ -39,7 +59,7 @@ export function ThemeProvider({ children }) {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const handleChange = () => {
             const newSystemTheme = getSystemTheme();
-            if (!localStorage.getItem('theme')) {
+            if (!localStorage.getItem('theme')) { // Only set if no theme preference is saved
                 setTheme(newSystemTheme);
             }
         };

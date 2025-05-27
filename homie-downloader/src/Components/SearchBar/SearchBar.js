@@ -41,6 +41,7 @@ const SearchBar = () => {
       Entertainment: ["movie", "show", "comedy", "vlog"],
       Technology: ["tech", "gadget", "review", "software"],
       Sports: ["sport", "fitness", "workout", "match"],
+
     };
     for (const [category, keywords] of Object.entries(categories)) {
       if (keywords.some((keyword) => text.includes(keyword))) return category;
@@ -163,6 +164,7 @@ const SearchBar = () => {
     }
   };
 
+
   const handleSearch = async (e) => {
     e.preventDefault();
     setError("");
@@ -194,6 +196,7 @@ const SearchBar = () => {
       setError("Please select a quality for download.");
       return;
     }
+
 
     setIsDownloading(true);
     setError("");
