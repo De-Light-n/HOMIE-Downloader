@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './Components/Firebase/AuthContext';
+import useSessionTracking from "./hooks/useSessionTracking";
 
 
 import Home from './Pages/Home/Home';
@@ -34,6 +35,8 @@ import './Styles/themes.css';
 
 
 function App() {
+    useSessionTracking();
+
     return (
         <Router>
             <ThemeProvider>

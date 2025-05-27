@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -8,15 +8,126 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../../Components/Firebase/firebase";
 
-const monthlyData = [
-  { name: "Week 1", videos: 12 },
-  { name: "Week 2", videos: 19 },
-  { name: "Week 3", videos: 30 },
-  { name: "Week 4", videos: 25 },
-];
+import "./Analitics.css";
+
+const getWeeklyCounts = (items) => {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const weeks = [0, 0, 0, 0];
+  items.forEach((item) => {
+    const date = new Date(item.timestamp);
+    if (date >= startOfMonth && date <= now) {
+      const week = Math.min(3, Math.floor((date.getDate() - 1) / 7));
+      weeks[week]++;
+    }
+  });
+  return [
+    { name: "Week 1", count: weeks[0] },
+    { name: "Week 2", count: weeks[1] },
+    { name: "Week 3", count: weeks[2] },
+    { name: "Week 4", count: weeks[3] },
+  ];
+};
+
+const AnalyticsSection = ({ currentUser }) => {
+  const [analytics, setAnalytics] = useState({
+    timeSpent: 0,
+    searches: [],
+    downloads: [],
+  });
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      if (!currentUser) return;
+
+      const analyticsRef = doc(db, "userAnalytics", currentUser.uid);
+      const analyticsSnap = await getDoc(analyticsRef);
+
+      if (analyticsSnap.exists()) {
+        const data = analyticsSnap.data();
+        setAnalytics({
+          timeSpent: data.timeSpent || 0,
+          searches: data.searches || [],
+          downloads: data.downloads || [],
+        });
+      }
+    };
+
+    fetchAnalytics();
+  }, [currentUser]);
+
+  return (
+    <div className="analytics-section">
+      <div className="analytics-stats">
+        <div className="time-spend-section">
+          <h4>Total Time Spent</h4>
+          <p className="stat-value">
+            {Math.floor(analytics.timeSpent / 60)} minutes
+          </p>
+        </div>
+        <div className="analytics-cards-row">
+          <div className="analitics-card">
+            <h4>Last Searches</h4>
+            <ul>
+              {analytics.searches
+                .slice(-5)
+                .reverse()
+                .map((s, i) => (
+                  <li key={i}>
+                    {new Date(s.timestamp).toLocaleString()} — {s.query}
+                  </li>
+                ))}
+            </ul>
+          </div>
+          <div className="analitics-card">
+            <h4>Last Downloads</h4>
+            <ul>
+              {analytics.downloads
+                .slice(-5)
+                .reverse()
+                .map((d, i) => (
+                  <li key={i}>
+                    {new Date(d.timestamp).toLocaleString()} — {d.videoTitle}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const PersonalComponent = ({ currentUser }) => {
+  const [analytics, setAnalytics] = useState({
+    timeSpent: 0,
+    searches: [],
+    downloads: [],
+  });
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      if (!currentUser) return;
+      const analyticsRef = doc(db, "userAnalytics", currentUser.uid);
+      const analyticsSnap = await getDoc(analyticsRef);
+      if (analyticsSnap.exists()) {
+        const data = analyticsSnap.data();
+        setAnalytics({
+          timeSpent: data.timeSpent || 0,
+          searches: data.searches || [],
+          downloads: data.downloads || [],
+        });
+      }
+    };
+    fetchAnalytics();
+  }, [currentUser]);
+
+  const weeklySearches = getWeeklyCounts(analytics.searches);
+  const weeklyDownloads = getWeeklyCounts(analytics.downloads);
+
   return (
     <>
       <div className="details-header">
@@ -32,7 +143,7 @@ const PersonalComponent = ({ currentUser }) => {
             <h4>Name</h4>
           </div>
           <p className="detail-value">
-            {currentUser.displayName || 'Not specified'}
+            {currentUser.displayName || "Not specified"}
           </p>
         </div>
 
@@ -53,17 +164,6 @@ const PersonalComponent = ({ currentUser }) => {
             ).toLocaleDateString()}
           </p>
         </div>
-
-        <div className="detail-item">
-          <div className="detail-item-header">
-            <h4>Last Login</h4>
-          </div>
-          <p className="detail-value">
-            {new Date(
-              currentUser.metadata?.lastSignInTime || Date.now()
-            ).toLocaleDateString()}
-          </p>
-        </div>
       </div>
 
       <div className="stats-container">
@@ -72,13 +172,21 @@ const PersonalComponent = ({ currentUser }) => {
 
           <div className="stats-cards">
             <div className="stat-card">
-              <h4>Videos Watched</h4>
-              <p className="stat-value">1,248</p>
+              <h4>Search requests</h4>
+              <p className="stat-value">{analytics.searches.length}</p>
               <div className="mini-chart">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlyData.slice(0, 2)}>
+                  <BarChart data={weeklySearches} barCategoryGap="15%">
+                    <XAxis dataKey="name" hide />
+                    <YAxis hide />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "var(--bg-secondary)",
+                        borderColor: "var(--border-color)",
+                      }}
+                    />
                     <Bar
-                      dataKey="videos"
+                      dataKey="count"
                       fill="var(--primary-color)"
                       radius={[4, 4, 0, 0]}
                     />
@@ -88,13 +196,21 @@ const PersonalComponent = ({ currentUser }) => {
             </div>
 
             <div className="stat-card">
-              <h4>Hours Watched</h4>
-              <p className="stat-value">87.5</p>
+              <h4>Download requests</h4>
+              <p className="stat-value">{analytics.downloads.length}</p>
               <div className="mini-chart">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlyData.slice(2, 4)}>
+                  <BarChart data={weeklyDownloads} barCategoryGap="15%">
+                    <XAxis dataKey="name" hide />
+                    <YAxis hide />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "var(--bg-secondary)",
+                        borderColor: "var(--border-color)",
+                      }}
+                    />
                     <Bar
-                      dataKey="videos"
+                      dataKey="count"
                       fill="var(--primary-dark)"
                       radius={[4, 4, 0, 0]}
                     />
@@ -109,22 +225,60 @@ const PersonalComponent = ({ currentUser }) => {
             <div className="chart-wrapper">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={monthlyData}
+                  data={[
+                    {
+                      name: "Week 1",
+                      Searches: weeklySearches[0].count,
+                      Downloads: weeklyDownloads[0].count,
+                    },
+                    {
+                      name: "Week 2",
+                      Searches: weeklySearches[1].count,
+                      Downloads: weeklyDownloads[1].count,
+                    },
+                    {
+                      name: "Week 3",
+                      Searches: weeklySearches[2].count,
+                      Downloads: weeklyDownloads[2].count,
+                    },
+                    {
+                      name: "Week 4",
+                      Searches: weeklySearches[3].count,
+                      Downloads: weeklyDownloads[3].count,
+                    },
+                  ]}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  barCategoryGap="15%"
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--border-color)"
+                  />
                   <XAxis dataKey="name" stroke="var(--text-secondary)" />
                   <YAxis stroke="var(--text-secondary)" />
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)' }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "var(--bg-secondary)",
+                      borderColor: "var(--border-color)",
+                    }}
+                  />
                   <Bar
-                    dataKey="videos"
+                    dataKey="Searches"
                     fill="var(--primary-color)"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="Downloads"
+                    fill="var(--primary-dark)"
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
+
+          <AnalyticsSection currentUser={currentUser} />
         </div>
       </div>
     </>
