@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LetsChat.css';
-import '../../Styles/Background.css';
+
 function LetsChat() {
     const navigate = useNavigate();
 
