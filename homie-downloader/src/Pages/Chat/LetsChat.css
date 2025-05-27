@@ -1,21 +1,22 @@
 .lets-chat-page {
-    font-family: "Inter", Arial, sans-serif;
+    font-family: var(--font-family, "Inter", Arial, sans-serif); /* Updated */
     color: var(--text-primary);
-    padding: 80px 20px;
-    min-height: calc(100vh - 160px);
-    background-color: transparent;
+    padding: 80px 20px; /* Assumes 80px header */
+    min-height: calc(100vh - 160px); /* Adjust if header/footer total height differs */
+    background-color: transparent; /* To show global animated background */
     position: relative;
-    z-index: 1;
+    z-index: 1; /* Above background, below modals */
 }
 
 .lets-chat-container {
     max-width: 800px;
     margin: 0 auto;
     padding: 40px;
-    background: var(--header-bg);
+    background: var(--header-bg); /* Or var(--bg-secondary) for a card-like feel */
     border-radius: 16px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 0 20px rgba(var(--primary-color), 0.2);
+    /* box-shadow: 0 0 20px rgba(var(--primary-color), 0.2); -- Old */
+    box-shadow: 0 0 20px color-mix(in srgb, var(--primary-color) 20%, transparent); /* Updated */
 }
 
 .lets-chat-title {
@@ -45,7 +46,8 @@
     text-align: center;
     margin-bottom: 40px;
     line-height: 1.6;
-    text-shadow: 0 0 5px rgba(var(--primary-color), 0.3);
+    /* text-shadow: 0 0 5px rgba(var(--primary-color), 0.3); -- Old */
+    text-shadow: 0 0 5px color-mix(in srgb, var(--primary-color) 30%, transparent); /* Updated */
 }
 
 .contact-form {
@@ -62,13 +64,14 @@
 
 .form-group label {
     font-size: 1.1rem;
-    color: var(--primary-dark);
+    color: var(--primary-dark); /* Or var(--text-secondary) for less emphasis */
 }
 
 .form-group input,
 .form-group textarea {
     padding: 12px 15px;
-    background: rgba(15, 5, 25, 0.7);
+    /* background: rgba(15, 5, 25, 0.7); -- Old specific color */
+    background: color-mix(in srgb, var(--bg-secondary) 80%, transparent); /* Updated: themed, semi-transparent */
     border: 1px solid var(--border-color);
     border-radius: 8px;
     color: var(--text-primary);
@@ -91,7 +94,9 @@
 .submit-btn {
     padding: 16px 30px;
     background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
-    color: white;
+    color: var(--text-primary); /* Updated: Assumes --text-primary contrasts with --primary-color.
+                                   A dedicated --text-on-primary variable would be more robust.
+                                   Original was 'white'. */
     border: none;
     border-radius: 12px;
     font-size: 1.1rem;
@@ -104,25 +109,35 @@
     position: relative;
     overflow: hidden;
     z-index: 1;
-    box-shadow: 0 0 15px rgba(var(--primary-color), 0.5);
+    /* box-shadow: 0 0 15px rgba(var(--primary-color), 0.5); -- Old */
+    box-shadow: 0 0 15px color-mix(in srgb, var(--primary-color) 50%, transparent); /* Updated */
 }
 
 .submit-btn::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    left: -100%; /* For hover animation */
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+    background: linear-gradient(45deg, var(--primary-dark), var(--primary-color)); /* Reversed gradient for hover effect */
     transition: all 0.4s ease;
     z-index: -1;
 }
 
 .submit-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 0 25px var(--primary-color);
+    box-shadow: 0 0 25px var(--primary-color); /* Increased glow on hover */
 }
+
+/* The ::before element is often used for a swipe/fill hover effect on buttons.
+   If the intent is a color change on hover using the ::before, it should become visible.
+   Example:
+   .submit-btn:hover::before { left: 0; }
+   However, the current :hover already changes box-shadow and transform,
+   and the ::before has a similar gradient to the button itself.
+   If it's for a subtle effect or future use, it's fine.
+*/
 
 .contact-info {
     margin-top: 50px;
@@ -134,7 +149,7 @@
 
 .contact-info h3 {
     font-size: 1.3rem;
-    color: var(--primary-dark);
+    color: var(--primary-dark); /* Or var(--text-primary) with different font-weight */
     margin-bottom: 20px;
     text-shadow: 0 0 8px var(--primary-dark);
 }
@@ -159,7 +174,7 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 0;
+    width: 0; /* Animates to 100% on hover */
     height: 1px;
     background: var(--primary-dark);
     transition: width 0.3s ease;
@@ -196,8 +211,8 @@
 
 @media (max-width: 768px) {
     .lets-chat-container {
-        padding: 30px 20px;
-        margin: 20px;
+        padding: 30px 20px; /* Reduced padding on smaller screens */
+        margin: 20px; /* Added margin to prevent touching screen edges */
     }
 
     .lets-chat-title {
