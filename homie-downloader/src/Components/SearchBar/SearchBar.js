@@ -417,8 +417,8 @@ const SearchBar = () => {
               className={styles.downloadButton}
               disabled={isDownloading || !selectedFormat || currentFormatOptions.length === 0}
             >
-              {isDownloading ? <Loader size="small" /> : <FiDownload size={18} />}
-              <span>{isDownloading ? 'Loading...' : 'Download'}</span>
+              <FiDownload size={18} />
+              <span>Download</span>
             </button>
           </div>
         </div>
