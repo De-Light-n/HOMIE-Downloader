@@ -2,7 +2,6 @@
 .videoRowSection {
     margin-bottom: 4rem;
     position: relative;
-    /* font-family will be inherited from parent components */
 }
 
 .header {
@@ -15,7 +14,7 @@
 .sectionTitle {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--text-primary); /* Already themed */
+    color: var(--text-primary);
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -23,11 +22,11 @@
     margin: 0;
     letter-spacing: 1px;
     text-transform: uppercase;
-    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark)); /* Updated */
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 30%, transparent); /* Updated */
+    text-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .sectionTitle::before {
@@ -35,10 +34,23 @@
     display: block;
     width: 10px;
     height: 10px;
-    background: var(--primary-color); /* Updated */
+    background: var(--primary-color);
     border-radius: 50%;
-    box-shadow: 0 0 15px var(--primary-color); /* Updated */
+    box-shadow: 0 0 15px var(--primary-color);
 }
+
+.loadingMoreIndicator {
+    font-size: 0.9rem;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-secondary); /* Or primary-color for emphasis */
+    margin-left: 0.5rem;
+    background: none; /* Reset background if inheriting from .sectionTitle */
+    -webkit-text-fill-color: var(--text-secondary); /* Reset fill color */
+    text-shadow: none; /* Reset text shadow */
+}
+
 
 .controls {
     display: flex;
@@ -49,9 +61,9 @@
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--primary-color) 25%, transparent); /* Updated */
-    border: 1px solid color-mix(in srgb, var(--primary-color) 60%, transparent); /* Updated */
-    color: var(--text-secondary); /* Updated */
+    background: color-mix(in srgb, var(--primary-color) 25%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 60%, transparent);
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -60,25 +72,38 @@
     backdrop-filter: blur(5px);
 }
 
-.arrowButton:hover {
-    background: color-mix(in srgb, var(--primary-color) 50%, transparent); /* Updated */
-    color: var(--text-primary); /* Updated */
+.arrowButton:hover:not(:disabled) { /* Apply hover styles only if not disabled */
+    background: color-mix(in srgb, var(--primary-color) 50%, transparent);
+    color: var(--text-primary);
     transform: scale(1.1);
-    box-shadow: 0 0 20px color-mix(in srgb, var(--primary-color) 60%, transparent); /* Updated */
+    box-shadow: 0 0 20px color-mix(in srgb, var(--primary-color) 60%, transparent);
 }
 
-.arrowButton.hidden {
-    opacity: 0;
-    pointer-events: none;
+/* Removed .arrowButton.hidden as buttons are always visible */
+
+.arrowButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    border-color: color-mix(in srgb, var(--primary-color) 30%, transparent);
+    color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+    transform: none; /* Reset transform for disabled state */
+    box-shadow: none; /* Reset box-shadow for disabled state */
 }
+
+.arrowButton:disabled:hover { /* Ensure hover doesn't override disabled styles */
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+    transform: none;
+    box-shadow: none;
+}
+
 
 .videoRowContainer {
     overflow-x: auto;
     padding: 0 2.5rem;
     scrollbar-width: none;
     position: relative;
-    /* Using a theme variable like --text-primary for the mask color is generally fine,
-       as it provides a solid color. Masks primarily use alpha or luminance. */
     mask-image: linear-gradient(
             to right,
             transparent,
@@ -95,7 +120,7 @@
 .videoRow {
     display: inline-flex;
     gap: 2rem;
-    padding-bottom: 2rem; /* Provides space for shadows or hover effects on video cards */
+    padding-bottom: 2rem;
 }
 
 @keyframes slideIn {
@@ -111,7 +136,7 @@
 
 .videoRowSection {
     animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: calc(var(--row-index) * 0.1s); /* var(--row-index) should be set inline style via JS */
+    animation-delay: calc(var(--row-index) * 0.1s);
 }
 
 @media (max-width: 768px) {
@@ -151,9 +176,9 @@
     border-radius: 12px;
     background: linear-gradient(
             90deg,
-            color-mix(in srgb, var(--user-icon-bg) 50%, transparent),      /* Updated */
-            color-mix(in srgb, var(--primary-color) 30%, transparent), /* Updated */
-            color-mix(in srgb, var(--user-icon-bg) 50%, transparent)       /* Updated */
+            color-mix(in srgb, var(--user-icon-bg) 50%, transparent),
+            color-mix(in srgb, var(--primary-color) 30%, transparent),
+            color-mix(in srgb, var(--user-icon-bg) 50%, transparent)
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
@@ -175,76 +200,16 @@
     }
 }
 
-/* Styles for Load More functionality */
 .videoRowWrapper {
     position: relative;
-    /* Adjusted padding if load more button is inside the scrollable area's parent
-       If button is next to arrows, this might not be needed or adjusted.
-       Assuming button is outside the immediate scroll container for now. */
-    /* padding-right: 120px; */ /* Consider if this is needed or if button is positioned differently */
+    /* padding-right for load more button is no longer needed */
 }
 
-.loadMoreButton {
-    position: absolute;
-    right: 20px; /* Adjust based on layout, might conflict with scrollbar area if not careful */
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 10px 15px;
-    background-color: var(--primary-color); /* Updated */
-    color: var(--text-primary); /* Updated - ensure contrast with primary-color */
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Kept generic shadow, themeable if needed */
-    min-width: 140px; /* Ensures button has decent width */
-    justify-content: center;
-}
+/* Styles for Load More functionality (button itself removed) */
+/* .loadMoreButton, .loadMoreIcon, .loadingMore (class for button's spinner) are removed */
 
-.loadMoreButton:hover {
-    background-color: var(--primary-dark); /* Updated */
-    transform: translateY(-50%) scale(1.05);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3); /* Kept generic shadow */
-}
-
-.loadMoreButton:disabled {
-    background-color: color-mix(in srgb, var(--primary-color) 40%, var(--bg-secondary) 60%); /* Updated */
-    color: color-mix(in srgb, var(--text-primary) 50%, var(--bg-secondary) 50%); /* Updated for disabled text */
-    cursor: not-allowed;
-    transform: translateY(-50%); /* Keep base transform */
-    box-shadow: none; /* Remove shadow for disabled state */
-}
-
-.loadMoreButton:active {
-    transform: translateY(-50%) scale(0.98); /* Slight press effect */
-}
-
-.loadMoreIcon {
-    transition: transform 0.3s ease;
-    /* Icon color inherited from button's color property */
-}
-
-.loadMoreButton:hover .loadMoreIcon {
-    transform: translateY(2px); /* Subtle icon animation on hover */
-}
-
-/* Loading animation for spinner icon */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loadingMore {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid color-mix(in srgb, var(--text-primary) 30%, transparent); /* Updated */
-    border-radius: 50%;
-    border-top-color: var(--text-primary); /* Updated */
-    animation: spin 1s ease-in-out infinite;
+.errorMessage, .emptyMessage {
+    padding: 0 2.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
 }
