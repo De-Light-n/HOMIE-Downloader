@@ -11,19 +11,17 @@ const Home = () => {
 
     return (
         <div className={styles.home}>
-            <div className="neonBackground">
-                <div className={`glowEffect purpleGlow`}></div>
-                <div className={`glowEffect pinkGlow`}></div>
-                <div className={`glowEffect blueGlow`}></div>
-                <div className="gridOverlay"></div>
+            <div className="background-animation-container">
+                <div className="floating-element orb1" style={{ '--base-opacity': '0.2' }}></div>
+                <div className="floating-element orb2" style={{ '--base-opacity': '0.15' }}></div>
+                <div className="floating-element orb3" style={{ '--base-opacity': '0.12' }}></div>
             </div>
-
             <div className={styles.contentWrapper}>
-                <Header />
+                <Header/>
 
                 <main className={styles.mainContent}>
                     <div className={styles.searchBarContainer}>
-                        <SearchBar />
+                        <SearchBar/>
                     </div>
 
                     <VideoRow

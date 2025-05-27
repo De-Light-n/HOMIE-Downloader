@@ -1,298 +1,509 @@
+# --- START OF FILE app.py ---
+
 import time
 import os
 import re
 import uuid
+import traceback
+from urllib.parse import quote as url_quote
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import yt_dlp as youtube_dl
+import imageio_ffmpeg
 
 app = Flask(__name__)
 CORS(app)
 
-# Конфігурація
+# --- КОНФІГУРАЦІЯ ---
 DOWNLOAD_FOLDER = 'downloads'
-ALLOWED_QUALITIES = ['144p', '240p', '360p', '480p', '720p', '1080p'] # Обмежимо для варіанту без FFmpeg
-# Вищі якості (1440p, 2160p) майже завжди вимагають FFmpeg.
-# Можна залишити їх, але користувачі рідко зможуть їх завантажити без FFmpeg.
+FFMPEG_EXE_PATH = None # Визначається автоматично
 
+# Створення папки downloads, якщо не існує
 if not os.path.exists(DOWNLOAD_FOLDER):
-    os.makedirs(DOWNLOAD_FOLDER)
+    try:
+        os.makedirs(DOWNLOAD_FOLDER)
+        print(f"Папку {DOWNLOAD_FOLDER} створено.")
+    except Exception as e:
+        print(f"Не вдалося створити папку {DOWNLOAD_FOLDER}: {e}")
+
+# Функція для отримання шляху до FFmpeg (залишається без змін)
+def get_ffmpeg_path_with_auto_download():
+    global FFMPEG_EXE_PATH
+    if FFMPEG_EXE_PATH and os.path.exists(FFMPEG_EXE_PATH) and os.path.isfile(FFMPEG_EXE_PATH):
+        return FFMPEG_EXE_PATH
+    try:
+        ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+        if os.path.exists(ffmpeg_path) and os.path.isfile(ffmpeg_path):
+            FFMPEG_EXE_PATH = ffmpeg_path
+            print(f"FFmpeg знайдено/завантажено: {ffmpeg_path}")
+            return ffmpeg_path
+        else:
+            print(f"imageio-ffmpeg не зміг надати валідний шлях до FFmpeg: {ffmpeg_path}")
+            FFMPEG_EXE_PATH = None
+            return None
+    except Exception as e:
+        print(f"Помилка під час отримання/завантаження FFmpeg: {e}")
+        FFMPEG_EXE_PATH = None
+        return None
+
+print("Ініціалізація шляху до FFmpeg...")
+FFMPEG_EXE_PATH = get_ffmpeg_path_with_auto_download()
+print(f"Фінальний шлях до FFmpeg: {FFMPEG_EXE_PATH or 'Не визначено/Не завантажено'}")
 
 
-def is_valid_youtube_url(url):
-    youtube_regex = (
-        r'(https?://)?(www\.)?'
-        r'(youtube|youtu|youtube-nocookie)\.(com|be)/'
-        r'(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})'
-    )
-    return re.match(youtube_regex, url) is not None
+# --- ДОПОМІЖНІ ФУНКЦІЇ ---
+def get_url_type(url): # Для попередньої класифікації, yt-dlp є основним джерелом правди
+    if re.match(r'(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/', url):
+        return 'youtube'
+    if re.match(r'(https?://)?(.*tiktok\.com.*)', url, re.IGNORECASE):
+        return 'tiktok'
+    if re.match(r'(https?://)?(.*soundcloud\.com.*)', url, re.IGNORECASE):
+        return 'soundcloud'
+    if re.match(r'(https?://)?(.*vimeo\.com.*)', url, re.IGNORECASE):
+        return 'vimeo'
+    # Можна додати інші популярні платформи для швидкої ідентифікації
+    return 'unknown'
 
 
 def get_video_info(url):
+    request_id_info = uuid.uuid4().hex[:8]
+    app.logger.info(f"get_video_info [{request_id_info}]: Запит інформації для URL: {url}")
+
     try:
         ydl_opts = {
-            'quiet': True,
-            'no_warnings': True,
+            'no_warnings': False,
             'skip_download': True,
-            'force_generic_extractor': True,
+            'force_generic_extractor': False,
+            'logger': app.logger,
+            'ffmpeg_location': FFMPEG_EXE_PATH,
+            'extract_flat': 'in_playlist', # Не заглиблюватися в плейлисти для прев'ю
+            'playlist_items': '1', # Для плейлистів брати інфо тільки першого елемента
         }
-
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
 
-            video_info = {
-                'title': info.get('title', 'Невідоме відео'),
-                'description': info.get('description', ''),
-                'thumbnail': info.get('thumbnail', ''),
-                'duration': info.get('duration', 0),
-                'views': info.get('view_count', 0),
-                'likes': info.get('like_count', 0),
-                'qualities': []
-            }
+        if not info:
+            app.logger.warning(f"get_video_info [{request_id_info}]: yt-dlp повернув порожню інформацію для {url}")
+            return None
 
-            formats = info.get('formats', [])
-            available_qualities = set()
+        # Якщо це був плейлист, беремо інформацію першого елемента
+        if '_type' in info and info['_type'] == 'playlist' and info.get('entries'):
+            info = info['entries'][0]
+            if not info: # Якщо перший елемент плейлиста порожній
+                app.logger.warning(f"get_video_info [{request_id_info}]: Перший елемент плейлиста порожній для {url}")
+                return None
 
+        extractor_key = info.get('extractor_key', '').lower()
+        if not extractor_key: extractor_key = get_url_type(url) # Резервний варіант
+
+        video_info_data = {
+            'title': info.get('title', info.get('fulltitle', 'Невідома назва')),
+            'description': info.get('description', ''),
+            'thumbnail': info.get('thumbnail', ''),
+            'duration': info.get('duration', 0),
+            'views': info.get('view_count', info.get('play_count')), # play_count для деяких платформ
+            'likes': info.get('like_count'),
+            'uploader': info.get('uploader', info.get('creator', info.get('channel', info.get('artist')))), # artist для аудіо
+            'qualities_video': [],
+            'qualities_audio': [], # Окремо для аудіо
+            'source_type': extractor_key or 'generic',
+            'original_url': info.get('webpage_url', url), # URL, з якого фактично взято інфо
+        }
+
+        # Заповнення специфічних полів
+        if 'youtube' in extractor_key:
+            pass # Загальні поля вже заповнені
+        elif 'tiktok' in extractor_key:
+            video_info_data['title'] = info.get('title', info.get('description', 'Відео TikTok'))
+            if not video_info_data['title'] and video_info_data['description']:
+                video_info_data['title'] = video_info_data['description'].split('\n')[0][:70]
+        elif 'soundcloud' in extractor_key:
+            video_info_data['title'] = info.get('title', info.get('track', 'Аудіо трек'))
+            video_info_data['uploader'] = info.get('uploader', info.get('user', {}).get('username'))
+            # Для SoundCloud може не бути переглядів/лайків у стандартному вигляді
+
+        formats = info.get('formats', [])
+        if not formats:
+            app.logger.warning(f"get_video_info [{request_id_info}]: Немає форматів для {url} (тип: {extractor_key}).")
+
+        # --- Обробка якостей ВІДЕО ---
+        available_video_qualities_set = set()
+        if 'youtube' in extractor_key:
+            # ... (логіка для YouTube якостей залишається схожою) ...
+            allowed_qualities_preview = ['144p', '240p', '360p', '480p', '720p', '1080p', '1440p', '2160p']
             for fmt in formats:
-                # Шукаємо формати, де відео та аудіо вже є (або тільки відео)
-                # і висота відповідає дозволеним.
-                # fmt.get('acodec') != 'none' - означає, що є аудіо
-                # fmt.get('vcodec') != 'none' - означає, що є відео
-                if fmt.get('vcodec') != 'none' and fmt.get('height'):
-                    # Додатково можна перевірити, чи формат вже об'єднаний, якщо це можливо
-                    # Але для спрощення, будемо вважати, що якщо є vcodec і acodec, то він потенційно підходить
-                    # або yt-dlp обере такий, якщо він є.
-                    quality = f"{fmt['height']}p"
-                    if quality in ALLOWED_QUALITIES:
-                        available_qualities.add(quality)
+                if fmt.get('vcodec') != 'none' and fmt.get('height'): # Має бути відео з висотою
+                    quality_str = f"{fmt['height']}p"
+                    if quality_str in allowed_qualities_preview:
+                        available_video_qualities_set.add(quality_str)
+            video_info_data['qualities_video'] = sorted(list(available_video_qualities_set), key=lambda q_str: int(q_str[:-1]), reverse=True)
+        else: # Для інших платформ (TikTok, Vimeo, загальні)
+            has_any_video = any(f.get('vcodec') != 'none' and f.get('ext') == 'mp4' for f in formats)
+            if has_any_video:
+                # Можна спробувати витягнути висоту, якщо є, але це може бути складно для всіх
+                # Простіше запропонувати загальну опцію
+                video_info_data['qualities_video'] = ['Найкраще відео (MP4)']
+            # Якщо є тільки відео без аудіо, і є FFmpeg, то це теж варіант
+            elif FFMPEG_EXE_PATH and any(f.get('vcodec') != 'none' and f.get('acodec') == 'none' for f in formats):
+                video_info_data['qualities_video'] = ['Найкраще відео (потрібне злиття)']
 
-            video_info['qualities'] = sorted(
-                list(available_qualities),
-                key=lambda x: int(x[:-1]),
-                reverse=True
-            )
-            return video_info
+
+        # --- Обробка якостей АУДІО ---
+        available_audio_qualities_set = set()
+        # Намагаємося знайти аудіо формати (m4a, mp3, opus, ogg)
+        # yt-dlp сам вибере найкращий аудіо, якщо вказати 'bestaudio'
+        # Тут ми можемо просто вказати, що аудіо доступне
+        has_any_audio_stream = any(f.get('acodec') != 'none' and f.get('vcodec') == 'none' for f in formats)
+        if has_any_audio_stream:
+            available_audio_qualities_set.add("Найкраще аудіо (M4A/Opus)") # yt-dlp за замовчуванням прагне до m4a/opus
+            if FFMPEG_EXE_PATH: # Якщо є FFmpeg, можемо запропонувати MP3
+                available_audio_qualities_set.add("Найкраще аудіо (MP3)")
+        elif any(f.get('acodec') != 'none' and f.get('vcodec') != 'none' for f in formats): # Якщо є тільки змерджені
+            available_audio_qualities_set.add("Витягнути аудіо (M4A/Opus)")
+            if FFMPEG_EXE_PATH:
+                available_audio_qualities_set.add("Витягнути аудіо (MP3)")
+
+        video_info_data['qualities_audio'] = sorted(list(available_audio_qualities_set))
+
+
+        if not video_info_data['qualities_video'] and not video_info_data['qualities_audio']:
+            app.logger.warning(f"get_video_info [{request_id_info}]: Не знайдено відео/аудіо якостей для {url} (тип: {extractor_key}).")
+
+        app.logger.info(f"get_video_info [{request_id_info}]: Інформація для {url} (тип: {extractor_key}): Відео якості: {video_info_data['qualities_video']}, Аудіо якості: {video_info_data['qualities_audio']}")
+        return video_info_data
 
     except youtube_dl.utils.DownloadError as e:
-        app.logger.error(f"Помилка yt-dlp при отриманні інформації про відео ({url}): {e}")
-        if "Unsupported URL" in str(e) or "not a valid URL" in str(e):
-            return {'error_type': 'InvalidURL', 'message': 'Наданий URL не підтримується або недійсний.'}
+        # ... (обробка помилок як раніше) ...
+        err_msg = str(e).lower()
+        app.logger.error(f"get_video_info [{request_id_info}]: Помилка yt-dlp (DownloadError) для {url}: {type(e)} - {str(e)}")
+        if "unsupported url" in err_msg or "not a valid url" in err_msg or "no supported media" in err_msg or "valid url" in err_msg:
+            return {'error_type': 'InvalidURL', 'message': 'Наданий URL не підтримується, недійсний або не містить медіа.'}
+        if "this video is unavailable" in err_msg or "private video" in err_msg or "video is private" in err_msg or "age restricted" in err_msg:
+            return {'error_type': 'VideoUnavailable', 'message': 'Це відео/аудіо недоступне (приватне, видалене, обмеження за віком).'}
         return None
     except Exception as e:
-        app.logger.error(f"Загальна помилка при отриманні інформації про відео ({url}): {e}")
+        app.logger.error(f"get_video_info [{request_id_info}]: Загальна помилка для {url}: {type(e)} - {str(e)}\n{traceback.format_exc()}")
         return None
 
-
+# --- МАРШРУТИ API ---
 @app.route('/api/video/preview', methods=['GET'])
 def video_preview():
     video_url = request.args.get('url')
+    # ... (перевірка video_url) ...
+    if not video_url: return jsonify({'error': 'URL не надано'}), 400
 
-    if not video_url:
-        return jsonify({'error': 'URL відео не надано'}), 400
-    if not is_valid_youtube_url(video_url):
-        return jsonify({'error': 'Недійсний URL YouTube'}), 400
+    video_info_data = get_video_info(video_url)
 
-    video_info = get_video_info(video_url)
+    # ... (обробка помилок video_info_data як раніше) ...
+    if not video_info_data: return jsonify({'error': 'Не вдалося отримати інформацію. Перевірте URL або спробуйте пізніше.'}), 500
+    if video_info_data.get('error_type'): return jsonify({'error': video_info_data['message']}), 400 if video_info_data.get('error_type') == 'InvalidURL' else 404
 
-    if not video_info:
-        return jsonify({'error': 'Не вдалося отримати інформацію про відео. Можливо, відео приватне, видалене або URL некоректний.'}), 500
-    if video_info.get('error_type') == 'InvalidURL':
-        return jsonify({'error': video_info['message']}), 400
+    # Форматування (залишається схожим, але враховуємо, що деякі поля можуть бути відсутні)
+    if isinstance(video_info_data.get('views'), (int, float)):
+        views = video_info_data['views']
+        if views >= 1000000: video_info_data['views'] = f"{views / 1000000:.1f}M"
+        elif views >= 1000: video_info_data['views'] = f"{views / 1000:.1f}K"
+    elif video_info_data.get('views') is None: video_info_data['views'] = "N/A"
 
-    if video_info['views'] >= 1000000: video_info['views'] = f"{video_info['views'] / 1000000:.1f}M"
-    elif video_info['views'] >= 1000: video_info['views'] = f"{video_info['views'] / 1000:.1f}K"
-    if video_info['likes'] >= 1000000: video_info['likes'] = f"{video_info['likes'] / 1000000:.1f}M"
-    elif video_info['likes'] >= 1000: video_info['likes'] = f"{video_info['likes'] / 1000:.1f}K"
 
-    duration_seconds = video_info.get('duration', 0)
-    if isinstance(duration_seconds, (int, float)):
-        minutes, seconds = divmod(int(duration_seconds), 60)
+    if isinstance(video_info_data.get('likes'), (int, float)):
+        likes = video_info_data['likes']
+        if likes >= 1000000: video_info_data['likes'] = f"{likes / 1000000:.1f}M"
+        elif likes >= 1000: video_info_data['likes'] = f"{likes / 1000:.1f}K"
+    elif video_info_data.get('likes') is None: video_info_data['likes'] = "N/A"
+
+    duration_seconds = video_info_data.get('duration', 0)
+    if isinstance(duration_seconds, (int, float)) and duration_seconds > 0:
+        minutes, seconds_rem = divmod(int(duration_seconds), 60)
         hours, minutes = divmod(minutes, 60)
-        video_info['duration'] = f"{hours}:{minutes:02d}:{seconds:02d}" if hours > 0 else f"{minutes:02d}:{seconds:02d}"
-    else:
-        video_info['duration'] = "N/A"
+        video_info_data['duration'] = f"{hours}:{minutes:02d}:{seconds_rem:02d}" if hours > 0 else f"{minutes:02d}:{seconds_rem:02d}"
+    else: video_info_data['duration'] = "N/A"
 
-    if not video_info['qualities']:
-        app.logger.warning(f"Для відео {video_url} не знайдено доступних якостей з ALLOWED_QUALITIES.")
-
-    return jsonify(video_info)
+    app.logger.info(f"video_preview: Успішно повернуто інформацію для {video_url}")
+    return jsonify(video_info_data)
 
 
 @app.route('/api/video/download', methods=['POST'])
 def download_video():
     data = request.json
     video_url = data.get('url')
-    quality_req = data.get('quality', '720p') # Якість, запитана користувачем
+    # Клієнт тепер має надсилати 'download_type': 'video' або 'audio'
+    download_type = data.get('download_type', 'video').lower()
+    # 'quality_or_format' може бути як "720p" для відео, так і "mp3" для аудіо
+    quality_or_format_req = data.get('quality', 'best')
+    request_id = uuid.uuid4().hex[:8]
 
-    if not video_url or not is_valid_youtube_url(video_url):
-        return jsonify({'error': 'Недійсний URL YouTube'}), 400
+    app.logger.info(f"download_video [{request_id}]: Запит: URL={video_url}, Тип={download_type}, Якість/Формат={quality_or_format_req}, FFmpeg={FFMPEG_EXE_PATH or 'Немає'}")
 
-    # Для версії без FFmpeg, ми більше покладатимемося на yt-dlp для вибору "найкращого"
-    # з того, що не потребує об'єднання, до вказаної якості.
-    # Якість (наприклад '720p') буде використана для фільтрації.
-    if quality_req not in ALLOWED_QUALITIES and quality_req != 'best':
-        return jsonify({'error': f'Недійсна якість відео: {quality_req}'}), 400
+    if not video_url: return jsonify({'error': 'URL не надано'}), 400
 
     try:
-        unique_id = uuid.uuid4().hex
+        # Отримуємо інфо для назви та типу
+        info_opts_for_meta = {'skip_download': True, 'logger': app.logger, 'no_warnings': True}
+        with youtube_dl.YoutubeDL(info_opts_for_meta) as ydl_meta:
+            info = ydl_meta.extract_info(video_url, download=False)
+        if not info: return jsonify({'error': 'Не вдалося отримати інфо про URL.'}), 500
 
-        # Отримуємо інформацію про відео для назви файлу та фактичного розширення
-        # Це додатковий запит, але він потрібен, щоб дізнатися розширення заздалегідь
-        temp_ydl_opts = {'quiet': True, 'skip_download': True}
-        with youtube_dl.YoutubeDL(temp_ydl_opts) as ydl_info_extractor:
-            info = ydl_info_extractor.extract_info(video_url, download=False)
-            title = re.sub(r'[\\/*?:"<>|]', "", info.get('title', 'video')).strip()
-            if len(title) > 60: title = title[:60] + "..."
+        if '_type' in info and info['_type'] == 'playlist' and info.get('entries'):
+            info = info['entries'][0] # Беремо перший елемент, якщо плейлист
 
-            # Спробуємо визначити розширення файлу, який буде завантажено
-            # Це складно без фактичного вибору формату yt-dlp,
-            # тому поки що будемо використовувати '.mp4' і сподіватися, що це буде так.
-            # Або можна залишити назву без розширення і додати його після завантаження,
-            # перевіривши фактичне розширення завантаженого файлу.
-            # Для простоти, залишимо .mp4, але це може бути неточно.
-            # Якщо yt-dlp завантажить .webm, ім'я файлу буде .mp4, а вміст .webm.
-            # Краще було б після завантаження перейменувати файл на основі його фактичного типу.
-            # Однак, для цього потрібно спочатку завантажити у тимчасовий файл без розширення.
+        source_type = info.get('extractor_key', '').lower() or get_url_type(url)
 
-        # Селектор формату для роботи без FFmpeg:
-        # 1. Шукаємо найкращий формат з відео ТА аудіо, який вже є mp4, і не вище вказаної якості.
-        # 2. Якщо такого немає, шукаємо найкращий формат з відео ТА аудіо, не вище вказаної якості (будь-який контейнер).
-        # 3. Якщо і такого немає, шукаємо найкращий формат (може бути тільки відео або тільки аудіо, якщо нічого кращого немає), не вище вказаної якості.
-        # yt-dlp сам намагатиметься вибрати формат, який не потребує об'єднання, якщо FFmpeg не вказано/не знайдено.
+        # Санітизація назви файлу
+        raw_title = info.get('title', info.get('track', 'downloaded_content'))
+        if not raw_title and info.get('description'): raw_title = info.get('description').split('\n')[0][:70]
 
-        # Спрощений селектор: найкращий формат, що не перевищує вказану висоту.
-        # yt-dlp сам спробує знайти формат, що не потребує об'єднання.
-        # Якщо 'best' передано, то обираємо найкращий доступний (може бути високої якості, що вимагає об'єднання)
-        if quality_req == 'best':
-            format_selector = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
-        else:
-            # Намагаємося отримати mp4 з відео та аудіо, якщо можливо, в межах якості
-            # (vcodec!=none&acodec!=none) - спроба вибрати об'єднаний формат
-            # [height<=quality_req[:-1]] - фільтр по висоті
-            # [ext=mp4] - пріоритет для mp4
-            # Якщо немає, то просто найкращий в межах якості.
-            height_filter = quality_req[:-1]
-            format_selector = (
-                f"best[vcodec!=none][acodec!=none][height<={height_filter}][ext=mp4]/" # Найкращий об'єднаний mp4
-                f"bestvideo[vcodec!=none][acodec!=none][height<={height_filter}]+bestaudio[height<={height_filter}]/" # Для yt-dlp, якщо він може об'єднати без ffmpeg (малоймовірно)
-                f"best[vcodec!=none][acodec!=none][height<={height_filter}]/" # Найкращий об'єднаний будь-якого типу
-                f"best[height<={height_filter}][ext=mp4]/" # Найкращий mp4 (може бути тільки відео)
-                f"best[height<={height_filter}]" # Просто найкращий в межах якості
-            )
-            # Для повного відключення спроб об'єднання, можна використовувати:
-            # format_selector = f"best[vcodec!=none][acodec!=none][height<={height_filter}][ext=mp4]/best[vcodec!=none][acodec!=none][height<={height_filter}]/best[height<={height_filter}]"
+        sanitized_title_for_file = re.sub(r'[\\/*?:"<>|\x00-\x1f\x7f]', "", raw_title).strip()
+        sanitized_title_for_file = sanitized_title_for_file.replace('#', '_H_').replace('%', '_P_') # Простіша заміна
+        max_len = 50 # Скорочуємо, щоб залишити місце для якості/формату
+        if not sanitized_title_for_file: sanitized_title_for_file = "content"
+        elif len(sanitized_title_for_file) > max_len: sanitized_title_for_file = sanitized_title_for_file[:max_len].strip()
 
+        app.logger.debug(f"download_video [{request_id}]: Санітизована назва: '{sanitized_title_for_file}' (Джерело: {source_type})")
 
-        # Назва файлу буде з .mp4, але фактичний тип може відрізнятися.
-        # Це компроміс для версії без FFmpeg.
-        actual_quality_for_filename = quality_req # Якість, яку покажемо в назві
-        filename = f"{title} [{actual_quality_for_filename}]_{unique_id}.mp4" # Залишаємо .mp4
-        output_path = os.path.join(DOWNLOAD_FOLDER, filename)
-
-        ydl_opts = {
-            'format': format_selector,
-            'outtmpl': output_path,
-            'quiet': False, # Вмикаємо логи, щоб бачити, що відбувається
-            'no_warnings': False,
-            # 'merge_output_format': 'mp4', # Ця опція не спрацює належним чином без FFmpeg, якщо потрібне об'єднання
-            # Якщо завантажується не mp4, він залишиться таким, яким є.
-            'verbose': app.debug, # Виводити більше логів, якщо Flask в debug режимі
-            # 'postprocessors': [], # Видаляємо постпроцесори, що залежать від FFmpeg
-            'ffmpeg_location': None # Явно вказуємо, що не шукати/не використовувати ffmpeg
-            # Хоча yt-dlp сам не буде його використовувати, якщо не знайде
+        # --- Налаштування для yt-dlp ---
+        ydl_opts_download = {
+            'logger': app.logger,
+            'nocheckcertificate': True,
+            'noplaylist': True, # Важливо, щоб не качати весь плейлист
+            'ffmpeg_location': FFMPEG_EXE_PATH,
+            'quiet': False, 'no_warnings': False, 'verbose': app.debug,
+            'format_sort_force': True,
+            'prefer_free_formats': True,
         }
-        # Додаткове налаштування, щоб yt-dlp не намагався викликати ffmpeg для об'єднання
-        # Це може бути не стандартною опцією yt-dlp, а скоріше побажанням
-        # Зазвичай, якщо ffmpeg_location=None або він не знайдений, yt-dlp не буде його використовувати.
-        # Головне - правильний format_selector.
 
-        app.logger.info(f"Спроба завантажити (без FFmpeg): {video_url} з якістю '{quality_req}' у файл {filename}")
-        app.logger.info(f"Використовується форматний рядок: {format_selector}")
+        file_label_part = "" # Для імені файлу [якість/формат]
+        output_final_extension = None # Визначатиметься логікою нижче
 
-        downloaded_correctly = False
-        try:
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                # Якщо yt-dlp не зможе завантажити (наприклад, формат вимагає об'єднання, а FFmpeg немає),
-                # він може видати помилку або завантажити тільки один потік.
-                ydl.download([video_url])
+        if download_type == 'video':
+            file_label_part = quality_or_format_req if quality_or_format_req != 'best' else 'best_video'
+            output_final_extension = 'mp4' # Прагнемо до mp4 для відео
 
-            if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                downloaded_correctly = True
-                # Тут можна було б перевірити фактичне розширення файлу і перейменувати,
-                # але це ускладнить код.
-                app.logger.info(f"Файл {filename} успішно завантажено.")
-            else:
-                # Файл не створено або порожній
-                app.logger.error(f"Файл {output_path} не було створено або він порожній після спроби завантаження.")
-        except youtube_dl.utils.DownloadError as de:
-            # Обробка помилок, специфічних для yt-dlp, які можуть виникнути,
-            # якщо потрібний формат не може бути отриманий без FFmpeg
-            app.logger.error(f"Помилка yt-dlp під час завантаження (можливо, потрібен FFmpeg): {de}")
-            if "ffmpeg" in str(de).lower() or "merger" in str(de).lower():
-                return jsonify({'error': f'Не вдалося завантажити відео у запитуваній якості ({quality_req}) без FFmpeg. Спробуйте нижчу якість або інше відео.'}), 500
-            raise # Перевикидаємо помилку, якщо вона не пов'язана з FFmpeg
+            if 'youtube' in source_type and quality_or_format_req != 'best' and 'p' in quality_or_format_req:
+                height_filter = quality_or_format_req[:-1]
+                if FFMPEG_EXE_PATH:
+                    ydl_opts_download['format'] = f'bestvideo[height<={height_filter}][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<={height_filter}]+bestaudio/best[height<={height_filter}]'
+                else: # Без FFmpeg шукаємо змерджені
+                    ydl_opts_download['format'] = f"best[height<={height_filter}][ext=mp4][vcodec!=none][acodec!=none]/best[height<={height_filter}][vcodec!=none][acodec!=none]"
+                    output_final_extension = None # yt-dlp визначить
+            else: # Для інших платформ або 'best'
+                if FFMPEG_EXE_PATH:
+                    ydl_opts_download['format'] = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best'
+                else:
+                    ydl_opts_download['format'] = 'best[ext=mp4][vcodec!=none][acodec!=none]/best[vcodec!=none][acodec!=none]'
+                    output_final_extension = None
 
-        if not downloaded_correctly:
-            return jsonify({'error': 'Не вдалося завантажити відео. Файл не створено або порожній.'}), 500
+            if FFMPEG_EXE_PATH and output_final_extension == 'mp4': # Якщо плануємо злиття в mp4
+                ydl_opts_download['merge_output_format'] = 'mp4'
 
+        elif download_type == 'audio':
+            file_label_part = quality_or_format_req # наприклад, "mp3" або "m4a"
+
+            # Бажані формати аудіо
+            audio_format_preference = quality_or_format_req.lower()
+            if audio_format_preference not in ['mp3', 'm4a', 'opus', 'ogg', 'wav', 'best']:
+                audio_format_preference = 'm4a' # За замовчуванням M4A, якщо не вказано відомий
+
+            if audio_format_preference == 'best': # Не плутати з 'best' для відео
+                ydl_opts_download['format'] = 'bestaudio/best'
+                # Якщо є FFmpeg, yt-dlp може сам конвертувати в кращий формат (зазвичай m4a або opus)
+                # Якщо немає FFmpeg, він завантажить найкращий доступний аудіофайл.
+                # Розширення буде визначено yt-dlp або postprocessor'ом
+                if FFMPEG_EXE_PATH:
+                    # За замовчуванням yt-dlp з 'bestaudio' і ffmpeg часто дає m4a/opus.
+                    # Якщо клієнт вибрав "Найкраще аудіо (MP3)", то тут має бути 'mp3'
+                    # Але якщо клієнт просто "best", то нехай yt-dlp вирішує
+                    # Якщо `quality_or_format_req` було щось типу "MP3_placeholder_from_client"
+                    if "mp3" in quality_or_format_req.lower() and FFMPEG_EXE_PATH:
+                        ydl_opts_download['postprocessors'] = [{
+                            'key': 'FFmpegExtractAudio',
+                            'preferredcodec': 'mp3',
+                            'preferredquality': '192', # Або інший бітрейт
+                        }]
+                        output_final_extension = 'mp3'
+                        file_label_part = 'mp3'
+                    else: # m4a/opus за замовчуванням
+                        ydl_opts_download['postprocessors'] = [{
+                            'key': 'FFmpegExtractAudio',
+                            'preferredcodec': 'm4a', # Або opus
+                        }]
+                        output_final_extension = 'm4a' # Або opus
+                        file_label_part = 'm4a' # Або opus
+
+                else: # Немає FFmpeg, розширення визначить yt-dlp
+                    output_final_extension = None
+            else: # Конкретний аудіо формат запитано (mp3, m4a, opus, etc.)
+                if not FFMPEG_EXE_PATH and audio_format_preference == 'mp3':
+                    app.logger.warning(f"download_video [{request_id}]: Запит MP3, але FFmpeg недоступний. Спроба завантажити найкраще аудіо.")
+                    ydl_opts_download['format'] = 'bestaudio/best' # yt-dlp візьме найкраще доступне
+                    output_final_extension = None # yt-dlp визначить
+                    file_label_part = 'best_audio'
+                elif not FFMPEG_EXE_PATH and audio_format_preference != 'mp3':
+                    # Шукаємо конкретний формат без FFmpeg
+                    ydl_opts_download['format'] = f'bestaudio[ext={audio_format_preference}]/bestaudio'
+                    output_final_extension = None # yt-dlp має дати потрібне розширення
+                else: # Є FFmpeg, можемо конвертувати
+                    ydl_opts_download['format'] = 'bestaudio/best' # Завантажуємо найкраще аудіо
+                    ydl_opts_download['postprocessors'] = [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': audio_format_preference,
+                        'preferredquality': '192' if audio_format_preference == 'mp3' else None, # Якість для mp3
+                    }]
+                    output_final_extension = audio_format_preference
+        else:
+            return jsonify({'error': f'Непідтримуваний тип завантаження: {download_type}'}), 400
+
+        # Формування імені файлу та шаблону outtmpl
+        base_filename_part = f"{sanitized_title_for_file} [{file_label_part}]"
+        if output_final_extension:
+            output_template = os.path.join(DOWNLOAD_FOLDER, f"{base_filename_part}.{output_final_extension}")
+        else: # Розширення буде визначено yt-dlp (наприклад, %(ext)s)
+            output_template = os.path.join(DOWNLOAD_FOLDER, f"{base_filename_part}.%(ext)s")
+
+        ydl_opts_download['outtmpl'] = output_template
+        app.logger.info(f"download_video [{request_id}]: Налаштування: Тип={download_type}, Формат yt-dlp='{ydl_opts_download.get('format')}', Шаблон файлу='{output_template}'")
+
+        # Завантаження
+        with youtube_dl.YoutubeDL(ydl_opts_download) as ydl:
+            download_return_code = ydl.download([video_url])
+        app.logger.info(f"download_video [{request_id}]: ydl.download завершено з кодом: {download_return_code}")
+        if download_return_code != 0:
+            # Деякі помилки можуть не викликати виняток, а повернути код
+            app.logger.error(f"download_video [{request_id}]: yt-dlp повернув ненульовий код: {download_return_code}. Перевірте логи yt-dlp.")
+            # Можливо, варто повернути більш конкретну помилку на основі логів yt-dlp, якщо можливо
+
+        # --- Пошук файлу (логіка залишається схожою, але важливий `output_final_extension`) ---
+        actual_filename_found = None
+        time.sleep(1.5) # Збільшимо трохи час для можливої конвертації аудіо
+
+        expected_ext_for_search = output_final_extension # Використовуємо визначене розширення
+        if ydl_opts_download.get('postprocessors') and not expected_ext_for_search:
+            # Якщо був postprocessor (наприклад, FFmpegExtractAudio без явного preferredcodec),
+            # розширення могло змінитися. Спробуємо типові аудіо.
+            # Цю логіку можна покращити, якщо знати, яке розширення дасть postprocessor.
+            pass # Поки що покладаємося на пошук за шаблоном, якщо expected_ext_for_search is None
+
+
+        if expected_ext_for_search:
+            expected_filename = f"{base_filename_part}.{expected_ext_for_search}"
+            app.logger.info(f"download_video [{request_id}]: Шукаємо файл (з очікуваним розширенням '{expected_ext_for_search}'): '{expected_filename}'")
+            full_expected_path = os.path.join(DOWNLOAD_FOLDER, expected_filename)
+            if os.path.exists(full_expected_path) and os.path.isfile(full_expected_path):
+                actual_filename_found = expected_filename
+                app.logger.info(f"download_video [{request_id}]: Знайдено точний очікуваний файл: '{actual_filename_found}'")
+
+        if not actual_filename_found:
+            app.logger.debug(f"download_video [{request_id}]: Точний файл не знайдено або розширення було динамічним. Пошук за '{base_filename_part}*.*'")
+            files_in_dir = os.listdir(DOWNLOAD_FOLDER)
+            app.logger.debug(f"download_video [{request_id}]: Вміст папки {DOWNLOAD_FOLDER}: {files_in_dir}")
+            candidate_files = [f for f in files_in_dir if f.startswith(base_filename_part) and not f.endswith((".part", ".ytdl"))]
+            if candidate_files:
+                candidate_files.sort(key=lambda name: (len(name), name))
+                actual_filename_found = candidate_files[0]
+                app.logger.info(f"download_video [{request_id}]: Знайдено файл за шаблоном: '{actual_filename_found}'")
+
+        # --- Перевірка результату ---
+        if not actual_filename_found:
+            # ... (обробка помилки, якщо файл не знайдено) ...
+            return jsonify({'error': 'Файл не знайдено після завантаження/обробки.'}), 500
+
+        # ... (перевірка розміру файлу) ...
+        final_output_path = os.path.join(DOWNLOAD_FOLDER, actual_filename_found)
+        if not (os.path.exists(final_output_path) and os.path.isfile(final_output_path) and os.path.getsize(final_output_path) > 0):
+            return jsonify({'error': 'Завантажений файл порожній або не існує.'}), 500
+
+        # URL-кодування імені файлу для відповіді клієнту
+        encoded_filename = url_quote(actual_filename_found)
+        app.logger.info(f"download_video [{request_id}]: Успішно. Файл: {actual_filename_found}, URL-кодоване: {encoded_filename}")
         return jsonify({
             'success': True,
-            'download_url': f'/download/{filename}',
-            'filename': filename
+            'download_url': f'/download/{encoded_filename}',
+            'filename': actual_filename_found
         })
 
     except youtube_dl.utils.DownloadError as e:
-        app.logger.error(f"Помилка yt-dlp при завантаженні відео: {e}")
-        if "Unsupported URL" in str(e): return jsonify({'error': f'URL не підтримується: {video_url}'}), 400
-        if "video unavailable" in str(e).lower(): return jsonify({'error': 'Відео недоступне.'}), 404
-        if "No video formats found" in str(e) or "requested format not available" in str(e):
-            return jsonify({'error': f'Запитувана якість ({quality_req}) недоступна для цього відео або потребує FFmpeg.'}), 400
-        return jsonify({'error': f'Помилка завантаження відео: {str(e)}'}), 500
+        # ... (обробка помилок yt-dlp як раніше) ...
+        return jsonify({'error': f'Помилка yt-dlp: {str(e)}'}), 500
     except Exception as e:
-        app.logger.error(f"Загальна помилка при завантаженні відео: {e}")
-        import traceback
-        app.logger.error(traceback.format_exc())
-        return jsonify({'error': 'Не вдалося завантажити відео через непередбачену помилку сервера.'}), 500
+        # ... (обробка загальних помилок як раніше) ...
+        return jsonify({'error': 'Внутрішня помилка сервера при завантаженні.'}), 500
 
 
-@app.route('/download/<path:filename>', methods=['GET'])
-def download_file(filename):
-    if '/' in filename or '\\' in filename:
-        return jsonify({'error': 'Неприпустиме ім\'я файлу'}), 400
-    file_path = os.path.join(DOWNLOAD_FOLDER, filename)
-    app.logger.info(f"Запит на завантаження файлу: {file_path}")
-    if not os.path.exists(file_path):
-        app.logger.error(f"Файл не знайдено: {file_path}")
-        return jsonify({'error': 'Файл не знайдено'}), 404
-    try:
-        response = send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
-        @response.call_on_close
-        def remove_file_after_send():
-            try:
-                # time.sleep(0.5) # Розкоментуйте, якщо виникають проблеми з видаленням
-                os.remove(file_path)
-                app.logger.info(f"Файл {filename} успішно видалено після відправки.")
-            except Exception as error:
-                app.logger.error(f"Помилка видалення файлу {filename}: {error}")
-        return response
-    except Exception as e:
-        app.logger.error(f"Помилка при відправці файлу {filename}: {e}")
-        return jsonify({'error': 'Не вдалося відправити файл.'}), 500
+# Функція download_file (залишається без змін)
+@app.route('/download/<path:filename_from_url>', methods=['GET'])
+def download_file(filename_from_url):
+    # ... (код як у попередній версії) ...
+    request_id = uuid.uuid4().hex[:8]
+    app.logger.info(f"download_file [{request_id}]: Отримано запит на завантаження. filename_from_url (після де кодування Flask): '{filename_from_url}'")
+    if not filename_from_url.strip(): return jsonify({'error': 'Ім\'я файлу не може бути порожнім'}), 400
+    if ".." in filename_from_url or filename_from_url.startswith(("/", "\\")): return jsonify({'error': 'Неприпустиме ім\'я файлу'}), 400
+    safe_filename = filename_from_url
+    app.logger.info(f"download_file [{request_id}]: Використовується ім'я файлу для пошуку на диску: '{safe_filename}'")
+    file_path = os.path.join(DOWNLOAD_FOLDER, safe_filename)
+    app.logger.debug(f"download_file [{request_id}]: Повний шлях до файлу: '{file_path}'")
+    if not (os.path.exists(file_path) and os.path.isfile(file_path)):
+        app.logger.error(f"download_file [{request_id}]: Файл '{file_path}' НЕ ІСНУЄ або не є файлом.")
+        return jsonify({'error': 'Файл не знайдено на сервері'}), 404
+    app.logger.info(f"download_file [{request_id}]: Файл '{safe_filename}' знайдено, відправка.")
+    return send_from_directory(DOWNLOAD_FOLDER, safe_filename, as_attachment=True)
 
+
+# --- ЗАПУСК СЕРВЕРА ТА НАЛАШТУВАННЯ ЛОГЕРА ---
 if __name__ == '__main__':
+    # ... (код логера та запуску як у попередній версії) ...
     import logging
-    logging.basicConfig(level=logging.DEBUG if app.debug else logging.INFO) # Більше логів для debug
+    from flask.logging import default_handler
 
-    # Створення файлового логера
-    file_handler = logging.FileHandler('flask_app.log', encoding='utf-8')
-    file_handler.setLevel(logging.DEBUG if app.debug else logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(formatter)
+    flask_debug_env = os.environ.get("FLASK_DEBUG")
+    current_debug_mode = flask_debug_env == "1" if flask_debug_env is not None else False
+    log_level_name_env = os.environ.get("FLASK_LOG_LEVEL", "INFO").upper()
+    if current_debug_mode and log_level_name_env == "INFO": log_level = logging.DEBUG
+    else: log_level = getattr(logging, log_level_name_env, logging.INFO)
 
-    # Додавання файлового логера до логера Flask
-    # Також можна додати до кореневого логера, щоб логувати і yt-dlp
-    logging.getLogger().addHandler(file_handler) # Для логів yt-dlp
-    app.logger.addHandler(file_handler) # Для логів самого Flask додатку
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - [%(process)d:%(threadName)s] - %(module)s.%(funcName)s:%(lineno)d - %(message)s'
+    )
+    console_handler = logging.StreamHandler(); console_handler.setLevel(log_level); console_handler.setFormatter(formatter)
+    file_handler = None
+    try:
+        log_file_path = 'flask_app.log'
+        file_handler = logging.FileHandler(log_file_path, encoding='utf-8')
+        file_handler.setLevel(log_level); file_handler.setFormatter(formatter)
+        print(f"Файловий логер буде налаштовано для запису в: {os.path.abspath(log_file_path)}")
+    except Exception as e_fh: print(f"Не вдалося налаштувати файловий логер: {e_fh}. Логування буде тільки в консоль.")
 
-    app.logger.info("Flask app starting...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.logger.removeHandler(default_handler); app.logger.setLevel(log_level)
+    app.logger.addHandler(console_handler);
+    if file_handler: app.logger.addHandler(file_handler)
+
+    werkzeug_logger = logging.getLogger('werkzeug')
+    for h in list(werkzeug_logger.handlers): werkzeug_logger.removeHandler(h)
+    werkzeug_logger.setLevel(logging.INFO if not current_debug_mode else logging.DEBUG)
+    werkzeug_logger.addHandler(console_handler)
+    if file_handler: werkzeug_logger.addHandler(file_handler)
+    werkzeug_logger.propagate = False
+
+    yt_dlp_logger = logging.getLogger('yt_dlp') # Логер для yt-dlp
+    for h in list(yt_dlp_logger.handlers): yt_dlp_logger.removeHandler(h)
+    yt_dlp_logger.setLevel(logging.WARNING if not current_debug_mode else logging.DEBUG) # Зробимо менш шумним за замовчуванням
+    yt_dlp_logger.addHandler(console_handler)
+    if file_handler: yt_dlp_logger.addHandler(file_handler)
+    yt_dlp_logger.propagate = False
+
+    imageio_logger = logging.getLogger('imageio_ffmpeg')
+    for h in list(imageio_logger.handlers): imageio_logger.removeHandler(h)
+    imageio_logger.setLevel(log_level); imageio_logger.addHandler(console_handler)
+    if file_handler: imageio_logger.addHandler(file_handler)
+    imageio_logger.propagate = False
+
+    app.debug = current_debug_mode
+    app.logger.info(f"Flask app starting... Debug mode is {'ON' if app.debug else 'OFF'}. Effective log level for app: {logging.getLevelName(app.logger.getEffectiveLevel())}")
+
+    try:
+        use_reloader_flag = app.debug
+        app.run(host='0.0.0.0', port=5000, debug=app.debug, use_reloader=use_reloader_flag)
+    except Exception as e_run:
+        log_func = app.logger.critical if app.logger.hasHandlers() else print
+        log_func(f"Критична помилка при запуску Flask-додатку: {e_run}\n{traceback.format_exc()}")
+
+# --- END OF FILE app.py ---

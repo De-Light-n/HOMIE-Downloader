@@ -63,11 +63,6 @@ function Footer() {
                 </div>
             </div>
 
-            {/* Нижня частина */}
-            <div className="footer-bottom">
-                <p>© Homie Downloader 2025 <Link to="/privacy">Privacy Policy</Link></p>
-                <p>DESIGN AND DEVELOPMENT ⚡ <a href="https://webstudio.example.com">WEBSTUDIO</a></p>
-            </div>
 
             {/* Великий напис на фоні */}
             <div className="footer-bg-text">Homie</div>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useAuth } from '../Firebase/AuthContext';
+import { useAuth } from '../Firebase/AuthContext'; // Переконайтеся, що шлях правильний
 import { useNavigate, Link } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import './Signup.css';
-import backgroundVideo from './176434-855480487_small.mp4';
+// Відеофон видалено
+// import backgroundVideo from './176434-855480487_small.mp4';
 
 const Signup = () => {
     const [email, setEmail] = useState('');
@@ -17,7 +18,9 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            return setError('Passwords do not match');
+            setError('Passwords do not match');
+            setTimeout(() => setError(''), 3000); // Повідомлення зникає через 3 секунди
+            return;
         }
 
         try {
@@ -47,17 +50,8 @@ const Signup = () => {
 
     return (
         <div className="signup-container">
-            <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="login-video-background"
-            >
-                <source src={backgroundVideo} type="video/mp4" />
-                Your browser does not support the video tag.
-            </video>
-            <div className="signup-background"></div>
+            {/* Елемент video видалено */}
+            <div className="signup-background"></div> {/* Для радіальних градієнтів за карткою */}
             <div className="signup-card">
                 <div className="signup-header">
                     <h2>Create Account</h2>
@@ -75,7 +69,7 @@ const Signup = () => {
                             required
                             placeholder="Enter your email"
                         />
-                        <label></label>
+                        <label></label> {/* Напис для анімації, якщо placeholder не використовується */}
                         <span className="input-border"></span>
                     </div>
 
@@ -87,7 +81,7 @@ const Signup = () => {
                             required
                             placeholder="Enter your password"
                         />
-                        <label></label>
+                        <label></label> {/* Напис для анімації */}
                         <span className="input-border"></span>
                     </div>
 
@@ -99,7 +93,7 @@ const Signup = () => {
                             required
                             placeholder="Enter your password again"
                         />
-                        <label></label>
+                        <label></label> {/* Напис для анімації */}
                         <span className="input-border"></span>
                     </div>
 

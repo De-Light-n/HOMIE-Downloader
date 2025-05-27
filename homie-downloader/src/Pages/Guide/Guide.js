@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './Guide.css';
 
+
 function Guide() {
     const location = useLocation();
 
@@ -17,11 +18,10 @@ function Guide() {
 
     return (
         <div className="guide-page">
-            <div className="neonBackground">
-                <div className={`glowEffect purpleGlow`}></div>
-                <div className={`glowEffect pinkGlow`}></div>
-                <div className={`glowEffect blueGlow`}></div>
-                <div className="gridOverlay"></div>
+            <div className="background-animation-container">
+                <div className="floating-element orb1" style={{ '--base-opacity': '0.2' }}></div>
+                <div className="floating-element orb2" style={{ '--base-opacity': '0.15' }}></div>
+                <div className="floating-element orb3" style={{ '--base-opacity': '0.12' }}></div>
             </div>
             <div className="guide-content">
                 <section id="how-to-use" className="guide-section">

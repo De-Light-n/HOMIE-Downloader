@@ -35,70 +35,102 @@
 }
 
 :root[data-theme="floral"] {
-    --bg-primary: #1C2526; 
-    --bg-secondary: #4A5859; 
-    --header-bg: #1C2526; 
-    --text-primary: #C7D0CC; 
-    --text-secondary: #7A8C8E; 
-    --border-color: #7A8C8E; 
-    --primary-color: #F0C05A; 
-    --primary-dark: #D3A53F; 
-    --user-icon-bg: #4A5859; 
+    --bg-primary: #1C2526;
+    --bg-secondary: #4A5859;
+    --header-bg: #1C2526;
+    --text-primary: #C7D0CC;
+    --text-secondary: #7A8C8E;
+    --border-color: #7A8C8E;
+    --primary-color: #F0C05A;
+    --primary-dark: #D3A53F;
+    --user-icon-bg: #4A5859;
 }
 
 :root[data-theme="eco"] {
-    --bg-primary: #E8F5E9; 
-    --bg-secondary: #C8E6C9; 
-    --header-bg: #E8F5E9; 
-    --text-primary: #1B5E20; 
-    --text-secondary: #2E7D32; 
-    --border-color: #A5D6A7; 
-    --primary-color: #4CAF50; 
-    --primary-dark: #388E3C; 
-    --user-icon-bg: #DCEDC8; 
+    --bg-primary: #E8F5E9;
+    --bg-secondary: #C8E6C9;
+    --header-bg: #E8F5E9;
+    --text-primary: #1B5E20;
+    --text-secondary: #2E7D32;
+    --border-color: #A5D6A7;
+    --primary-color: #4CAF50;
+    --primary-dark: #388E3C;
+    --user-icon-bg: #DCEDC8;
 }
 
-/* Неоновий фон (removed neon effects, keeping as a placeholder for background styling) */
-.neonBackground {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    overflow: hidden;
-    background: var(--bg-secondary); /* Use secondary background instead of gradients */
+:root[data-theme="oceanic-bliss"] {
+    --bg-primary: #F0F8FF;
+    --bg-secondary: #E0FFFF;
+    --header-bg: #F0F8FF;
+    --text-primary: #005073;
+    --text-secondary: #107dac;
+    --border-color: #70C1B3;
+    --primary-color: #20A4F3;
+    --primary-dark: #187BCD;
+    --user-icon-bg: #B2DFDB;
 }
 
-/* Ефекти світіння (removed glow effects, replaced with simple shadows) */
-.glowEffect {
-    position: absolute;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    filter: blur(10px);
-    opacity: 0.2;
-    animation: float 25s infinite linear;
-    background: var(--primary-color); /* Use primary color for a subtle effect */
+:root[data-theme="crimson-night"] {
+    --bg-primary: #121212;
+    --bg-secondary: #1E1E1E;
+    --header-bg: #121212;
+    --text-primary: #EAEAEA;
+    --text-secondary: #A0A0A0;
+    --border-color: #4A0404;
+    --primary-color: #DC143C;
+    --primary-dark: #B22222;
+    --user-icon-bg: #2B2B2B;
 }
 
-.purpleGlow, .pinkGlow, .blueGlow {
-    display: none; /* Remove specific glow effects */
+/* --- NEW THEMES CSS START --- */
+:root[data-theme="halloween"] {
+    --bg-primary: #1A1A1A;
+    --bg-secondary: #0D0D0D;
+    --header-bg: #1A1A1A;
+    --text-primary: #F0F0F0;
+    --text-secondary: #FF8C00;
+    --border-color: #8C3B00;
+    --primary-color: #FF6600;
+    --primary-dark: #CC5200;
+    --user-icon-bg: #262626;
 }
 
-/* Сітка поверх фону */
-.gridOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-        linear-gradient(var(--border-color) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-    background-size: 50px 50px;
-    opacity: 0.5;
+:root[data-theme="horror"] {
+    --bg-primary: #0A0000;
+    --bg-secondary: #000000;
+    --header-bg: #0A0000;
+    --text-primary: #E0E0E0;
+    --text-secondary: #8B0000;
+    --border-color: #400000;
+    --primary-color: #FF0000;
+    --primary-dark: #B30000;
+    --user-icon-bg: #1C1C1C;
 }
+
+:root[data-theme="hello-kitty"] {
+    --bg-primary: #FFF0F5;
+    --bg-secondary: #FFFAFA;
+    --header-bg: #FFF0F5;
+    --text-primary: #C71585;
+    --text-secondary: #FF69B4;
+    --border-color: #FFB6C1;
+    --primary-color: #FF1493;
+    --primary-dark: #DB7093;
+    --user-icon-bg: #FFE4E1;
+}
+
+:root[data-theme="cyberpunk-neon"] {
+    --bg-primary: #0C001F;
+    --bg-secondary: #05000F;
+    --header-bg: #100028;
+    --text-primary: #00FFFF;
+    --text-secondary: #FF00FF;
+    --border-color: #FFFF00;
+    --primary-color: #39FF14;
+    --primary-dark: #2FDD0D;
+    --user-icon-bg: #20003B;
+}
+/* --- NEW THEMES CSS END --- */
 
 /* Глобальні стилі */
 * {
@@ -107,14 +139,93 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    overflow-x: hidden;
+html {
+    height: 100%; /* Важливо для overflow: hidden на body */
 }
 
-@keyframes glow {
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-primary); /* Основний фон тіла */
+    color: var(--text-primary);
+    min-height: 100%; /* Забезпечуємо, що body займає всю висоту */
+    overflow-x: hidden; /* Запобігаємо горизонтальному скролу */
+    position: relative; /* Для правильного позиціонування дочірніх елементів з z-index */
+    /* Застосовуємо градієнт безпосередньо до body */
+    background-image: linear-gradient(45deg, var(--bg-primary), var(--bg-secondary));
+    background-attachment: fixed; /* Щоб градієнт не скролився з контентом */
+}
+
+
+/* --- Рухомі елементи фону --- */
+.background-animation-container {
+    position: fixed; /* Фіксоване положення відносно viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Обрізаємо кулі, що виходять за межі */
+    z-index: -1; /* Розміщуємо позаду основного контенту */
+    pointer-events: none; /* Не перехоплюють події миші */
+}
+
+.floating-element {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15; /* Базова прозорість, буде переписана в анімації */
+    will-change: transform, opacity; /* Оптимізація анімації */
+}
+
+/* Перша куля */
+.orb1 {
+    width: 35vw; /* Розмір відносно ширини екрану */
+    height: 35vw;
+    max-width: 550px; /* Максимальний розмір */
+    max-height: 550px;
+    background: var(--primary-color);
+    filter: blur(100px); /* Розмиття для м'якості */
+    animation: driftAndPulse 40s infinite linear alternate;
+    left: 5%;
+    top: 10%;
+    /* --base-opacity задається через style в HTML */
+}
+
+/* Друга куля */
+.orb2 {
+    width: 25vw;
+    height: 25vw;
+    max-width: 400px;
+    max-height: 400px;
+    background: var(--primary-dark); /* Використовуємо темніший відтінок теми */
+    filter: blur(80px);
+    animation: driftAndPulse 30s infinite linear alternate;
+    animation-delay: -15s; /* Зсув початку анімації */
+    right: 10%;
+    bottom: 5%;
+}
+
+/* Третя куля */
+.orb3 {
+    width: 18vw;
+    height: 18vw;
+    max-width: 250px;
+    max-height: 250px;
+    background: var(--text-secondary);
+    filter: blur(60px);
+    animation: driftAndPulse 50s infinite linear alternate;
+    animation-delay: -5s;
+    left: 45%;
+    top: 40%;
+    /* --base-opacity для orb3 буде нижчою, тому використовуємо style в HTML */
+}
+
+
+/* Видаляємо старі ефекти світіння, якщо вони більше не потрібні */
+.glowEffect, .purpleGlow, .pinkGlow, .blueGlow, .neonBackground {
+    display: none; /* .neonBackground тепер не використовується як окремий div */
+}
+
+
+@keyframes glow { /* Залишено, якщо використовується для інших елементів */
     0% {
         box-shadow: 0 0 5px var(--primary-color);
     }
@@ -126,7 +237,7 @@ body {
     }
 }
 
-@keyframes pulse {
+@keyframes pulse { /* Залишено, якщо використовується для інших елементів */
     0% {
         transform: scale(1);
         opacity: 0.8;
@@ -141,20 +252,26 @@ body {
     }
 }
 
-@keyframes float {
+/* Анімація для плавного руху та пульсації фонових куль */
+@keyframes driftAndPulse {
     0% {
-        transform: translate(0, 0);
+        transform: translate(0px, 0px) scale(0.9) rotate(0deg);
+        opacity: calc(var(--base-opacity, 0.15) * 0.6); /* Трохи темніше на початку/кінці */
     }
     25% {
-        transform: translate(20px, -20px);
+        transform: translate(3vw, -5vh) scale(1) rotate(30deg);
+        opacity: calc(var(--base-opacity, 0.15) * 0.9);
     }
     50% {
-        transform: translate(0, 0);
+        transform: translate(-2vw, 4vh) scale(1.1) rotate(-20deg);
+        opacity: var(--base-opacity, 0.15); /* Повна базова прозорість в піку */
     }
     75% {
-        transform: translate(-20px, 20px);
+        transform: translate(-4vw, -3vh) scale(0.95) rotate(15deg);
+        opacity: calc(var(--base-opacity, 0.15) * 0.9);
     }
     100% {
-        transform: translate(0, 0);
+        transform: translate(0px, 0px) scale(0.9) rotate(0deg);
+        opacity: calc(var(--base-opacity, 0.15) * 0.6);
     }
 }
