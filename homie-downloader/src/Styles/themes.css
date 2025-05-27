@@ -1,0 +1,160 @@
+:root[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9f9f9;
+    --header-bg: #ffffff;
+    --text-primary: #000000;
+    --text-secondary: #606060;
+    --border-color: #4B0082;
+    --primary-color: #800080;
+    --primary-dark: #4B0082;
+    --user-icon-bg: #e5e5e5;
+}
+
+:root[data-theme="dark"] {
+    --bg-primary: #1A0023;
+    --bg-secondary: #2E0047;
+    --header-bg: #220033;
+    --text-primary: #ffffff;
+    --text-secondary: #D8BFD8;
+    --border-color: #4B0082;
+    --primary-color: #800080;
+    --primary-dark: #4B0082;
+    --user-icon-bg: #2A0033;
+}
+
+:root[data-theme="high-contrast"] {
+    --bg-primary: #000000;
+    --bg-secondary: #333333;
+    --header-bg: #000000;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --border-color: #ffffff;
+    --primary-color: #FF00FF;
+    --primary-dark: #CC00CC;
+    --user-icon-bg: #444444;
+}
+
+:root[data-theme="floral"] {
+    --bg-primary: #1C2526; 
+    --bg-secondary: #4A5859; 
+    --header-bg: #1C2526; 
+    --text-primary: #C7D0CC; 
+    --text-secondary: #7A8C8E; 
+    --border-color: #7A8C8E; 
+    --primary-color: #F0C05A; 
+    --primary-dark: #D3A53F; 
+    --user-icon-bg: #4A5859; 
+}
+
+:root[data-theme="eco"] {
+    --bg-primary: #E8F5E9; 
+    --bg-secondary: #C8E6C9; 
+    --header-bg: #E8F5E9; 
+    --text-primary: #1B5E20; 
+    --text-secondary: #2E7D32; 
+    --border-color: #A5D6A7; 
+    --primary-color: #4CAF50; 
+    --primary-dark: #388E3C; 
+    --user-icon-bg: #DCEDC8; 
+}
+
+/* Неоновий фон (removed neon effects, keeping as a placeholder for background styling) */
+.neonBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    background: var(--bg-secondary); /* Use secondary background instead of gradients */
+}
+
+/* Ефекти світіння (removed glow effects, replaced with simple shadows) */
+.glowEffect {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(10px);
+    opacity: 0.2;
+    animation: float 25s infinite linear;
+    background: var(--primary-color); /* Use primary color for a subtle effect */
+}
+
+.purpleGlow, .pinkGlow, .blueGlow {
+    display: none; /* Remove specific glow effects */
+}
+
+/* Сітка поверх фону */
+.gridOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(var(--border-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.5;
+}
+
+/* Глобальні стилі */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px var(--primary-color);
+    }
+    50% {
+        box-shadow: 0 0 10px var(--primary-color);
+    }
+    100% {
+        box-shadow: 0 0 5px var(--primary-color);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(20px, -20px);
+    }
+    50% {
+        transform: translate(0, 0);
+    }
+    75% {
+        transform: translate(-20px, 20px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+}

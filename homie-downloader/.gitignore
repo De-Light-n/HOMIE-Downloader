@@ -11,6 +11,7 @@
 # production
 /build
 
+.venv
 # misc
 .DS_Store
 .env.local
@@ -21,3 +22,114 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/  # Важливо! Ваша папка для завантажених відео
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+# Usually these files are written by a PyInstaller script; this is just a
+# placeholder file section to remind you that you need to create the .spec
+# file yourself.
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PEP 582; __pypackages__
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv/  # Ігноруємо папку віртуального оточення
+venv/
+ENV/
+env/
+
+# IDE / Editor specific
+.idea/
+.vscode/
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# OS specific
+.DS_Store  # macOS
+Thumbs.db  # Windows
