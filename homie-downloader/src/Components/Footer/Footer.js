@@ -51,14 +51,13 @@ function Footer() {
 
                 <div className="footer-contact">
                     <h4>CONTACTS</h4>
-                    <p>+38 067 987 65 43</p>
+                    <p>+38 066 666 66</p>
                     <p>
                         <a href="mailto:support@homiedownloader.com">support@homiedownloader.com</a>
                     </p>
                     <p>
-                        St. Technical, 25 <br/>
-                        Kyiv, Ukraine<br/>
-                        02000
+                        St. Pidarasiv, 3 <br/>
+                        Lviv, Ukraine<br/>
                     </p>
                 </div>
             </div>
