@@ -9,7 +9,6 @@ import neonY from './photo/neonY.png';
 
 
 
-
 function AboutUs() {
     return (
         <div className="about-us-page">
