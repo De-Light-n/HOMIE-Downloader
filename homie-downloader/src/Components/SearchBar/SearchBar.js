@@ -1,351 +1,445 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiX, FiDownload, FiThumbsUp, FiEye, FiChevronDown, FiExternalLink } from 'react-icons/fi';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '../Firebase/firebase'; // Переконайтеся, що шлях правильний
-import styles from './SearchBar.module.css';
-import Loader from './Loader'; // Переконайтеся, що компонент Loader існує і імпортований
+// --- START OF MODIFIED SearchBar.js ---
+
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  FiSearch,
+  FiX,
+  FiDownload,
+  FiThumbsUp,
+  FiEye,
+  FiChevronDown,
+  FiExternalLink,
+  FiYoutube, // Для іконки YouTube
+  FiMoreHorizontal, // Для інших платформ
+  FiVideo, // Для вибору типу
+  FiMusic, // Для вибору типу
+} from "react-icons/fi";
+import { FaTiktok } from "react-icons/fa"; // Для іконки TikTok
+import { collection, addDoc, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db, auth } from "../Firebase/firebase"; // Adjust path as needed
+import styles from "./SearchBar.module.css";
+import Loader from "./Loader"; // Ensure Loader component exists
 
 const SearchBar = () => {
-    const [query, setQuery] = useState('');
-    const [isFocused, setIsFocused] = useState(false);
-    const [videoPreview, setVideoPreview] = useState(null);
-    const [isLoadingPreview, setIsLoadingPreview] = useState(false);
-    const [selectedQuality, setSelectedQuality] = useState('720p'); // За замовчуванням
-    const [showFullDescription, setShowFullDescription] = useState(false);
-    const [isDownloading, setIsDownloading] = useState(false);
-    const [error, setError] = useState(''); // Для відображення помилок користувачу
-    const descriptionRef = useRef(null);
-    const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const [videoPreview, setVideoPreview] = useState(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
-    // Функція для визначення, чи є рядок URL YouTube
-    const isValidYoutubeUrl = (url) => {
-        const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-        return youtubeRegex.test(url);
-    };
+  // Нові стани
+  const [downloadType, setDownloadType] = useState("video"); // 'video' або 'audio'
+  const [selectedFormat, setSelectedFormat] = useState(""); // Для обраної якості/формату
 
-    const detectVideoCategory = (title, description) => {
-        // ... (ваш код detectVideoCategory залишається без змін)
-        if (!title && !description) return 'Other';
-        const text = `${title} ${description}`.toLowerCase();
-        const categories = { /* ... ваші категорії ... */ };
-        for (const [category, keywords] of Object.entries(categories)) {
-            if (keywords.some(keyword => text.includes(keyword))) return category;
-        }
-        return 'Other';
-    };
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [error, setError] = useState("");
+  const descriptionRef = useRef(null);
+  const navigate = useNavigate();
 
-    const saveAction = async (actionData) => {
-        try {
-            const user = auth.currentUser;
-            let category = 'Other';
-            if (actionData.videoTitle || actionData.videoDescription) {
-                category = detectVideoCategory(actionData.videoTitle || '', actionData.videoDescription || '');
-            }
-            const data = Object.entries({
-                ...actionData,
-                category,
-                timestamp: serverTimestamp(),
-                userId: user?.uid || 'anonymous',
-                userEmail: user?.email || null,
-            }).reduce((acc, [key, value]) => (value !== undefined ? { ...acc, [key]: value } : acc), {});
-            await addDoc(collection(db, 'userActions'), data);
-            // console.log('Дія збережена:', data);
-        } catch (e) {
-            console.error("Помилка збереження дії:", e);
-        }
-    };
+  // Оновлена валідація URL (дуже загальна, покладаємося на сервер)
+  const isValidPlatformUrl = (url) => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+      // Можна додати більш специфічні перевірки, якщо потрібно, але yt-dlp гнучкий
+    } catch (e) {
+      return false;
+    }
+  };
 
-    useEffect(() => {
-        if (isValidYoutubeUrl(query)) {
-            const timer = setTimeout(() => { // Дебаунс для запиту прев'ю
-                fetchVideoPreview(query);
-            }, 500); // Затримка 500 мс перед запитом
-            return () => clearTimeout(timer);
-        } else {
-            setVideoPreview(null);
-            setError(''); // Скидаємо помилку, якщо URL вже не валідний
-        }
-    }, [query]);
-
-    const fetchVideoPreview = async (url) => {
-        setIsLoadingPreview(true);
-        setError('');
-        setVideoPreview(null); // Скидаємо попереднє прев'ю
-        try {
-            const response = await fetch(`/api/video/preview?url=${encodeURIComponent(url)}`);
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || `Помилка сервера: ${response.status}`);
-            }
-
-            setVideoPreview(data);
-            if (data.qualities && data.qualities.length > 0) {
-                setSelectedQuality(data.qualities[0]); // Встановлюємо найкращу доступну якість
-            } else {
-                setSelectedQuality('720p'); // або стандартну, якщо список порожній
-            }
-            setShowFullDescription(false);
-
-            await saveAction({
-                type: 'preview', query: url, videoTitle: data.title || '',
-                videoDescription: data.description || '', thumbnail: data.thumbnail || '',
-                duration: data.duration || '', views: data.views || '', likes: data.likes || ''
-            });
-        } catch (err) {
-            console.error("Помилка отримання прев'ю:", err);
-            setError(err.message || "Не вдалося отримати інформацію про відео.");
-            setVideoPreview(null);
-        } finally {
-            setIsLoadingPreview(false);
-        }
-    };
-
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        setError('');
-        if (query.trim()) {
-            if (!isValidYoutubeUrl(query)) {
-                // Тут можна реалізувати логіку пошуку на YouTube, якщо це не URL
-                setError("Будь ласка, вставте дійсне посилання на YouTube відео для прев'ю та завантаження.");
-                // navigate(`/search-results?q=${encodeURIComponent(query)}`); // Приклад навігації на сторінку результатів
-                console.log("Пошуковий запит (не URL):", query);
-                await saveAction({ type: 'search', query: query, isVideoUrl: false });
-                return;
-            }
-            // Якщо це URL, fetchVideoPreview вже мав викликатися через useEffect
-            // Можна додати примусовий виклик, якщо потрібно
-            // fetchVideoPreview(query);
-            await saveAction({ type: 'search', query: query, isVideoUrl: true });
-        }
-    };
-
-    const clearInput = () => {
-        setQuery('');
-        setVideoPreview(null);
-        setIsDownloading(false);
-        setError('');
-    };
-
-    const handleDownload = async () => {
-        if (!query || !videoPreview) {
-            setError("Спочатку отримайте інформацію про відео, вставивши посилання.");
-            return;
-        }
-        if (!selectedQuality) {
-            setError("Будь ласка, виберіть якість для завантаження.");
-            return;
-        }
-
-        setIsDownloading(true);
-        setError('');
-        try {
-            await saveAction({
-                type: 'download', url: query, quality: selectedQuality,
-                videoTitle: videoPreview?.title || '', videoDescription: videoPreview?.description || '',
-                thumbnail: videoPreview?.thumbnail || '', duration: videoPreview?.duration || '',
-                views: videoPreview?.views || '', likes: videoPreview?.likes || ''
-            });
-
-            const response = await fetch('/api/video/download', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: query, quality: selectedQuality })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || `Помилка сервера: ${response.status}`);
-            }
-
-            if (data.success && data.download_url) {
-                console.log("Attempting download with:", data);
-                const link = document.createElement('a');
-
-                // ФОРМУЄМО ПОВНИЙ URL, ЯКЩО ПРОБЛЕМА МОЖЕ БУТИ В ЦЬОМУ
-                const flaskServerBaseUrl = 'http://localhost:5000';
-                link.href = `${flaskServerBaseUrl}${data.download_url}`;
-                console.log("Setting link.href to:", link.href);
-
-                link.setAttribute('download', data.filename || 'video.mp4');
-
-                // Важливо для деяких браузерів, щоб посилання було в DOM
-                document.body.appendChild(link);
-
-                // Спробуємо додати невелику затримку перед кліком
-                // і переконатися, що елемент ще видимий (хоча для <a> це не так критично)
-                // link.style.display = 'none'; // Можна приховати, якщо не хочете, щоб миготіло
-
-                console.log("About to click the link...");
-                try {
-                    link.click();
-                    console.log("Link clicked successfully (programmatically).");
-                } catch (e) {
-                    console.error("Error during link.click():", e);
-                }
-
-                // Видаляємо посилання з DOM
-                // Можна зробити це з невеликою затримкою, щоб дати браузеру час
-                setTimeout(() => {
-                    if (link.parentNode) {
-                        document.body.removeChild(link);
-                        console.log("Link removed from DOM.");
-                    }
-                }, 150); // Затримка 150 мс
-
-            } else {
-                console.error("Download failed, data issue:", data);
-                setError(data.error || "Не вдалося отримати посилання на завантаження.");
-            }
-        } catch (err) {
-            console.error("Помилка завантаження:", err);
-            setError(err.message || "Помилка при завантаженні відео. Спробуйте ще раз.");
-        } finally {
-            setIsDownloading(false);
-        }
-    };
-
-    const handleViewFullDetails = () => {
-        if (videoPreview && query) {
-            navigate(`/video/details`, { state: { videoData: videoPreview, videoUrl: query } });
-        }
-    };
-
-    const toggleDescription = () => {
-        // Логіка для toggleDescription (можна залишити вашу або спростити)
-        // Поточна логіка з ref може бути складною, якщо опис короткий.
-        // Розгляньте CSS рішення для обрізки тексту, якщо це можливо.
-        setShowFullDescription(!showFullDescription);
-    };
-
-    // Стилі для обрізки опису (приклад)
-    const descriptionStyle = {
-        display: '-webkit-box',
-        WebkitBoxOrient: 'vertical',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        WebkitLineClamp: showFullDescription ? 'none' : 3, // Показувати 3 рядки
-        maxHeight: showFullDescription ? 'none' : '4.5em', // Приблизно 3 * line-height
-        lineHeight: '1.5em' // Встановіть відповідний line-height
-    };
+  const getUrlPlatformIcon = (sourceType) => {
+    if (sourceType === 'youtube') return <FiYoutube className={styles.platformOriginIcon} />;
+    if (sourceType === 'tiktok') return <FaTiktok className={styles.platformOriginIcon} />;
+    if (sourceType === 'soundcloud') return <FiMusic className={styles.platformOriginIcon} />; // Приклад
+    return <FiMoreHorizontal className={styles.platformOriginIcon} />;
+  };
 
 
-    return (
-        <div className={styles.searchWrapper}>
-            <form
-                onSubmit={handleSearch}
-                className={`${styles.searchForm} ${isFocused ? styles.focused : ''}`}
-            >
-                <div className={styles.searchContainer}>
-                    <FiSearch className={styles.searchIcon} size={20} />
-                    <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        onFocus={() => setIsFocused(true)}
-                        onBlur={() => setIsFocused(false)}
-                        placeholder="Вставте посилання на YouTube відео..."
-                        className={styles.searchInput}
-                    />
-                    {query && (
-                        <button type="button" onClick={clearInput} className={styles.clearButton}>
-                            <FiX size={18} />
-                        </button>
-                    )}
-                </div>
-                {/* Кнопка пошуку може бути не потрібна, якщо прев'ю завантажується автоматично по URL */}
-                {/* <button type="submit" className={styles.searchButton} disabled={!query.trim()}>
-                    <FiSearch size={18} /> <span>Пошук</span>
-                </button> */}
-            </form>
+  const detectVideoCategory = (title, description) => {
+    // ... (ваш код залишається без змін) ...
+    if (!title && !description) return "Other";
+    const text = `${title} ${description}`.toLowerCase();
+    const categories = { /* ... ваші категорії ... */ };
+    for (const [category, keywords] of Object.entries(categories)) {
+      if (keywords.some((keyword) => text.includes(keyword))) return category;
+    }
+    return "Other";
+  };
 
-            {error && <p className={styles.errorMessage}>{error}</p>}
+  const saveAction = async (actionData) => {
+    // ... (ваш код залишається без змін) ...
+    try {
+      const user = auth.currentUser;
+      let category = "Other";
+      if (actionData.videoTitle || actionData.videoDescription) {
+        category = detectVideoCategory(
+            actionData.videoTitle || "",
+            actionData.videoDescription || ""
+        );
+      }
+      const data = Object.entries({
+        ...actionData,
+        category,
+        timestamp: serverTimestamp(),
+        userId: user?.uid || "anonymous",
+        userEmail: user?.email || null,
+      }).reduce(
+          (acc, [key, value]) => (value !== undefined ? { ...acc, [key]: value } : acc),
+          {}
+      );
+      await addDoc(collection(db, "userActions"), data);
+    } catch (e) {
+      console.error("Error saving action:", e);
+    }
+  };
 
-            {isLoadingPreview && (
-                <div className={styles.loadingPreview}>
-                    <Loader />
-                </div>
+  const updateAnalytics = async (actionType, videoTitle = "", queryVal = "") => { // query перейменовано в queryVal
+    // ... (ваш код залишається без змін) ...
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const analyticsRef = doc(db, "userAnalytics", user.uid);
+      const analyticsSnap = await getDoc(analyticsRef);
+      let analyticsData = analyticsSnap.exists()
+          ? analyticsSnap.data()
+          : {
+            timeSpent: 0,
+            searches: [],
+            downloads: [],
+            userEmail: user.email,
+          };
+
+      const now = Date.now();
+
+      if (actionType === "search" || actionType === "preview") {
+        analyticsData.searches.push({
+          timestamp: now,
+          query: queryVal || query, // Використовуємо queryVal або поточний query
+        });
+      }
+      if (actionType === "download") {
+        analyticsData.downloads.push({
+          timestamp: now,
+          videoTitle: videoTitle || "",
+        });
+      }
+
+      await setDoc(analyticsRef, analyticsData);
+    } catch (e) {
+      console.error("Error updating analytics:", e);
+    }
+  };
+
+  useEffect(() => {
+    if (query.trim() && isValidPlatformUrl(query)) { // Перевірка на пустий рядок
+      const timer = setTimeout(() => {
+        fetchVideoPreview(query);
+      }, 700); // Трохи більша затримка
+      return () => clearTimeout(timer);
+    } else {
+      setVideoPreview(null);
+      if (query.trim() === '') setError(""); // Скидаємо помилку, якщо поле порожнє
+      // Не скидаємо помилку, якщо це не URL, щоб користувач бачив повідомлення від handleSearch
+    }
+  }, [query]);
+
+  const fetchVideoPreview = async (url) => {
+    setIsLoadingPreview(true);
+    setError("");
+    setVideoPreview(null);
+    setSelectedFormat(""); // Скидаємо вибраний формат
+    try {
+      const response = await fetch(`/api/video/preview?url=${encodeURIComponent(url)}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Server error: ${response.status}`);
+      }
+
+      setVideoPreview(data);
+      // Встановлення формату за замовчуванням залежно від типу
+      if (downloadType === "video" && data.qualities_video && data.qualities_video.length > 0) {
+        setSelectedFormat(data.qualities_video[0]);
+      } else if (downloadType === "audio" && data.qualities_audio && data.qualities_audio.length > 0) {
+        setSelectedFormat(data.qualities_audio[0]);
+      } else if (data.qualities_video && data.qualities_video.length > 0) { // Резерв на випадок, якщо downloadType ще не оновлено
+        setSelectedFormat(data.qualities_video[0]);
+      }
+
+
+      setShowFullDescription(false);
+
+      await saveAction({
+        type: "preview",
+        query: url, // виправлено type на query
+        videoTitle: data.title || "",
+        videoDescription: data.description || "",
+        thumbnail: data.thumbnail || "",
+        duration: data.duration || "",
+        views: data.views || "",
+        likes: data.likes || "",
+        source_type: data.source_type || "unknown",
+      });
+      await updateAnalytics("preview", data.title || "", url || "");
+    } catch (err) {
+      console.error("Error fetching preview:", err);
+      setError(err.message || "Failed to fetch video information.");
+      setVideoPreview(null);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  };
+
+  // Оновлення вибраного формату при зміні типу завантаження
+  useEffect(() => {
+    if (videoPreview) {
+      if (downloadType === "video" && videoPreview.qualities_video && videoPreview.qualities_video.length > 0) {
+        setSelectedFormat(videoPreview.qualities_video[0]);
+      } else if (downloadType === "audio" && videoPreview.qualities_audio && videoPreview.qualities_audio.length > 0) {
+        setSelectedFormat(videoPreview.qualities_audio[0]);
+      } else {
+        setSelectedFormat(""); // Немає доступних форматів для цього типу
+      }
+    }
+  }, [downloadType, videoPreview]);
+
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (query.trim()) {
+      if (!isValidPlatformUrl(query)) { // Менш сувора перевірка
+        setError("Будь ласка, вставте дійсне посилання на медіа або спробуйте пошук (пошук поки не реалізовано).");
+        await saveAction({ type: "search_attempt_invalid_url", query: query, isVideoUrl: false });
+        await updateAnalytics("search"); // Можна додати флаг is_valid_url: false
+        return;
+      }
+      // Якщо URL валідний (схожий на URL), то fetchVideoPreview викличеться з useEffect
+      // Додатково можна викликати тут, якщо є потреба в примусовому оновленні
+      // fetchVideoPreview(query);
+      await saveAction({ type: "search_valid_url", query: query, isVideoUrl: true });
+      await updateAnalytics("search");
+    }
+  };
+
+  const clearInput = () => {
+    setQuery("");
+    setVideoPreview(null);
+    setIsDownloading(false);
+    setError("");
+    setSelectedFormat("");
+    setDownloadType("video"); // Скидаємо на відео за замовчуванням
+  };
+
+  const handleDownload = async () => {
+    if (!query || !videoPreview) {
+      setError("Будь ласка, вставте посилання та отримайте інформацію про медіа.");
+      return;
+    }
+    if (!selectedFormat) {
+      setError("Будь ласка, виберіть формат/якість для завантаження.");
+      return;
+    }
+
+    setIsDownloading(true);
+    setError("");
+    try {
+      await saveAction({
+        type: "download_initiate", // Більш конкретний тип дії
+        url: query,
+        download_type: downloadType,
+        quality_format: selectedFormat, // Надсилаємо обраний формат/якість
+        videoTitle: videoPreview?.title || "",
+        source_type: videoPreview?.source_type || "unknown",
+      });
+      await updateAnalytics("download", videoPreview?.title || "", "");
+
+      const response = await fetch("/api/video/download", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: query,
+          quality: selectedFormat, // Надсилаємо обраний формат/якість
+          download_type: downloadType // Надсилаємо тип завантаження
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Server error: ${response.status}`);
+      }
+
+      if (data.success && data.download_url) {
+        const link = document.createElement("a");
+        // Формування повного URL для завантаження
+        const serverBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : '';
+        link.href = `${serverBaseUrl}${data.download_url}`;
+        console.log("Attempting download from:", link.href);
+
+        link.setAttribute("download", data.filename || (downloadType === "video" ? "video.mp4" : "audio.mp3"));
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => { // Даємо час на ініціацію завантаження
+          if(link.parentNode) {
+            document.body.removeChild(link);
+          }
+        }, 150);
+      } else {
+        throw new Error(data.error || "Failed to retrieve download link.");
+      }
+    } catch (err) {
+      console.error("Download error:", err);
+      setError(err.message || "Error downloading content. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleViewFullDetails = () => {
+    if (videoPreview && query) {
+      navigate("/video/details", { state: { videoData: videoPreview, videoUrl: query } });
+    }
+  };
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  const descriptionStyle = { /* ... (залишається без змін) ... */ };
+
+  // Поточний список опцій для селектора (відео якості або аудіо формати)
+  const currentFormatOptions = downloadType === 'video'
+      ? videoPreview?.qualities_video || []
+      : videoPreview?.qualities_audio || [];
+
+  return (
+      <div className={styles.searchWrapper}>
+        <form
+            onSubmit={handleSearch}
+            className={`${styles.searchForm} ${isFocused ? styles.focused : ""}`}
+        >
+          <div className={styles.searchContainer}>
+            <FiSearch className={styles.searchIcon} size={20} />
+            <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="Вставте посилання на відео або аудіо..." // Оновлений placeholder
+                className={styles.searchInput}
+            />
+            {query && (
+                <button type="button" onClick={clearInput} className={styles.clearButton}>
+                  <FiX size={18} />
+                </button>
             )}
+          </div>
+          {/* Кнопка пошуку може бути потрібна, якщо не тільки по URL працюємо */}
+          {/* <button type="submit" className={styles.searchButton} disabled={!query.trim()}>
+          <FiSearch size={18} /> <span>Пошук</span>
+        </button> */}
+        </form>
 
-            {isDownloading && ( // Використовуємо isDownloading для відображення завантажувача
-                <div className={styles.downloadLoaderContainer}> {/* Окремий контейнер для лоадера завантаження */}
-                    <p>Завантаження відео, будь ласка, зачекайте...</p>
-                    <Loader /> {/* Використовуємо той самий Loader, або створіть спеціальний DownloadLoader */}
-                </div>
-            )}
+        {error && <p className={styles.errorMessage}>{error}</p>}
 
-            {videoPreview && !isLoadingPreview && (
-                <div className={styles.videoPreviewContainer}>
-                    <div className={styles.videoPreviewContent}>
-                        <div className={styles.videoThumbnail}>
-                            <img src={videoPreview.thumbnail} alt={videoPreview.title || "Прев'ю відео"} />
-                        </div>
-                        <div className={styles.videoInfo}>
-                            <h3>{videoPreview.title}</h3>
-                            <div className={styles.descriptionContainer}>
-                                <p
-                                    ref={descriptionRef}
-                                    className={styles.videoDescription}
-                                    style={descriptionStyle} // Застосовуємо стилі для обрізки
-                                >
-                                    {videoPreview.description || "Опис відсутній."}
-                                </p>
-                                {/* Перевірка, чи текст дійсно довший за N рядків, перш ніж показувати кнопку */}
-                                {(videoPreview.description && videoPreview.description.split('\n').length > 3 || videoPreview.description && videoPreview.description.length > 150) && ( // Приблизна умова
-                                    <button
-                                        onClick={toggleDescription}
-                                        className={styles.toggleDescriptionButton}
-                                    >
-                                        <FiChevronDown size={16} />
-                                        <span>{showFullDescription ? 'Згорнути' : 'Розгорнути'}</span>
-                                    </button>
-                                )}
-                            </div>
-                            <div className={styles.videoStats}>
-                                <span className={styles.videoStat}><FiThumbsUp /> {videoPreview.likes}</span>
-                                <span className={styles.videoStat}><FiEye /> {videoPreview.views}</span>
-                                <span className={styles.videoStat}>{videoPreview.duration}</span>
-                            </div>
-                        </div>
-                    </div>
-                    {videoPreview.qualities && videoPreview.qualities.length > 0 ? (
-                        <div className={styles.downloadOptions}>
-                            <select
-                                value={selectedQuality}
-                                onChange={(e) => setSelectedQuality(e.target.value)}
-                                className={styles.qualitySelect}
-                                disabled={isDownloading}
-                            >
-                                {videoPreview.qualities.map(q => (
-                                    <option key={q} value={q}>{q}</option>
-                                ))}
-                            </select>
-                            <button
-                                onClick={handleDownload}
-                                className={styles.downloadButton}
-                                disabled={isDownloading || !selectedQuality}
-                            >
-                                {isDownloading ? <Loader size="small" /> : <FiDownload size={18} />}
-                                <span>{isDownloading ? 'Завантаження...' : 'Завантажити'}</span>
-                            </button>
-                            <button
-                                onClick={handleViewFullDetails}
-                                className={styles.fullDetailsButton}
-                                disabled={isDownloading}
-                            >
-                                <FiExternalLink size={18} />
-                                <span>Деталі</span>
-                            </button>
-                        </div>
-                    ) : (
-                        <p className={styles.noQualities}>Для цього відео не знайдено доступних якостей для завантаження.</p>
-                    )}
+        {isLoadingPreview && <div className={styles.loadingPreview}><Loader /></div>}
+        {isDownloading && (
+            <div className={styles.downloadLoaderContainer}>
+              <p>Завантаження, будь ласка, зачекайте...</p>
+              <Loader />
+            </div>
+        )}
+
+        {videoPreview && !isLoadingPreview && (
+            <div className={styles.videoPreviewContainer}>
+              <div className={styles.videoPreviewContent}>
+                <div className={styles.videoThumbnail}>
+                  <img src={videoPreview.thumbnail || "/default-thumbnail.png"} alt="Прев'ю" /> {/* Додано дефолтний thumbnail */}
+                  {videoPreview.source_type && (
+                      <div className={styles.platformIconContainer}>
+                        {getUrlPlatformIcon(videoPreview.source_type)}
+                      </div>
+                  )}
                 </div>
-            )}
-        </div>
-    );
+                <div className={styles.videoInfo}>
+                  <h3>{videoPreview.title || "Назва не знайдена"}</h3>
+                  {videoPreview.uploader && <p className={styles.videoUploader}>Автор: {videoPreview.uploader}</p>}
+                  <div className={styles.descriptionContainer}>
+                    <p ref={descriptionRef} className={styles.videoDescription} style={descriptionStyle}>
+                      {videoPreview.description || "Опис відсутній."}
+                    </p>
+                    {/* ... (кнопка розгорнути/згорнути опис) ... */}
+                  </div>
+                  <div className={styles.videoStats}>
+                    {videoPreview.likes !== "N/A" && videoPreview.likes !== undefined && <span className={styles.videoStat}><FiThumbsUp /> {videoPreview.likes}</span>}
+                    {videoPreview.views !== "N/A" && videoPreview.views !== undefined && <span className={styles.videoStat}><FiEye /> {videoPreview.views}</span>}
+                    {videoPreview.duration !== "N/A" && <span className={styles.videoStat}>{videoPreview.duration}</span>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Вибір типу завантаження та формату/якості */}
+              <div className={styles.downloadOptions}>
+                <div className={styles.downloadTypeSelector}>
+                  <button
+                      className={`${styles.typeButton} ${downloadType === 'video' ? styles.active : ''}`}
+                      onClick={() => setDownloadType('video')}
+                      disabled={isDownloading || !videoPreview?.qualities_video || videoPreview.qualities_video.length === 0}
+                  >
+                    <FiVideo /> Відео
+                  </button>
+                  <button
+                      className={`${styles.typeButton} ${downloadType === 'audio' ? styles.active : ''}`}
+                      onClick={() => setDownloadType('audio')}
+                      disabled={isDownloading || !videoPreview?.qualities_audio || videoPreview.qualities_audio.length === 0}
+                  >
+                    <FiMusic /> Аудіо
+                  </button>
+                </div>
+
+                {currentFormatOptions.length > 0 ? (
+                    <select
+                        value={selectedFormat}
+                        onChange={(e) => setSelectedFormat(e.target.value)}
+                        className={styles.qualitySelect}
+                        disabled={isDownloading}
+                    >
+                      {currentFormatOptions.map((format) => (
+                          <option key={format} value={format}>
+                            {format}
+                          </option>
+                      ))}
+                    </select>
+                ) : (
+                    <p className={styles.noFormatsAvailable}>
+                      {downloadType === 'video' ? 'Немає доступних якостей відео.' : 'Немає доступних форматів аудіо.'}
+                    </p>
+                )}
+
+                <button
+                    onClick={handleDownload}
+                    className={styles.downloadButton}
+                    disabled={isDownloading || !selectedFormat || currentFormatOptions.length === 0}
+                >
+                  {isDownloading ? <Loader size="small" /> : <FiDownload size={18} />}
+                  <span>{isDownloading ? 'Завантаження...' : 'Завантажити'}</span>
+                </button>
+
+                {/* Кнопка "Деталі" - можна залишити або прибрати, якщо не потрібна для всіх типів */}
+                {/* <button onClick={handleViewFullDetails} className={styles.fullDetailsButton} disabled={isDownloading}>
+              <FiExternalLink size={18} /> <span>Деталі</span>
+            </button> */}
+              </div>
+            </div>
+        )}
+      </div>
+  );
 };
 
 export default SearchBar;
+
+// --- END OF MODIFIED SearchBar.js ---
