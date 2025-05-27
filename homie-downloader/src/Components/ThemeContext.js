@@ -2,28 +2,40 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import {
     oceanicBlissTheme,
     crimsonNightTheme,
-    // --- NEW THEME IMPORTS ---
     halloweenTheme,
     horrorTheme,
     helloKittyTheme,
-    cyberpunkNeonTheme
+    cyberpunkNeonTheme,
+    noirCinemaTheme,
+    sunsetGlowTheme,
+    vintagePaperTheme,
+    deepForestTheme,
+    // --- HORROR THEMES ROUND 2 IMPORTS ---
+    staticVoidTheme,
+    eldritchDepthsTheme
 } from '../Styles/theme';
 
 const themes = [
     { name: 'oceanic-bliss', styles: oceanicBlissTheme },
     { name: 'crimson-night', styles: crimsonNightTheme },
-    // --- NEW THEMES ADDED TO THEMES ARRAY ---
     { name: 'halloween', styles: halloweenTheme },
     { name: 'horror', styles: horrorTheme },
     { name: 'hello-kitty', styles: helloKittyTheme },
     { name: 'cyberpunk-neon', styles: cyberpunkNeonTheme },
+    { name: 'noir-cinema', styles: noirCinemaTheme },
+    { name: 'sunset-glow', styles: sunsetGlowTheme },
+    { name: 'vintage-paper', styles: vintagePaperTheme },
+    { name: 'deep-forest', styles: deepForestTheme },
+    // --- HORROR THEMES ROUND 2 ADDED TO THEMES ARRAY ---
+    { name: 'static-void', styles: staticVoidTheme },
+    { name: 'eldritch-depths', styles: eldritchDepthsTheme },
 ];
 
 const getSystemTheme = () => {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
+        return 'crimson-night'; // Example: default dark theme
     }
-    return 'light';
+    return 'oceanic-bliss'; // Example: default light theme
 };
 
 const ThemeContext = createContext();
@@ -48,9 +60,11 @@ export function ThemeProvider({ children }) {
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const handleChange = () => {
-            const newSystemTheme = getSystemTheme();
-            if (!localStorage.getItem('theme')) { // Only set if no theme preference is saved
-                setTheme(newSystemTheme);
+            if (!localStorage.getItem('theme')) {
+                const newSystemThemeName = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'crimson-night' : 'oceanic-bliss';
+                if (themes.some(t => t.name === newSystemThemeName)) {
+                    setTheme(newSystemThemeName);
+                }
             }
         };
 
