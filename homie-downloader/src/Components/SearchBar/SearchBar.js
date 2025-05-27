@@ -14,7 +14,14 @@ import {
   FiMusic,
 } from "react-icons/fi";
 import { FaTiktok } from "react-icons/fa";
-import { collection, addDoc, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db, auth } from "../Firebase/firebase";
 import styles from "./SearchBar.module.css";
 import Loader from "./Loader";
@@ -43,16 +50,21 @@ const SearchBar = () => {
   };
 
   const getUrlPlatformIcon = (sourceType) => {
-    if (sourceType === 'youtube') return <FiYoutube className={styles.platformOriginIcon} />;
-    if (sourceType === 'tiktok') return <FaTiktok className={styles.platformOriginIcon} />;
-    if (sourceType === 'soundcloud') return <FiMusic className={styles.platformOriginIcon} />;
+    if (sourceType === "youtube")
+      return <FiYoutube className={styles.platformOriginIcon} />;
+    if (sourceType === "tiktok")
+      return <FaTiktok className={styles.platformOriginIcon} />;
+    if (sourceType === "soundcloud")
+      return <FiMusic className={styles.platformOriginIcon} />;
     return <FiMoreHorizontal className={styles.platformOriginIcon} />;
   };
 
   const detectVideoCategory = (title, description) => {
     if (!title && !description) return "Other";
     const text = `${title} ${description}`.toLowerCase();
-    const categories = { /* ... ваші категорії ... */ };
+    const categories = {
+      /* ... ваші категорії ... */
+    };
     for (const [category, keywords] of Object.entries(categories)) {
       if (keywords.some((keyword) => text.includes(keyword))) return category;
     }
@@ -76,7 +88,8 @@ const SearchBar = () => {
         userId: user?.uid || "anonymous",
         userEmail: user?.email || null,
       }).reduce(
-        (acc, [key, value]) => (value !== undefined ? { ...acc, [key]: value } : acc),
+        (acc, [key, value]) =>
+          value !== undefined ? { ...acc, [key]: value } : acc,
         {}
       );
       await addDoc(collection(db, "userActions"), data);
@@ -85,7 +98,11 @@ const SearchBar = () => {
     }
   };
 
-  const updateAnalytics = async (actionType, videoTitle = "", queryVal = "") => {
+  const updateAnalytics = async (
+    actionType,
+    videoTitle = "",
+    queryVal = ""
+  ) => {
     try {
       const user = auth.currentUser;
       if (!user) return;
@@ -95,11 +112,11 @@ const SearchBar = () => {
       let analyticsData = analyticsSnap.exists()
         ? analyticsSnap.data()
         : {
-          timeSpent: 0,
-          searches: [],
-          downloads: [],
-          userEmail: user.email,
-        };
+            timeSpent: 0,
+            searches: [],
+            downloads: [],
+            userEmail: user.email,
+          };
 
       const now = Date.now();
 
@@ -131,7 +148,7 @@ const SearchBar = () => {
     } else {
       setVideoPreview(null);
       setShowPreview(true);
-      if (query.trim() === '') setError("");
+      if (query.trim() === "") setError("");
     }
   }, [query]);
 
@@ -141,7 +158,9 @@ const SearchBar = () => {
     setVideoPreview(null);
     setSelectedFormat("");
     try {
-      const response = await fetch(`/api/video/preview?url=${encodeURIComponent(url)}`);
+      const response = await fetch(
+        `/api/video/preview?url=${encodeURIComponent(url)}`
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -149,9 +168,17 @@ const SearchBar = () => {
       }
 
       setVideoPreview(data);
-      if (downloadType === "video" && data.qualities_video && data.qualities_video.length > 0) {
+      if (
+        downloadType === "video" &&
+        data.qualities_video &&
+        data.qualities_video.length > 0
+      ) {
         setSelectedFormat(data.qualities_video[0]);
-      } else if (downloadType === "audio" && data.qualities_audio && data.qualities_audio.length > 0) {
+      } else if (
+        downloadType === "audio" &&
+        data.qualities_audio &&
+        data.qualities_audio.length > 0
+      ) {
         setSelectedFormat(data.qualities_audio[0]);
       } else if (data.qualities_video && data.qualities_video.length > 0) {
         setSelectedFormat(data.qualities_video[0]);
@@ -182,9 +209,17 @@ const SearchBar = () => {
 
   useEffect(() => {
     if (videoPreview) {
-      if (downloadType === "video" && videoPreview.qualities_video && videoPreview.qualities_video.length > 0) {
+      if (
+        downloadType === "video" &&
+        videoPreview.qualities_video &&
+        videoPreview.qualities_video.length > 0
+      ) {
         setSelectedFormat(videoPreview.qualities_video[0]);
-      } else if (downloadType === "audio" && videoPreview.qualities_audio && videoPreview.qualities_audio.length > 0) {
+      } else if (
+        downloadType === "audio" &&
+        videoPreview.qualities_audio &&
+        videoPreview.qualities_audio.length > 0
+      ) {
         setSelectedFormat(videoPreview.qualities_audio[0]);
       } else {
         setSelectedFormat("");
@@ -197,12 +232,22 @@ const SearchBar = () => {
     setError("");
     if (query.trim()) {
       if (!isValidPlatformUrl(query)) {
-        setError("Please insert a valid media link or try a search (search not yet implemented).");
-        await saveAction({ type: "search_attempt_invalid_url", query: query, isVideoUrl: false });
+        setError(
+          "Please insert a valid media link or try a search (search not yet implemented)."
+        );
+        await saveAction({
+          type: "search_attempt_invalid_url",
+          query: query,
+          isVideoUrl: false,
+        });
         await updateAnalytics("search");
         return;
       }
-      await saveAction({ type: "search_valid_url", query: query, isVideoUrl: true });
+      await saveAction({
+        type: "search_valid_url",
+        query: query,
+        isVideoUrl: true,
+      });
       await updateAnalytics("search");
     }
   };
@@ -247,7 +292,7 @@ const SearchBar = () => {
         body: JSON.stringify({
           url: query,
           quality: selectedFormat,
-          download_type: downloadType
+          download_type: downloadType,
         }),
       });
 
@@ -259,11 +304,16 @@ const SearchBar = () => {
 
       if (data.success && data.download_url) {
         const link = document.createElement("a");
-        const serverBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000' : '';
+        const serverBaseUrl =
+          process.env.NODE_ENV === "development" ? "http://localhost:5000" : "";
         link.href = `${serverBaseUrl}${data.download_url}`;
         console.log("Attempting download from:", link.href);
 
-        link.setAttribute("download", data.filename || (downloadType === "video" ? "video.mp4" : "audio.mp3"));
+        link.setAttribute(
+          "download",
+          data.filename ||
+            (downloadType === "video" ? "video.mp4" : "audio.mp3")
+        );
         document.body.appendChild(link);
         link.click();
         setTimeout(() => {
@@ -285,7 +335,9 @@ const SearchBar = () => {
 
   const handleViewFullDetails = () => {
     if (videoPreview && query) {
-      navigate("/video/details", { state: { videoData: videoPreview, videoUrl: query } });
+      navigate("/video/details", {
+        state: { videoData: videoPreview, videoUrl: query },
+      });
     }
   };
 
@@ -295,9 +347,10 @@ const SearchBar = () => {
 
   const descriptionStyle = {};
 
-  const currentFormatOptions = downloadType === 'video'
-    ? videoPreview?.qualities_video || []
-    : videoPreview?.qualities_audio || [];
+  const currentFormatOptions =
+    downloadType === "video"
+      ? videoPreview?.qualities_video || []
+      : videoPreview?.qualities_audio || [];
 
   return (
     <div className={styles.searchWrapper}>
@@ -317,7 +370,11 @@ const SearchBar = () => {
             className={styles.searchInput}
           />
           {query && (
-            <button type="button" onClick={clearInput} className={styles.clearButton}>
+            <button
+              type="button"
+              onClick={clearInput}
+              className={styles.clearButton}
+            >
               <FiX size={18} />
             </button>
           )}
@@ -344,7 +401,10 @@ const SearchBar = () => {
         <div className={styles.videoPreviewContainer}>
           <div className={styles.videoPreviewContent}>
             <div className={styles.videoThumbnail}>
-              <img src={videoPreview.thumbnail || "/default-thumbnail.png"} alt="Прев'ю" />
+              <img
+                src={videoPreview.thumbnail || "/default-thumbnail.png"}
+                alt="Прев'ю"
+              />
               {videoPreview.source_type && (
                 <div className={styles.platformIconContainer}>
                   {getUrlPlatformIcon(videoPreview.source_type)}
@@ -353,24 +413,38 @@ const SearchBar = () => {
             </div>
             <div className={styles.videoInfo}>
               <h3>{videoPreview.title || "Name not found"}</h3>
-              {videoPreview.uploader && <p className={styles.videoUploader}>Автор: {videoPreview.uploader}</p>}
+              {videoPreview.uploader && (
+                <p className={styles.videoUploader}>
+                  Автор: {videoPreview.uploader}
+                </p>
+              )}
               <div className={styles.descriptionContainer}>
-                <p ref={descriptionRef} className={styles.videoDescription} style={descriptionStyle}>
+                <p
+                  ref={descriptionRef}
+                  className={styles.videoDescription}
+                  style={descriptionStyle}
+                >
                   {videoPreview.description || "There is no description."}
                 </p>
               </div>
               <div className={styles.videoStats}>
-                {videoPreview.likes !== "N/A" && videoPreview.likes !== undefined && (
+                {videoPreview.likes !== "N/A" &&
+                  videoPreview.likes !== undefined && (
+                    <span className={styles.videoStat}>
+                      <FiThumbsUp /> {videoPreview.likes}
+                    </span>
+                  )}
+                {videoPreview.views !== "N/A" &&
+                  videoPreview.views !== undefined && (
+                    <span className={styles.videoStat}>
+                      <FiEye /> {videoPreview.views}
+                    </span>
+                  )}
+                {videoPreview.duration !== "N/A" && (
                   <span className={styles.videoStat}>
-                    <FiThumbsUp /> {videoPreview.likes}
+                    {videoPreview.duration}
                   </span>
                 )}
-                {videoPreview.views !== "N/A" && videoPreview.views !== undefined && (
-                  <span className={styles.videoStat}>
-                    <FiEye /> {videoPreview.views}
-                  </span>
-                )}
-                {videoPreview.duration !== "N/A" && <span className={styles.videoStat}>{videoPreview.duration}</span>}
               </div>
             </div>
           </div>
@@ -378,21 +452,36 @@ const SearchBar = () => {
           <div className={styles.downloadOptions}>
             <div className={styles.downloadTypeSelector}>
               <button
-                className={`${styles.typeButton} ${downloadType === 'video' ? styles.active : ''}`}
-                onClick={() => setDownloadType('video')}
-                disabled={isDownloading || !videoPreview?.qualities_video || videoPreview.qualities_video.length === 0}
+                className={`${styles.typeButton} ${
+                  downloadType === "video" ? styles.active : ""
+                }`}
+                onClick={() => setDownloadType("video")}
+                disabled={
+                  isDownloading ||
+                  !videoPreview?.qualities_video ||
+                  videoPreview.qualities_video.length === 0
+                }
+                aria-label="Video"
               >
-                <FiVideo /> Відео
+                <FiVideo />
+                <span>Відео</span>
               </button>
               <button
-                className={`${styles.typeButton} ${downloadType === 'audio' ? styles.active : ''}`}
-                onClick={() => setDownloadType('audio')}
-                disabled={isDownloading || !videoPreview?.qualities_audio || videoPreview.qualities_audio.length === 0}
+                className={`${styles.typeButton} ${
+                  downloadType === "audio" ? styles.active : ""
+                }`}
+                onClick={() => setDownloadType("audio")}
+                disabled={
+                  isDownloading ||
+                  !videoPreview?.qualities_audio ||
+                  videoPreview.qualities_audio.length === 0
+                }
+                aria-label="Audio"
               >
-                <FiMusic /> Аудіо
+                <FiMusic />
+                <span>Аудіо</span>
               </button>
             </div>
-
             {currentFormatOptions.length > 0 ? (
               <select
                 value={selectedFormat}
@@ -408,14 +497,20 @@ const SearchBar = () => {
               </select>
             ) : (
               <p className={styles.noFormatsAvailable}>
-                {downloadType === 'video' ? 'No video qualities available.' : 'No audio formats available.'}
+                {downloadType === "video"
+                  ? "No video qualities available."
+                  : "No audio formats available."}
               </p>
             )}
 
             <button
               onClick={handleDownload}
               className={styles.downloadButton}
-              disabled={isDownloading || !selectedFormat || currentFormatOptions.length === 0}
+              disabled={
+                isDownloading ||
+                !selectedFormat ||
+                currentFormatOptions.length === 0
+              }
             >
               <FiDownload size={18} />
               <span>Download</span>
