@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './Guide.css';
-
+import '../../Styles/Background.css';
 function Guide() {
     const location = useLocation();
 
@@ -17,6 +17,12 @@ function Guide() {
 
     return (
         <div className="guide-page">
+            <div className="neonBackground">
+                <div className={`glowEffect purpleGlow`}></div>
+                <div className={`glowEffect pinkGlow`}></div>
+                <div className={`glowEffect blueGlow`}></div>
+                <div className="gridOverlay"></div>
+            </div>
             <div className="guide-content">
                 <section id="how-to-use" className="guide-section">
                     <h2 className="section-title">Як користуватися сервісом</h2>

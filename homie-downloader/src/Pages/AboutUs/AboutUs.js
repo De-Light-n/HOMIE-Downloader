@@ -5,7 +5,7 @@ import neonI from './photo/neonI.png';
 import neonR from './photo/neonR.png';
 import neonN from './photo/neonN.png';
 import neonY from './photo/neonY.png';
-
+import '../../Styles/Background.css';
 
 
 
@@ -13,95 +13,103 @@ import neonY from './photo/neonY.png';
 function AboutUs() {
     return (
         <div className="about-us-page">
+            <div className="neonBackground">
+                <div className={`glowEffect purpleGlow`}></div>
+                <div className={`glowEffect pinkGlow`}></div>
+                <div className={`glowEffect blueGlow`}></div>
+                <div className="gridOverlay"></div>
+            </div>
             <div className="about-us">
                 <section className="intro-block">
                     <div className="about-header">
-                        <h1 className="about-title">Про нас</h1>
+                        <h1 className="about-title">About us</h1>
                     </div>
                     <p className="text-holder">
-                        Ми – команда розробників, які створюють зручний завантажувач для відео та пісень з різних платформ. Наш сервіс – це ваш помічник для збереження улюбленого контенту швидко та легко.
+                        We are a team of developers who create a user-friendly downloader for videos and songs from various platforms. Our service is your assistant for saving your favorite content quickly and easily.
                     </p>
                 </section>
 
                 <section className="mission-block">
-                    <h2 className="section-title">Наша місія</h2>
+                    <h2 className="section-title">Our mission</h2>
                     <p className="text-holder">
-                        Ми прагнемо зробити завантаження медіа доступним для кожного. Наш сервіс допомагає користувачам зберігати відео та музику з популярних платформ без зайвих складнощів.
+                        We're committed to making media downloads accessible to everyone. Our service helps users save videos and music from popular platforms without unnecessary complications.
                     </p>
                 </section>
 
                 <section className="content-block">
-                    <h2 className="section-title">Що пропонує наш сервіс</h2>
+                    <h2 className="section-title">What our service offers</h2>
                     <div className="features-list">
                         <div className="feature-item">
-                            <h3>Завантаження з різних платформ</h3>
-                            <p>Підтримуємо YouTube, TikTok, SoundCloud та багато інших сервісів.</p>
+                            <h3>Downloading from different platforms</h3>
+                            <p>We support YouTube, TikTok, SoundCloud and many other services.</p>
                         </div>
                         <div className="feature-item">
-                            <h3>Простота використання</h3>
-                            <p>Інтуїтивний інтерфейс для швидкого завантаження без зайвих налаштувань.</p>
+                            <h3>Ease of use</h3>
+                            <p>
+                                Intuitive interface for fast loading without unnecessary settings.
+                            </p>
                         </div>
                         <div className="feature-item">
-                            <h3>Висока якість контенту</h3>
-                            <p>Зберігайте відео у високій роздільній здатності та музику у форматі MP3.</p>
+                            <h3>High quality content</h3>
+                            <p>Save videos in high resolution and music in MP3 format.</p>
                         </div>
                         <div className="feature-item">
-                            <h3>Безкоштовний доступ</h3>
-                            <p>Завантажуйте улюблені файли безкоштовно та без обмежень.</p>
+                            <h3>Free access</h3>
+                            <p>Download your favorite files for free and without restrictions.</p>
                         </div>
                     </div>
                 </section>
 
                 <section className="team-block">
-                    <h2 className="section-title">Наша команда</h2>
+                    <h2 className="section-title">Our team</h2>
                     <div className="team-members">
                         <div className="team-member">
                             <img src={neonI} alt="Ігор - фронтенд розробник" className="team-member__image" />
                             <div className="team-member__content">
-                                <h3>Ігор</h3>
-                                <p className="team-member__role">Фронтенд розробник</p>
+                                <h3>Ihor</h3>
+                                <p className="team-member__role">Frontend developer</p>
                                 <p>
-                                    Створюю зручний та привабливий інтерфейс, щоб користувачі могли легко завантажувати медіа з будь-якої платформи.
+                                    I create a convenient and attractive interface so that users can easily download media from any platform.
                                 </p>
                             </div>
                         </div>
                         <div className="team-member">
                             <img src={neonN} alt="Назар - фулстек розробник" className="team-member__image" />
                             <div className="team-member__content">
-                                <h3>Назар</h3>
-                                <p className="team-member__role">Фулстек розробник</p>
+                                <h3>Nazar</h3>
+                                <p className="team-member__role">Fullstack developer</p>
                                 <p>
-                                    Розробляю серверну та клієнтську частини, забезпечуючи швидке та надійне завантаження відео та аудіо з різних платформ.
+                                    I develop server and client parts, providing fast and reliable downloading of video and audio from various platforms.
                                 </p>
                             </div>
                         </div>
                         <div className="team-member">
                             <img src={neonO} alt="Орест - фулстек розробник" className="team-member__image" />
                             <div className="team-member__content">
-                                <h3>Орест</h3>
-                                <p className="team-member__role">Фулстек розробник</p>
+                                <h3>Orest</h3>
+                                <p className="team-member__role">Fullstack developer</p>
                                 <p>
-                                    Працюю над фронтендом і бекендом, створюючи цілісний та швидкий інтерфейс для комфортної роботи з нашим сервісом.
+                                    I work on the frontend and backend, creating a complete and fast interface for comfortable work with our service.
                                 </p>
                             </div>
                         </div>
                         <div className="team-member">
                             <img src={neonY} alt="Ян - тестувальник" className="team-member__image" />
                             <div className="team-member__content">
-                                <h3>Ян</h3>
-                                <p className="team-member__role">Тестувальник</p>
+                                <h3>Ian</h3>
+                                <p className="team-member__role">Tester</p>
                                 <p>
-                                    Перевіряю функціонал сервісу, щоб забезпечити стабільну роботу та бездоганний досвід користувача.
+                                    I check the functionality of the service to ensure stable operation and flawless user experience.
                                 </p>
                             </div>
                         </div>
                         <div className="team-member">
                             <img src={neonR} alt="Руслан - аналітик" className="team-member__image" />
                             <div className="team-member__content">
-                                <h3>Руслан</h3>
-                                <p className="team-member__role">Аналітик</p>
+                                <h3>Ruslan</h3>
+                                <p className="team-member__role">Analyst</p>
                                 <p>
-                                    Аналізую потреби користувачів і оптимізую сервіс, щоб він відповідав вашим очікуванням і залишався зручним.
+                                    I analyze the needs of users and optimize the service so that it meets your expectations and remains convenient.
                                 </p>
                             </div>
                         </div>
@@ -109,14 +117,14 @@ function AboutUs() {
                 </section>
 
                 <section className="why-us-block">
-                    <h2 className="section-title">Чому ми?</h2>
+                    <h2 className="section-title">Why us?</h2>
                     <p>
-                        Ми не просто створюємо завантажувач – ми робимо його максимально зручним і ефективним! Кожна функція протестована, а кожен оновлення спрямоване на покращення вашого досвіду.
+                        We don't just create a downloader - we make it as convenient and efficient as possible! Every feature is tested and every update aims to improve your experience.
                     </p>
                 </section>
 
                 <section className="testimonials-section">
-                    <h2 className="section-title">Відгуки, що надихають</h2>
+                    <h2 className="section-title">Inspirational reviews</h2>
                     <div className="testimonials-scroller">
                         <div className="testimonials-track">
                             <div className="testimonial-card">

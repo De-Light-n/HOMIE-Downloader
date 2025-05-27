@@ -9,6 +9,7 @@ import Signup from './Components/Auth/Signup';
 import VideoDetailsPage from './Pages/VideoDetailsPage/VideoDetailsPage';
 import AboutUs from './Pages/AboutUs/AboutUs';
 import Guide from './Pages/Guide/Guide';
+import LetsChat from "./Pages/Chat/LetsChat";
 
 import Header from './Components/Header/Header';
 import Footer from './Components/Footer/Footer';
@@ -48,6 +49,7 @@ function App() {
                         <Route path="/signup" element={<Signup />} />
                         <Route path="/aboutus" element={<AboutUs />} />
                         <Route path="/guide" element={<Guide />} />
+                        <Route path="/letschat" element={<LetsChat />} />
                     </Routes>
                     <Footer />
                 </AuthProvider>

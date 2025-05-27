@@ -226,7 +226,7 @@ const SearchBar = () => {
                         onChange={(e) => setQuery(e.target.value)}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
-                        placeholder="Вставте посилання на YouTube відео..."
+                        placeholder="Search for videos, channels or paste a video link..."
                         className={styles.searchInput}
                     />
                     {query && (
@@ -235,10 +235,14 @@ const SearchBar = () => {
                         </button>
                     )}
                 </div>
-                {/* Кнопка пошуку може бути не потрібна, якщо прев'ю завантажується автоматично по URL */}
-                {/* <button type="submit" className={styles.searchButton} disabled={!query.trim()}>
-                    <FiSearch size={18} /> <span>Пошук</span>
-                </button> */}
+                <button
+                    type="submit"
+                    className={styles.searchButton}
+                    disabled={!query.trim()}
+                >
+                    <FiSearch size={18} />
+                    <span>Search</span>
+                </button>
             </form>
 
             {error && <p className={styles.errorMessage}>{error}</p>}
@@ -260,7 +264,7 @@ const SearchBar = () => {
                 <div className={styles.videoPreviewContainer}>
                     <div className={styles.videoPreviewContent}>
                         <div className={styles.videoThumbnail}>
-                            <img src={videoPreview.thumbnail} alt={videoPreview.title || "Прев'ю відео"} />
+                            <img src={videoPreview.thumbnail} alt="Preview of video" />
                         </div>
                         <div className={styles.videoInfo}>
                             <h3>{videoPreview.title}</h3>
@@ -279,7 +283,7 @@ const SearchBar = () => {
                                         className={styles.toggleDescriptionButton}
                                     >
                                         <FiChevronDown size={16} />
-                                        <span>{showFullDescription ? 'Згорнути' : 'Розгорнути'}</span>
+                                        <span>{showFullDescription ? 'Roll up' : 'Unfold'}</span>
                                     </button>
                                 )}
                             </div>
@@ -290,38 +294,32 @@ const SearchBar = () => {
                             </div>
                         </div>
                     </div>
-                    {videoPreview.qualities && videoPreview.qualities.length > 0 ? (
-                        <div className={styles.downloadOptions}>
-                            <select
-                                value={selectedQuality}
-                                onChange={(e) => setSelectedQuality(e.target.value)}
-                                className={styles.qualitySelect}
-                                disabled={isDownloading}
-                            >
-                                {videoPreview.qualities.map(q => (
-                                    <option key={q} value={q}>{q}</option>
-                                ))}
-                            </select>
-                            <button
-                                onClick={handleDownload}
-                                className={styles.downloadButton}
-                                disabled={isDownloading || !selectedQuality}
-                            >
-                                {isDownloading ? <Loader size="small" /> : <FiDownload size={18} />}
-                                <span>{isDownloading ? 'Завантаження...' : 'Завантажити'}</span>
-                            </button>
-                            <button
-                                onClick={handleViewFullDetails}
-                                className={styles.fullDetailsButton}
-                                disabled={isDownloading}
-                            >
-                                <FiExternalLink size={18} />
-                                <span>Деталі</span>
-                            </button>
-                        </div>
-                    ) : (
-                        <p className={styles.noQualities}>Для цього відео не знайдено доступних якостей для завантаження.</p>
-                    )}
+                    <div className={styles.downloadOptions}>
+                        <select
+                            value={selectedQuality}
+                            onChange={(e) => setSelectedQuality(e.target.value)}
+                            className={styles.qualitySelect}
+                        >
+                            {videoPreview.qualities.map(quality => (
+                                <option key={quality} value={quality}>{quality}</option>
+                            ))}
+                        </select>
+                        <button
+                            onClick={handleDownload}
+                            className={styles.downloadButton}
+                            disabled={isDownloading}
+                        >
+                            <FiDownload size={18} />
+                            <span>Download</span>
+                        </button>
+                        <button
+                            onClick={handleViewFullDetails}
+                            className={styles.fullDetailsButton}
+                        >
+                            <FiExternalLink size={18} />
+                            <span>Details</span>
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
