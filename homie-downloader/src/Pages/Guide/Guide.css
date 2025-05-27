@@ -29,10 +29,10 @@
     font-size: 2rem;
     font-weight: 600;
     margin-bottom: 20px;
-    color: var(--neon-pink);
+    color: var(--primary-color);
     position: relative;
     padding-bottom: 10px;
-    text-shadow: 0 0 8px var(--neon-pink);
+    text-shadow: 0 0 8px var(--primary-color);
 }
 
 .section-title:after {
@@ -42,8 +42,8 @@
     left: 0;
     width: 60px;
     height: 3px;
-    background: var(--neon-blue);
-    box-shadow: 0 0 5px var(--neon-blue);
+    background: var(--primary-dark);
+    box-shadow: 0 0 5px var(--primary-dark);
 }
 
 .text-holder {
@@ -56,8 +56,8 @@
 .text-holder h3 {
     font-size: 1.3rem;
     margin-bottom: 15px;
-    color: var(--neon-purple);
-    text-shadow: 0 0 5px var(--neon-purple);
+    color: var(--primary-dark);
+    text-shadow: 0 0 5px var(--primary-dark);
 }
 
 .features-list,
@@ -82,7 +82,7 @@
 .faq-item:hover {
     transform: translateY(-5px);
     background: var(--primary-dark);
-    box-shadow: 0 0 15px var(--neon-purple);
+    box-shadow: 0 0 15px var(--primary-dark);
     color: var(--text-primary);
 }
 
@@ -90,7 +90,7 @@
 .faq-item h3 {
     font-size: 1.3rem;
     margin-bottom: 15px;
-    color: var(--neon-pink);
+    color: var(--primary-color);
 }
 
 @media (max-width: 768px) {
