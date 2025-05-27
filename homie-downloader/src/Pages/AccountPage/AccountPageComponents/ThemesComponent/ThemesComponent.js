@@ -1,10 +1,6 @@
 import React from "react";
 import {
-    lightTheme,
-    darkTheme,
-    highContrastTheme,
-    ecoTheme,
-    floralTheme,
+
     oceanicBlissTheme,
     crimsonNightTheme,
     // --- NEW THEME IMPORTS ---
@@ -17,11 +13,6 @@ import {
 const ThemesComponent = ({ theme, themes, toggleTheme }) => {
     // Об'єкт тем для отримання опису
     const themesData = {
-        light: lightTheme,
-        dark: darkTheme,
-        'high-contrast': highContrastTheme,
-        'eco': ecoTheme,
-        'floral': floralTheme,
         'oceanic-bliss': oceanicBlissTheme,
         'crimson-night': crimsonNightTheme,
         // --- NEW THEMES ADDED TO themesData ---

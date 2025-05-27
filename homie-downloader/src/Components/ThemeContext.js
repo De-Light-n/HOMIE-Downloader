@@ -1,10 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import {
-    lightTheme,
-    darkTheme,
-    highContrastTheme,
-    ecoTheme,
-    floralTheme,
     oceanicBlissTheme,
     crimsonNightTheme,
     // --- NEW THEME IMPORTS ---
@@ -15,11 +10,6 @@ import {
 } from '../Styles/theme';
 
 const themes = [
-    { name: 'light', styles: lightTheme },
-    { name: 'dark', styles: darkTheme },
-    { name: 'high-contrast', styles: highContrastTheme },
-    { name: 'eco', styles: ecoTheme },
-    { name: 'floral', styles: floralTheme },
     { name: 'oceanic-bliss', styles: oceanicBlissTheme },
     { name: 'crimson-night', styles: crimsonNightTheme },
     // --- NEW THEMES ADDED TO THEMES ARRAY ---
@@ -68,7 +58,7 @@ export function ThemeProvider({ children }) {
         return () => mediaQuery.removeEventListener('change', handleChange);
     }, []);
 
-    const themeStyles = themes.find(t => t.name === theme)?.styles || lightTheme;
+    const themeStyles = themes.find(t => t.name === theme)?.styles;
 
     return (
         <ThemeContext.Provider value={{ theme, themes: themes.map(t => t.name), toggleTheme, themeStyles }}>

@@ -3,7 +3,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 80px 20px;
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--font-family, 'Roboto', sans-serif); /* Updated to use theme font */
   color: var(--text-primary); /* Updated */
   position: relative;
   margin-top: 2rem;
@@ -750,7 +750,7 @@ input:checked + .slider:before {
   background-color: var(--bg-secondary); /* Updated */
   color: var(--text-primary); /* Updated */
   border: 1px solid var(--border-color); /* Updated */
-  font-size: 1rem;
+  font-size: 1rem; /* Inherits from .account-page-container, but can be explicit */
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
