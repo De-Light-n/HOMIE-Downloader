@@ -4,7 +4,7 @@ import Header from '../../Components/Header/Header';
 import VideoRow from '../../Components/VideoRow/VideoRow';
 import LoadingSpinner from '../../Components/LoadingSpinner/LoadingSpinner';
 import SearchBar from '../../Components/SearchBar/SearchBar';
-import '../../Styles/Background.css';
+import '../../Styles/themes.css';
 
 const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
