@@ -8,17 +8,23 @@
     ```bash
     git clone <URL_ВАШОГО_РЕПОЗИТОРІЯ>
     cd <шлях_до_папки_сервера> 
-    # наприклад, cd homie-downloader/src/server
+    cd homie-downloader/src/server_python
     ```
 
 2.  **Створіть та активуйте віртуальне оточення:**
 3. ЗАЙТИ В ПАПКУ ДЛЯ СЕРВЕРА server_python
+
+    Створити оточення:
     ```bash
     python -m venv .venv
+
+    Перейти в оточення:
     # Windows PowerShell:
     # .\.venv\Scripts\Activate.ps1
+
     # Windows CMD:
     # .\.venv\Scripts\activate.bat
+
     # Linux/macOS:
     # source .venv/bin/activate
     ```

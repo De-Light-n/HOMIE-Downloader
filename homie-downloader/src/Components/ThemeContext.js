@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { lightTheme, darkTheme, highContrastTheme } from '../Styles/theme';
+import { lightTheme, darkTheme, highContrastTheme, ecoTheme, floralTheme } from '../Styles/theme';
 
 const themes = [
     { name: 'light', styles: lightTheme },
     { name: 'dark', styles: darkTheme },
     { name: 'high-contrast', styles: highContrastTheme },
+    { name: 'eco', styles: ecoTheme },
+    { name: 'floral', styles: floralTheme },
 ];
 
 const getSystemTheme = () => {
