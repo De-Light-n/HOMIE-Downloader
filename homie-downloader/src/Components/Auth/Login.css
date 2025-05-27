@@ -1,17 +1,5 @@
 /* Login.css */
-:root {
-    --primary: #8a2be2;
-    --primary-light: #9d50ff;
-    --primary-soft: rgba(157, 80, 255, 0.2);
-    --accent: #ff66ff;
-    --accent-light: #ff99ff;
-    --dark: #1e0032;
-    --dark-soft: rgba(30, 0, 50, 0.8);
-    --light: #e2c2ff;
-    --light-soft: rgba(226, 194, 255, 0.3);
-    --error: #ff6b81;
-    --error-soft: rgba(255, 107, 129, 0.15);
-}
+/* Видалено блок :root з локальними змінними кольорів */
 
 .login-container {
     display: flex;
@@ -21,7 +9,8 @@
     padding: 20px;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    /* Дозволяє фону body (градієнт та сфери з themes.css) бути видимим */
+    background: transparent;
 }
 
 .login-background {
@@ -30,50 +19,50 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 20% 50%, var(--primary-soft) 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, var(--accent-soft) 0%, transparent 40%);
+    /* Радіальні градієнти з використанням кольорів теми */
+    background:
+            radial-gradient(circle at 20% 50%, color-mix(in srgb, var(--primary-color) 20%, transparent) 0%, transparent 40%),
+            radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--primary-dark) 20%, transparent) 0%, transparent 40%);
     animation: float 25s infinite alternate ease-in-out;
     z-index: 0;
 }
 
 .login-card {
-    background: var(--dark-soft);
+    background: color-mix(in srgb, var(--header-bg) 85%, transparent); /* Напівпрозорий фон картки, злегка темніший */
     padding: 2.5rem;
     border-radius: 24px;
     width: 100%;
     max-width: 440px;
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--light-soft);
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px); /* Зменшено blur для чіткості */
+    border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent); /* Трохи виразніший бордер */
+    box-shadow: 0 0 20px color-mix(in srgb, var(--primary-color) 25%, transparent); /* Статичне тематичне світіння */
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     z-index: 1;
     overflow: hidden;
-    border: 1px solid var(--light-soft);
-    box-shadow: 0 0 15px rgba(157, 80, 255, 0.3);
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .login-card:hover {
-    border: 1px solid #c24bff;
+    border-color: var(--primary-color);
     box-shadow:
-            0 0 25px #b13dff,
-            0 0 50px rgba(157, 80, 255, 0.7),
-            0 0 75px rgba(157, 80, 255, 0.5);
-    animation: neon-glow 1.5s infinite alternate;
+            0 0 25px var(--primary-color),
+            0 0 50px color-mix(in srgb, var(--primary-color) 70%, transparent),
+            0 0 75px color-mix(in srgb, var(--primary-color) 50%, transparent);
+    /* animation: neon-glow 1.5s infinite alternate; - анімація тіні вже є в keyframes, hover змінює саму тінь */
 }
 
 @keyframes neon-glow {
     from {
         box-shadow:
-                0 0 15px #b13dff,
-                0 0 30px rgba(157, 80, 255, 0.7),
-                0 0 45px rgba(157, 80, 255, 0.5);
+                0 0 15px var(--primary-dark),
+                0 0 30px color-mix(in srgb, var(--primary-dark) 60%, transparent),
+                0 0 45px color-mix(in srgb, var(--primary-dark) 40%, transparent);
     }
     to {
         box-shadow:
-                0 0 25px #c24bff,
-                0 0 50px rgba(204, 102, 255, 0.8),
-                0 0 75px rgba(204, 102, 255, 0.6);
+                0 0 25px var(--primary-color),
+                0 0 50px color-mix(in srgb, var(--primary-color) 70%, transparent),
+                0 0 75px color-mix(in srgb, var(--primary-color) 50%, transparent);
     }
 }
 
@@ -87,12 +76,9 @@
 .login-card-wrapper:hover::before {
     content: '';
     position: absolute;
-    top: -6px;
-    left: -6px;
-    right: -6px;
-    bottom: -6px;
+    top: -6px; left: -6px; right: -6px; bottom: -6px;
     border-radius: 30px;
-    background: linear-gradient(45deg, #c24bff, #ff79ff);
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
     z-index: -1;
     filter: blur(15px);
     opacity: 0.8;
@@ -100,36 +86,20 @@
 }
 
 @keyframes neon-pulse {
-    from {
-        opacity: 0.6;
-        filter: blur(10px);
-    }
-    to {
-        opacity: 0.9;
-        filter: blur(20px);
-    }
+    from { opacity: 0.6; filter: blur(10px); }
+    to { opacity: 0.9; filter: blur(20px); }
 }
 
-/* Оновлені кольори для більш яскравого ефекту */
-:root {
-    --primary: #c24bff;
-    --primary-light: #d16bff;
-    --primary-soft: rgba(210, 107, 255, 0.4);
-    --accent: #ff79ff;
-    --accent-light: #ffa3ff;
-}
 .login-card::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
     background: linear-gradient(
             to bottom right,
             transparent 0%,
             transparent 50%,
-            var(--primary-soft) 100%
+            color-mix(in srgb, var(--primary-color) 15%, transparent) 100%
     );
     transform: rotate(30deg);
     z-index: -1;
@@ -144,16 +114,16 @@
 .login-header h2 {
     font-size: 2.2rem;
     font-weight: 600;
-    color: var(--light);
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
-    background: linear-gradient(90deg, var(--light), var(--accent-light));
+    background: linear-gradient(90deg, var(--text-primary), var(--primary-color));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .login-header p {
-    color: var(--light-soft);
+    color: var(--text-secondary);
     font-size: 1rem;
     font-weight: 400;
 }
@@ -174,22 +144,21 @@
     padding: 1.2rem 1rem 0.8rem;
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--light-soft);
-    color: var(--light);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+    color: var(--text-primary);
     font-size: 1rem;
     transition: all 0.3s ease;
 }
 
 .form-group input:focus {
     outline: none;
-    border-bottom-color: var(--primary-light);
+    border-bottom-color: var(--primary-color);
 }
 
 .form-group label {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
-    color: var(--light-soft);
+    top: 1rem; left: 1rem;
+    color: var(--text-secondary);
     font-size: 1rem;
     font-weight: 400;
     pointer-events: none;
@@ -200,16 +169,14 @@
 .form-group input:focus + label,
 .form-group input:not(:placeholder-shown) + label {
     transform: translateY(-0.8rem) scale(0.8);
-    color: var(--primary-light);
+    color: var(--primary-color);
 }
 
 .input-border {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary-light), var(--accent));
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
     transition: width 0.4s ease;
 }
 
@@ -218,10 +185,10 @@
 }
 
 .error-message {
-    color: var(--error);
+    color: var(--primary-dark);
     padding: 1rem;
     margin-bottom: 1.5rem;
-    background: var(--error-soft);
+    background: color-mix(in srgb, var(--primary-dark) 15%, var(--bg-primary));
     border-radius: 12px;
     animation: fadeIn 0.4s ease-out;
     text-align: center;
@@ -243,28 +210,17 @@
     position: relative;
     overflow: hidden;
     z-index: 1;
-}
-
-.login-button {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white;
-    box-shadow: 0 4px 20px var(--primary-soft);
-}
-
-.google-login-button {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: white;
-    box-shadow: 0 4px 20px var(--primary-soft);
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: #ffffff; /* Явний білий колір для тексту кнопки для кращого контрасту */
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
 .login-button::before, .google-login-button::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--primary-light), var(--accent));
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color)); /* Ефект при наведенні */
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: -1;
@@ -272,7 +228,7 @@
 
 .login-button:hover, .google-login-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 30px var(--primary-soft);
+    box-shadow: 0 8px 30px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .login-button:hover::before, .google-login-button:hover::before {
@@ -281,11 +237,10 @@
 
 .button-loader {
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    width: 20px; height: 20px;
+    border: 3px solid color-mix(in srgb, #ffffff 30%, transparent); /* База завантажувача з білого */
     border-radius: 50%;
-    border-top-color: white;
+    border-top-color: #ffffff; /* Активна частина завантажувача біла */
     animation: spin 1s ease-in-out infinite;
 }
 
@@ -293,7 +248,7 @@
     display: flex;
     align-items: center;
     margin: 1.8rem 0;
-    color: var(--light-soft);
+    color: var(--text-secondary);
     font-size: 0.9rem;
     font-weight: 300;
 }
@@ -302,16 +257,11 @@
 .divider::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid var(--light-soft);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
 }
 
-.divider::before {
-    margin-right: 1rem;
-}
-
-.divider::after {
-    margin-left: 1rem;
-}
+.divider::before { margin-right: 1rem; }
+.divider::after { margin-left: 1rem; }
 
 .login-footer {
     display: flex;
@@ -319,19 +269,19 @@
     align-items: center;
     gap: 1rem;
     margin-top: 2rem;
-    color: var(--light-soft);
+    color: var(--text-secondary);
     font-size: 0.95rem;
 }
 
 .login-footer a {
-    color: var(--primary-light);
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
     transition: all 0.2s ease;
 }
 
 .login-footer a:hover {
-    color: var(--accent);
+    color: var(--primary-dark);
     text-decoration: underline;
 }
 
@@ -354,7 +304,7 @@
     100% { transform: translate(0, 0) scale(1); }
 }
 
-@keyframes shine {
+@keyframes shine { /* Анімація обертання для .login-card::before, якщо потрібно */
     0% { transform: rotate(30deg) translate(-30%, -30%); }
     100% { transform: rotate(30deg) translate(30%, 30%); }
 }
@@ -376,27 +326,4 @@
     .login-button, .google-login-button {
         padding: 1rem;
     }
-}
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    /* Видаліть градієнтний фон */
-    /* background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%); */
-}
-
-.login-video-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    /* Додайте затемнення, якщо потрібно */
-    filter: brightness(0.6);
 }
