@@ -1,4 +1,6 @@
-// --- START OF FILE App.js ---
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './Components/Firebase/AuthContext';
+import useSessionTracking from "./hooks/useSessionTracking";
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'; // Додано useLocation
 import { AuthProvider } from './Components/Firebase/AuthContext';
@@ -59,6 +61,8 @@ function AppLayout() {
 }
 
 function App() {
+    useSessionTracking();
+
     return (
         <Router>
             <ThemeProvider>

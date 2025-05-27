@@ -1,0 +1,93 @@
+/* analytics.css */
+.analytics-section {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.analytics-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.time-spend-section {
+    background-color: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    width: 100%;
+}
+
+.time-spend-section h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.time-spend-section .stat-value {
+    color: var(--primary-dark);
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.analytics-cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.analitics-card {
+    background-color: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.analitics-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.analitics-card h4 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.analitics-card ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.analitics-card li {
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.analitics-card li:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .analytics-cards-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .analitics-card {
+        padding: 1rem;
+    }
+}
