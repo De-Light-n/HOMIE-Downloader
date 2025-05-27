@@ -23,7 +23,6 @@ const Home = () => {
                     <div className={styles.searchBarContainer}>
                         <SearchBar/>
                     </div>
-
                     <VideoRow
                         title="Recent-searches"
                         type="recent-searches"
@@ -34,61 +33,6 @@ const Home = () => {
                         title="Recent-downloads"
                         type="recent-downloads"
                         index={1}
-                    />
-
-                    {/* Виправлені рядки за категоріями - використовуємо проп category замість type */}
-                    <VideoRow
-                        title="Popular Music"
-                        category="Music"
-                        index={2}
-                    />
-
-                    <VideoRow
-                        title="Popular Games"
-                        category="gaming"
-                        index={3}
-                    />
-
-                    <VideoRow
-                        title="Educational Videos"
-                        category="education"
-                        index={4}
-                    />
-
-                    <VideoRow
-                        title="Sports Videos"
-                        category="sports"
-                        index={5}
-                    />
-
-                    <VideoRow
-                        title="Podcasts"
-                        category="podcasts"
-                        index={6}
-                    />
-
-                    <VideoRow
-                        title="Cooking Videos"
-                        category="cooking"
-                        index={7}
-                    />
-
-                    <VideoRow
-                        title="Travel Videos"
-                        category="travel"
-                        index={8}
-                    />
-
-                    <VideoRow
-                        title="Motivation Videos"
-                        category="motivation"
-                        index={9}
-                    />
-
-                    <VideoRow
-                        title="Movies & TV Shows"
-                        category="movies"
-                        index={10}
                     />
                 </main>
             </div>
