@@ -197,7 +197,7 @@ const SearchBar = () => {
     setError("");
     if (query.trim()) {
       if (!isValidPlatformUrl(query)) {
-        setError("Будь ласка, вставте дійсне посилання на медіа або спробуйте пошук (пошук поки не реалізовано).");
+        setError("Please insert a valid media link or try a search (search not yet implemented).");
         await saveAction({ type: "search_attempt_invalid_url", query: query, isVideoUrl: false });
         await updateAnalytics("search");
         return;
@@ -219,11 +219,11 @@ const SearchBar = () => {
 
   const handleDownload = async () => {
     if (!query || !videoPreview) {
-      setError("Будь ласка, вставте посилання та отримайте інформацію про медіа.");
+      setError("Please insert a link and get media information.");
       return;
     }
     if (!selectedFormat) {
-      setError("Будь ласка, виберіть формат/якість для завантаження.");
+      setError("Please select a format/quality to download.");
       return;
     }
 
@@ -313,7 +313,7 @@ const SearchBar = () => {
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Вставте посилання на відео або аудіо..."
+            placeholder="Insert video or audio link..."
             className={styles.searchInput}
           />
           {query && (
@@ -328,14 +328,14 @@ const SearchBar = () => {
 
       {isLoadingPreview && (
         <div className={styles.loadingPreview}>
-          <p>Шукаємо ваш запит, зачекайте будь ласка!</p>
+          <p>We are looking for your request, please wait!</p>
           <Loader />
         </div>
       )}
 
       {isDownloading && (
         <div className={styles.loadingPreview}>
-          <p>Йде завантаження, зачекайте будь ласка!</p>
+          <p>Loading, please wait!</p>
           <Loader />
         </div>
       )}
@@ -352,11 +352,11 @@ const SearchBar = () => {
               )}
             </div>
             <div className={styles.videoInfo}>
-              <h3>{videoPreview.title || "Назва не знайдена"}</h3>
+              <h3>{videoPreview.title || "Name not found"}</h3>
               {videoPreview.uploader && <p className={styles.videoUploader}>Автор: {videoPreview.uploader}</p>}
               <div className={styles.descriptionContainer}>
                 <p ref={descriptionRef} className={styles.videoDescription} style={descriptionStyle}>
-                  {videoPreview.description || "Опис відсутній."}
+                  {videoPreview.description || "There is no description."}
                 </p>
               </div>
               <div className={styles.videoStats}>
@@ -408,7 +408,7 @@ const SearchBar = () => {
               </select>
             ) : (
               <p className={styles.noFormatsAvailable}>
-                {downloadType === 'video' ? 'Немає доступних якостей відео.' : 'Немає доступних форматів аудіо.'}
+                {downloadType === 'video' ? 'No video qualities available.' : 'No audio formats available.'}
               </p>
             )}
 
@@ -418,7 +418,7 @@ const SearchBar = () => {
               disabled={isDownloading || !selectedFormat || currentFormatOptions.length === 0}
             >
               {isDownloading ? <Loader size="small" /> : <FiDownload size={18} />}
-              <span>{isDownloading ? 'Завантаження...' : 'Завантажити'}</span>
+              <span>{isDownloading ? 'Loading...' : 'Download'}</span>
             </button>
           </div>
         </div>
