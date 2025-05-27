@@ -254,6 +254,34 @@
     font-size: 0.9rem;
 }
 
+.detailsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-left: auto; /* Вирівнює праворуч */
+  
+}
+
+.detailsButton p{
+    margin: 1vh;
+}
+
+.detailsButton:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.detailsButton:active {
+  transform: scale(0.95);
+}
+
 .downloadTypeSelector {
   display: flex;
   gap: 12px;

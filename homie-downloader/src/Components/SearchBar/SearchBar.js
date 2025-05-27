@@ -445,6 +445,14 @@ const SearchBar = () => {
                     {videoPreview.duration}
                   </span>
                 )}
+                <button
+                  onClick={handleViewFullDetails}
+                  className={styles.detailsButton}
+                  aria-label="More details"
+                >
+                  <FiExternalLink size={16} />
+                  <p>Details</p>
+                </button>
               </div>
             </div>
           </div>
