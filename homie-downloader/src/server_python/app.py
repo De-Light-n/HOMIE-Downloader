@@ -155,9 +155,9 @@ def get_video_info(url):
         # Тут ми можемо просто вказати, що аудіо доступне
         has_any_audio_stream = any(f.get('acodec') != 'none' and f.get('vcodec') == 'none' for f in formats)
         if has_any_audio_stream:
-            available_audio_qualities_set.add("Найкраще аудіо (M4A/Opus)") # yt-dlp за замовчуванням прагне до m4a/opus
+            available_audio_qualities_set.add("Best audio (M4A/Opus)") # yt-dlp за замовчуванням прагне до m4a/opus
             if FFMPEG_EXE_PATH: # Якщо є FFmpeg, можемо запропонувати MP3
-                available_audio_qualities_set.add("Найкраще аудіо (MP3)")
+                available_audio_qualities_set.add("Best audio (MP3)")
         elif any(f.get('acodec') != 'none' and f.get('vcodec') != 'none' for f in formats): # Якщо є тільки змерджені
             available_audio_qualities_set.add("Витягнути аудіо (M4A/Opus)")
             if FFMPEG_EXE_PATH:
