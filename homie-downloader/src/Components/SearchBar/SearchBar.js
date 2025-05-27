@@ -62,9 +62,7 @@ const SearchBar = () => {
   const detectVideoCategory = (title, description) => {
     if (!title && !description) return "Other";
     const text = `${title} ${description}`.toLowerCase();
-    const categories = {
-      /* ... ваші категорії ... */
-    };
+    const categories = {};
     for (const [category, keywords] of Object.entries(categories)) {
       if (keywords.some((keyword) => text.includes(keyword))) return category;
     }
@@ -335,8 +333,13 @@ const SearchBar = () => {
 
   const handleViewFullDetails = () => {
     if (videoPreview && query) {
+      // Передаємо qualities_video як qualities для сумісності з VideoDetailsPage
+      const modifiedVideoData = {
+        ...videoPreview,
+        qualities: videoPreview.qualities_video || [],
+      };
       navigate("/video/details", {
-        state: { videoData: videoPreview, videoUrl: query },
+        state: { videoData: modifiedVideoData, videoUrl: query },
       });
     }
   };
@@ -389,7 +392,7 @@ const SearchBar = () => {
           <Loader />
         </div>
       )}
-
+      
       {isDownloading && (
         <div className={styles.loadingPreview}>
           <p>Loading, please wait!</p>
