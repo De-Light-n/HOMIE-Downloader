@@ -361,7 +361,7 @@
 
 .downloadOptions > select { /* Assuming .qualitySelect is the select here */
     flex: 1;
-    max-width: 150px; /* Or adjust as needed */
+    max-width: 200px; /* Or adjust as needed */
 }
 
 .downloadOptions > button { /* Assuming .downloadButton and .fullDetailsButton */
