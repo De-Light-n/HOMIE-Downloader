@@ -29,11 +29,11 @@ const StyledWrapper = styled.div`
     height: 20px;
     position: absolute;
     border-radius: 50%;
-    background: linear-gradient(45deg, #8a2be2, #a100ff);
+    background: var(--primary-color);
     left: 15%;
     transform-origin: 50%;
     animation: circle7124 .5s alternate infinite ease;
-    box-shadow: 0 0 10px rgba(138, 43, 226, 0.8);
+    box-shadow: 0 0 10px var(--primary-color);
   }
 
   @keyframes circle7124 {
@@ -58,21 +58,21 @@ const StyledWrapper = styled.div`
   .circle:nth-child(2) {
     left: 45%;
     animation-delay: .2s;
-    background: linear-gradient(45deg, #9d50ff, #ff00ff);
+    background: var(--text-secondary);
   }
 
   .circle:nth-child(3) {
     left: auto;
     right: 15%;
     animation-delay: .3s;
-    background: linear-gradient(45deg, #6a00ff, #8a2be2);
+    background: var(--primary-dark);
   }
 
   .shadow {
     width: 20px;
     height: 4px;
     border-radius: 50%;
-    background-color: rgba(106, 0, 255, 0.5);
+    background-color: var(--border-color);
     position: absolute;
     top: 62px;
     transform-origin: 50%;
@@ -80,6 +80,7 @@ const StyledWrapper = styled.div`
     left: 15%;
     filter: blur(1px);
     animation: shadow046 .5s alternate infinite ease;
+    opacity: 0.5;
   }
 
   @keyframes shadow046 {
@@ -101,14 +102,13 @@ const StyledWrapper = styled.div`
   .shadow:nth-child(4) {
     left: 45%;
     animation-delay: .2s;
-    background-color: rgba(157, 80, 255, 0.5);
   }
 
   .shadow:nth-child(5) {
     left: auto;
     right: 15%;
     animation-delay: .3s;
-    background-color: rgba(138, 43, 226, 0.5);
-  }`;
+  }
+`;
 
 export default Loader;

@@ -366,6 +366,7 @@
 /* Updated loading preview styles */
 .loadingPreview {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 2rem;
@@ -380,6 +381,10 @@
     min-height: 150px;
     /* Original: box-shadow: 0 0 20px rgba(106, 0, 255, 0.2); */
     box-shadow: 0 0 20px color-mix(in srgb, var(--primary-dark) 20%, transparent);
+}
+
+.loadingPreview p {
+    margin-bottom: 2vh;
 }
 
 .downloadButton {
