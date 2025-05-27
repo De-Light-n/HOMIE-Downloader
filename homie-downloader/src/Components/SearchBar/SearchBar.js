@@ -223,7 +223,7 @@ const SearchBar = () => {
                         onChange={(e) => setQuery(e.target.value)}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
-                        placeholder="Пошук відео, каналів або вставте посилання на відео..."
+                        placeholder="Search for videos, channels or paste a video link..."
                         className={styles.searchInput}
                     />
                     {query && (
@@ -242,7 +242,7 @@ const SearchBar = () => {
                     disabled={!query.trim()}
                 >
                     <FiSearch size={18} />
-                    <span>Пошук</span>
+                    <span>Search</span>
                 </button>
             </form>
 
@@ -262,7 +262,7 @@ const SearchBar = () => {
                 <div className={styles.videoPreviewContainer}>
                     <div className={styles.videoPreviewContent}>
                         <div className={styles.videoThumbnail}>
-                            <img src={videoPreview.thumbnail} alt="Прев'ю відео" />
+                            <img src={videoPreview.thumbnail} alt="Preview of video" />
                         </div>
                         <div className={styles.videoInfo}>
                             <h3>{videoPreview.title}</h3>
@@ -279,7 +279,7 @@ const SearchBar = () => {
                                         className={styles.toggleDescriptionButton}
                                     >
                                         <FiChevronDown size={16} />
-                                        <span>{showFullDescription ? 'Згорнути' : 'Розгорнути'}</span>
+                                        <span>{showFullDescription ? 'Roll up' : 'Unfold'}</span>
                                     </button>
                                 )}
                             </div>
@@ -312,14 +312,14 @@ const SearchBar = () => {
                             disabled={isDownloading}
                         >
                             <FiDownload size={18} />
-                            <span>Завантажити</span>
+                            <span>Download</span>
                         </button>
                         <button
                             onClick={handleViewFullDetails}
                             className={styles.fullDetailsButton}
                         >
                             <FiExternalLink size={18} />
-                            <span>Деталі</span>
+                            <span>Details</span>
                         </button>
                     </div>
                 </div>

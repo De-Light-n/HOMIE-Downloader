@@ -225,7 +225,7 @@ const VideoRow = ({ title, type, index, category }) => {
                     </h2>
                 </div>
                 <div className={styles.errorMessage}>
-                    Помилка завантаження: {error}
+                    Download error: {error}
                 </div>
             </div>
         );
@@ -241,7 +241,7 @@ const VideoRow = ({ title, type, index, category }) => {
                     </h2>
                 </div>
                 <div className={styles.emptyMessage}>
-                    Відео не знайдено
+                    Video not found
                 </div>
             </div>
         );
@@ -302,10 +302,10 @@ const VideoRow = ({ title, type, index, category }) => {
                         disabled={loadingMore}
                     >
                         {loadingMore ? (
-                            <span>Завантаження...</span>
+                            <span>Downloading...</span>
                         ) : (
                             <>
-                                <span>Показати більше</span>
+                                <span>Show more</span>
                                 <FiChevronDown className={styles.loadMoreIcon} />
                             </>
                         )}

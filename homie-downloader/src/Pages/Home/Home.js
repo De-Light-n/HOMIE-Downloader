@@ -27,79 +27,71 @@ const Home = () => {
                     </div>
 
                     <VideoRow
-                        title="Недавні пошуки"
+                        title="Recent-searches"
                         type="recent-searches"
                         index={0}
                     />
 
                     <VideoRow
-                        title="Недавні завантаження"
+                        title="Recent-downloads"
                         type="recent-downloads"
                         index={1}
                     />
 
                     {/* Виправлені рядки за категоріями - використовуємо проп category замість type */}
                     <VideoRow
-                        title="Популярна музика"
+                        title="Popular Music"
                         category="Music"
                         index={2}
                     />
 
                     <VideoRow
-                        title="Топ ігри"
+                        title="Popular Games"
                         category="gaming"
                         index={3}
                     />
 
                     <VideoRow
-                        title="Навчальні матеріали"
+                        title="Educational Videos"
                         category="education"
                         index={4}
                     />
 
                     <VideoRow
-                        title="Спортивні події"
+                        title="Sports Videos"
                         category="sports"
                         index={5}
                     />
 
                     <VideoRow
-                        title="Подкасти"
+                        title="Podcasts"
                         category="podcasts"
                         index={6}
                     />
 
                     <VideoRow
-                        title="Кулінарні шедеври"
+                        title="Cooking Videos"
                         category="cooking"
                         index={7}
                     />
 
                     <VideoRow
-                        title="Подорожі"
+                        title="Travel Videos"
                         category="travel"
                         index={8}
                     />
 
                     <VideoRow
-                        title="Мотивація"
+                        title="Motivation Videos"
                         category="motivation"
                         index={9}
                     />
 
                     <VideoRow
-                        title="Кіно та серіали"
+                        title="Movies & TV Shows"
                         category="movies"
                         index={10}
                     />
-
-                    <div className={styles.ctaSection}>
-                        <h2 className={styles.ctaTitle}>Ready for More?</h2>
-                        <p className={styles.ctaSubtitle}>Discover exclusive content in our library</p>
-                        <button className={styles.exploreButton}>
-                            Explore All Videos
-                        </button>
-                    </div>
                 </main>
             </div>
         </div>

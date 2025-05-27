@@ -73,9 +73,9 @@ const Signup = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            placeholder=" "
+                            placeholder="Enter your email"
                         />
-                        <label>Email</label>
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 
@@ -85,9 +85,9 @@ const Signup = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            placeholder=" "
+                            placeholder="Enter your password"
                         />
-                        <label>Password</label>
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 
@@ -97,9 +97,9 @@ const Signup = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
-                            placeholder=" "
+                            placeholder="Enter your password again"
                         />
-                        <label>Confirm Password</label>
+                        <label></label>
                         <span className="input-border"></span>
                     </div>
 

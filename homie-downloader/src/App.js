@@ -10,6 +10,7 @@ import VideoDetailsPage from './Pages/VideoDetailsPage/VideoDetailsPage';
 import AboutUs from './Pages/AboutUs/AboutUs';
 import './Styles/globals.css';
 import Guide from './Pages/Guide/Guide';
+import LetsChat from "./Pages/Chat/LetsChat";
 
 
 // TODO: Maybe Footer
@@ -37,6 +38,7 @@ function App() {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/aboutus" element={<AboutUs />} />
                     <Route path="/guide" element={<Guide />} />
+                    <Route path="/letschat" element={<LetsChat />} />
                 </Routes>
                 <Footer />
             </AuthProvider>
