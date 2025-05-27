@@ -5,7 +5,6 @@ import neonI from './photo/neonI.png';
 import neonR from './photo/neonR.png';
 import neonN from './photo/neonN.png';
 import neonY from './photo/neonY.png';
-import '../../Styles/Background.css';
 
 
 
