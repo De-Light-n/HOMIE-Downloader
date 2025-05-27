@@ -1,17 +1,18 @@
 .about-us-page {
-    font-family: "Inter", Arial, sans-serif;
+    font-family: var(--font-family, "Inter", Arial, sans-serif); /* Updated */
     line-height: 1.6;
     color: var(--text-primary);
     margin: 0;
-    padding-top: 80px;
-    background-color: transparent;
+    padding-top: 80px; /* Assumes 80px header */
+    background-color: transparent; /* Allows global animated background to show */
     position: relative;
-    z-index: 1;
+    z-index: 1; /* Above global background, below modals */
 }
 
 .about-us {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px; /* Added padding for content spacing */
     position: relative;
 }
 
@@ -24,8 +25,8 @@
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 30px;
-    color: var(--primary-color); /* Changed from neon-purple */
-    text-shadow: 0 0 5px var(--primary-dark); /* Subtle shadow with primary-dark */
+    color: var(--primary-color);
+    text-shadow: 0 0 5px var(--primary-dark);
 }
 
 .intro-block,
@@ -43,10 +44,10 @@
     font-size: 2rem;
     font-weight: 600;
     margin-bottom: 20px;
-    color: var(--primary-color); /* Changed from neon-pink */
+    color: var(--primary-color);
     position: relative;
     padding-bottom: 10px;
-    text-shadow: 0 0 4px var(--primary-dark); /* Subtle shadow with primary-dark */
+    text-shadow: 0 0 4px var(--primary-dark);
 }
 
 .section-title:after {
@@ -56,8 +57,8 @@
     left: 0;
     width: 60px;
     height: 3px;
-    background: var(--primary-color); /* Changed from neon-blue */
-    box-shadow: 0 0 3px var(--primary-dark); /* Subtle shadow with primary-dark */
+    background: var(--primary-color);
+    box-shadow: 0 0 3px var(--primary-dark);
 }
 
 .text-holder {
@@ -75,7 +76,7 @@
 }
 
 .feature-item {
-    background: var(--header-bg);
+    background: var(--header-bg); /* Or var(--bg-secondary) / var(--user-icon-bg) */
     padding: 25px;
     border-radius: 12px;
     transition: all 0.3s ease;
@@ -86,14 +87,14 @@
 .feature-item:hover {
     transform: translateY(-5px);
     background: var(--primary-dark);
-    box-shadow: 0 0 15px var(--primary-dark); /* Changed from neon-purple */
-    color: var(--text-primary);
+    box-shadow: 0 0 15px var(--primary-dark);
+    color: var(--text-primary); /* Ensure contrast with var(--primary-dark) */
 }
 
 .feature-item h3 {
     font-size: 1.3rem;
     margin-bottom: 15px;
-    color: var(--primary-color); /* Changed from neon-pink */
+    color: var(--primary-color);
 }
 
 .team-members {
@@ -109,7 +110,7 @@
     align-items: center;
     width: 100%;
     padding: 30px;
-    background: var(--header-bg);
+    background: var(--header-bg); /* Or var(--bg-secondary) / var(--user-icon-bg) */
     border-radius: 12px;
     gap: 30px;
     border: 1px solid var(--border-color);
@@ -125,7 +126,7 @@
 }
 
 .team-member:hover {
-    box-shadow: 0 0 15px var(--primary-dark); /* Changed from neon-pink */
+    box-shadow: 0 0 15px var(--primary-dark);
 }
 
 .team-member__content {
@@ -133,24 +134,24 @@
 }
 
 .team-member__image {
-    width: 24vh;
-    height: 36vh;
+    width: 24vh; /* Consider using fixed px or rem for more consistent sizing */
+    height: 36vh;/* Consider using fixed px or rem for more consistent sizing, or aspect-ratio */
     object-fit: cover;
     border-radius: 6px;
-    border: 2px solid var(--primary-color); /* Changed from neon-purple */
-    box-shadow: 0 0 5px var(--primary-dark); /* Subtle shadow with primary-dark */
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-dark);
 }
 
 .team-member h3 {
     font-size: 1.5rem;
     margin-bottom: 10px;
-    color: var(--primary-color); /* Changed from neon-blue */
-    text-shadow: 0 0 3px var(--primary-dark); /* Subtle shadow with primary-dark */
+    color: var(--primary-color);
+    text-shadow: 0 0 3px var(--primary-dark);
 }
 
 .team-member__role {
     font-size: 1.1rem;
-    color: var(--primary-color); /* Changed from neon-pink */
+    color: var(--primary-color); /* Or var(--text-secondary) for role */
     margin-bottom: 10px;
     font-weight: 500;
 }
@@ -162,17 +163,17 @@
 
 .testimonials-section {
     padding: 60px 0;
-    background: transparent;
+    background: transparent; /* Allows global background to show */
     position: relative;
-    overflow: hidden;
+    overflow: hidden; /* To contain the scrolling track */
 }
 
 .testimonials-scroller {
     width: 100%;
-    border: 2px solid var(--primary-color); /* Changed from neon-purple */
+    border: 2px solid var(--primary-color);
     border-radius: 16px;
-    box-shadow: 0 0 5px var(--primary-dark); /* Subtle shadow with primary-dark */
-    overflow: hidden;
+    box-shadow: 0 0 5px var(--primary-dark);
+    overflow: hidden; /* Important for the scrolling animation */
 }
 
 .testimonials-track {
@@ -183,22 +184,22 @@
 }
 
 .testimonial-card {
-    flex: 0 0 400px;
-    background: var(--header-bg);
+    flex: 0 0 400px; /* Fixed width for each card */
+    background: var(--header-bg); /* Or var(--bg-secondary) / var(--user-icon-bg) */
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 0 5px var(--border-color); /* Changed from neon-purple */
+    box-shadow: 0 0 5px var(--border-color); /* Subtle shadow based on border color */
     transition: all 0.3s ease;
     color: var(--text-primary);
 }
 
 .testimonial-card:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 10px var(--primary-dark); /* Changed from neon-blue */
+    box-shadow: 0 0 10px var(--primary-dark);
 }
 
 .stars {
-    color: #ffc107;
+    color: #ffc107; /* Standard gold color for stars, usually fine across themes */
     font-size: 1.2rem;
     margin-bottom: 15px;
 }
@@ -212,7 +213,7 @@
 
 .author {
     font-weight: 600;
-    color: var(--primary-color);
+    color: var(--primary-color); /* Author name in primary theme color */
     font-style: italic;
 }
 
@@ -221,13 +222,18 @@
         transform: translateX(0);
     }
     100% {
+        /* This should be -(total width of cards + total gap width for one set)
+           If you have N cards and N-1 gaps, for a seamless loop, you often duplicate the track content.
+           If duplicated, then translateX(- (N * card_width + (N-1) * gap_width) ) might be more appropriate.
+           -50% assumes the track content is duplicated once in the HTML/JS.
+        */
         transform: translateX(-50%);
     }
 }
 
 @media (max-width: 768px) {
     .testimonial-card {
-        flex: 0 0 300px;
+        flex: 0 0 300px; /* Smaller cards on tablets/mobile */
         padding: 20px;
     }
 
@@ -242,11 +248,12 @@
 
     .team-member:nth-child(odd),
     .team-member:nth-child(even) {
-        flex-direction: column;
+        flex-direction: column; /* Ensure consistent stacking on mobile */
     }
 
     .team-member__image {
-        margin: 0 auto 20px;
+        margin: 0 auto 20px; /* Center image when stacked */
+        width: 20vh; /* Adjust size for mobile if needed */
+        height: 30vh;
     }
-
 }

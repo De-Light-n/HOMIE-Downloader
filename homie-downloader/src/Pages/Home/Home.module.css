@@ -2,23 +2,28 @@
     position: relative;
     min-height: 100vh;
     overflow-x: hidden;
+    font-family: var(--font-family, 'Roboto', sans-serif); /* Added theme font */
 }
 
 /* Контент */
 .contentWrapper {
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Ensures content is above the global background animation */
 }
 
+/* Combined .mainContent definitions */
 .mainContent {
     padding-top: 90px;
     padding-bottom: 4rem;
     display: flex;
     flex-direction: column;
     gap: 4rem;
+    position: relative; /* Keep this if elements within mainContent need z-index context relative to it */
+    z-index: 1; /* Adjust if needed, contentWrapper is already z-index: 2 */
 }
 
-/* Анімація руху фону */
+/* Анімація руху фону - This keyframes is defined but not explicitly used by elements in this file.
+   It might be used globally or by components not shown. Keeping it as is. */
 @keyframes float {
     0% { transform: translate(0, 0) rotate(0deg); }
     25% { transform: translate(50px, 50px) rotate(90deg); }
@@ -27,39 +32,30 @@
     100% { transform: translate(0, 0) rotate(360deg); }
 }
 
-
-.mainContent {
-    padding-top: 90px;
-    padding-bottom: 4rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
-    position: relative;
-    z-index: 1;
-}
-
 .loadingContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background: var(--bg-primary);
-    position: relative;
-    z-index: 100;
+    position: relative; /* This was 'fixed' implicitly by context, changing to relative based on typical use */
+    z-index: 100; /* High z-index to be on top */
 }
 
 .ctaSection {
     text-align: center;
     margin-top: 3rem;
     padding: 3rem 2rem;
-    background: rgba(var(--primary-dark), 0.6);
+    /* background: rgba(var(--primary-dark), 0.6); -- Incorrect usage */
+    background: color-mix(in srgb, var(--primary-dark) 60%, transparent); /* Updated */
     border-radius: 16px;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     backdrop-filter: blur(12px);
     border: 1px solid var(--primary-color);
-    box-shadow: 0 0 25px rgba(var(--primary-color), 0.5);
+    /* box-shadow: 0 0 25px rgba(var(--primary-color), 0.5); -- Incorrect usage */
+    box-shadow: 0 0 25px color-mix(in srgb, var(--primary-color) 50%, transparent); /* Updated */
     position: relative;
     overflow: hidden;
 }
@@ -71,9 +67,10 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(var(--primary-color), 0.15) 0%, transparent 70%);
+    /* background: radial-gradient(circle, rgba(var(--primary-color), 0.15) 0%, transparent 70%); -- Incorrect usage */
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary-color) 15%, transparent) 0%, transparent 70%); /* Updated */
     animation: rotate 20s linear infinite;
-    z-index: -1;
+    z-index: -1; /* Behind ctaSection content but above its background */
 }
 
 .ctaTitle {
@@ -83,7 +80,8 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 15px rgba(var(--primary-dark), 0.4);
+    /* text-shadow: 0 0 15px rgba(var(--primary-dark), 0.4); -- Incorrect usage */
+    text-shadow: 0 0 15px color-mix(in srgb, var(--primary-dark) 40%, transparent); /* Updated */
     font-weight: 700;
     letter-spacing: 1px;
 }
@@ -108,7 +106,7 @@
 
     .ctaSection {
         padding: 2rem 1.5rem;
-        margin: 1rem;
+        margin: 1rem; /* Ensures some margin on smaller screens */
     }
 
     .ctaTitle {
@@ -132,8 +130,8 @@
     margin: 0 auto 3rem;
     padding: 0 20px;
     position: relative;
-    z-index: 3;
-    justify-self: center;
+    z-index: 3; /* Ensure search bar is above .mainContent if overlapping */
+    justify-self: center; /* This property is for grid/flex items, might not have effect here directly */
 }
 
 @media (max-width: 768px) {

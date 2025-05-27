@@ -2,6 +2,7 @@
 .videoRowSection {
     margin-bottom: 4rem;
     position: relative;
+    /* font-family will be inherited from parent components */
 }
 
 .header {
@@ -22,12 +23,10 @@
     margin: 0;
     letter-spacing: 1px;
     text-transform: uppercase;
-    /* Original: linear-gradient(90deg, #9d50ff, #ff00ff); */
     background: linear-gradient(90deg, var(--primary-color), var(--primary-dark)); /* Updated */
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    /* Original: text-shadow: 0 0 10px rgba(157, 80, 255, 0.3); */
     text-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 30%, transparent); /* Updated */
 }
 
@@ -36,10 +35,8 @@
     display: block;
     width: 10px;
     height: 10px;
-    /* Original: background: #9d50ff; */
     background: var(--primary-color); /* Updated */
     border-radius: 50%;
-    /* Original: box-shadow: 0 0 15px #9d50ff; */
     box-shadow: 0 0 15px var(--primary-color); /* Updated */
 }
 
@@ -52,11 +49,8 @@
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    /* Original: background: rgba(157, 80, 255, 0.25); */
     background: color-mix(in srgb, var(--primary-color) 25%, transparent); /* Updated */
-    /* Original: border: 1px solid rgba(157, 80, 255, 0.6); */
     border: 1px solid color-mix(in srgb, var(--primary-color) 60%, transparent); /* Updated */
-    /* Original: color: #e2c4ff; */
     color: var(--text-secondary); /* Updated */
     display: flex;
     align-items: center;
@@ -67,12 +61,9 @@
 }
 
 .arrowButton:hover {
-    /* Original: background: rgba(157, 80, 255, 0.5); */
     background: color-mix(in srgb, var(--primary-color) 50%, transparent); /* Updated */
-    /* Original: color: white; */
     color: var(--text-primary); /* Updated */
     transform: scale(1.1);
-    /* Original: box-shadow: 0 0 20px rgba(157, 80, 255, 0.6); */
     box-shadow: 0 0 20px color-mix(in srgb, var(--primary-color) 60%, transparent); /* Updated */
 }
 
@@ -86,10 +77,12 @@
     padding: 0 2.5rem;
     scrollbar-width: none;
     position: relative;
+    /* Using a theme variable like --text-primary for the mask color is generally fine,
+       as it provides a solid color. Masks primarily use alpha or luminance. */
     mask-image: linear-gradient(
             to right,
             transparent,
-            var(--text-primary) 40px, /* Using text-primary for black, can be inverted if needed */
+            var(--text-primary) 40px,
             var(--text-primary) calc(100% - 40px),
             transparent
     );
@@ -102,7 +95,7 @@
 .videoRow {
     display: inline-flex;
     gap: 2rem;
-    padding-bottom: 2rem;
+    padding-bottom: 2rem; /* Provides space for shadows or hover effects on video cards */
 }
 
 @keyframes slideIn {
@@ -118,7 +111,7 @@
 
 .videoRowSection {
     animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    animation-delay: calc(var(--row-index) * 0.1s);
+    animation-delay: calc(var(--row-index) * 0.1s); /* var(--row-index) should be set inline style via JS */
 }
 
 @media (max-width: 768px) {
@@ -135,7 +128,7 @@
         mask-image: linear-gradient(
                 to right,
                 transparent,
-                var(--text-primary) 20px, /* Using text-primary for black */
+                var(--text-primary) 20px,
                 var(--text-primary) calc(100% - 20px),
                 transparent
         );
@@ -150,18 +143,12 @@
         height: 38px;
     }
 }
+
 .videoCardSkeleton {
     width: 300px;
     height: 250px;
     flex-shrink: 0;
     border-radius: 12px;
-    /* Original:
-    background: linear-gradient(
-            90deg,
-            rgba(30, 0, 50, 0.3),
-            rgba(157, 80, 255, 0.2),
-            rgba(30, 0, 50, 0.3)
-    ); */
     background: linear-gradient(
             90deg,
             color-mix(in srgb, var(--user-icon-bg) 50%, transparent),      /* Updated */
@@ -188,33 +175,23 @@
     }
 }
 
-/* Додаємо нові стилі */
+/* Styles for Load More functionality */
 .videoRowWrapper {
     position: relative;
-    padding-right: 120px; /* Місце для кнопки */
+    /* Adjusted padding if load more button is inside the scrollable area's parent
+       If button is next to arrows, this might not be needed or adjusted.
+       Assuming button is outside the immediate scroll container for now. */
+    /* padding-right: 120px; */ /* Consider if this is needed or if button is positioned differently */
 }
-
-/* videoRowContainer already defined and styled above */
-/* .videoRowContainer {
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.videoRowContainer::-webkit-scrollbar {
-    display: none;
-} */
 
 .loadMoreButton {
     position: absolute;
-    right: 20px;
+    right: 20px; /* Adjust based on layout, might conflict with scrollbar area if not careful */
     top: 50%;
     transform: translateY(-50%);
     padding: 10px 15px;
-    /* Original: background-color: #3f51b5; */
     background-color: var(--primary-color); /* Updated */
-    /* Original: color: white; */
-    color: var(--text-primary); /* Updated */
+    color: var(--text-primary); /* Updated - ensure contrast with primary-color */
     border: none;
     border-radius: 20px;
     cursor: pointer;
@@ -224,41 +201,39 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Kept generic shadow */
-    min-width: 140px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Kept generic shadow, themeable if needed */
+    min-width: 140px; /* Ensures button has decent width */
     justify-content: center;
 }
 
 .loadMoreButton:hover {
-    /* Original: background-color: #303f9f; */
     background-color: var(--primary-dark); /* Updated */
     transform: translateY(-50%) scale(1.05);
     box-shadow: 0 3px 8px rgba(0,0,0,0.3); /* Kept generic shadow */
 }
 
 .loadMoreButton:disabled {
-    /* Original: background-color: #9fa8da; */
     background-color: color-mix(in srgb, var(--primary-color) 40%, var(--bg-secondary) 60%); /* Updated */
     color: color-mix(in srgb, var(--text-primary) 50%, var(--bg-secondary) 50%); /* Updated for disabled text */
     cursor: not-allowed;
-    transform: translateY(-50%);
-    box-shadow: none;
+    transform: translateY(-50%); /* Keep base transform */
+    box-shadow: none; /* Remove shadow for disabled state */
 }
 
 .loadMoreButton:active {
-    transform: translateY(-50%) scale(0.98);
+    transform: translateY(-50%) scale(0.98); /* Slight press effect */
 }
 
 .loadMoreIcon {
     transition: transform 0.3s ease;
-    /* Icon color will be inherited from button's color property */
+    /* Icon color inherited from button's color property */
 }
 
 .loadMoreButton:hover .loadMoreIcon {
-    transform: translateY(2px);
+    transform: translateY(2px); /* Subtle icon animation on hover */
 }
 
-/* Анімація завантаження */
+/* Loading animation for spinner icon */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -268,10 +243,8 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    /* Original: border: 2px solid rgba(255,255,255,0.3); */
     border: 2px solid color-mix(in srgb, var(--text-primary) 30%, transparent); /* Updated */
     border-radius: 50%;
-    /* Original: border-top-color: white; */
     border-top-color: var(--text-primary); /* Updated */
     animation: spin 1s ease-in-out infinite;
 }

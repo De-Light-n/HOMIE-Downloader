@@ -4,13 +4,13 @@
 .footer {
     background-color: var(--bg-primary); /* Already themed */
     color: var(--text-primary); /* Already themed */
-    padding-bottom: 0; /* Removed bottom padding to let footer-bottom handle it */
+    padding-bottom: 0; /* Bottom padding handled by .footer-bottom */
     position: relative;
-    overflow: hidden;
-    font-family: 'Inter', Arial, sans-serif;
+    overflow: hidden; /* For .footer-bg-text containment */
+    font-family: var(--font-family, 'Inter', Arial, sans-serif); /* Updated */
     border-top: 1px solid var(--border-color); /* Already themed */
-    margin-top: auto; /* Ensure footer sticks to bottom in flex layout */
-    z-index: 1;
+    margin-top: auto; /* Pushes footer to bottom in flex layouts */
+    z-index: 1; /* Above global background, below modals etc. */
 }
 
 /* Верхній рядок футера */
@@ -19,20 +19,15 @@
     padding: 40px 0;
     text-align: center;
     font-weight: bold;
-    /* Original: color: var(--neon-purple); */
     color: var(--primary-color); /* Updated */
     font-size: 28px;
-    /* Original: text-shadow: 0 0 10px var(--neon-purple); */
     text-shadow: 0 0 10px var(--primary-color); /* Updated */
     transition: all 0.3s ease;
 }
 
 .footer-top:hover {
-    /* Original: color: var(--neon-pink); */
     color: var(--primary-dark); /* Updated */
-    /* Original: text-shadow: 0 0 15px var(--neon-pink); */
     text-shadow: 0 0 15px var(--primary-dark); /* Updated */
-    /* Original: box-shadow: 0 0 20px var(--neon-pink); */
     box-shadow: 0 0 20px var(--primary-dark); /* Updated */
 }
 
@@ -43,22 +38,22 @@
     justify-content: space-between;
     max-width: 1200px;
     margin: 0 auto;
-    padding-top: 40px; /* Added padding-top as it was removed from .footer */
+    padding-top: 40px;
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Above .footer-bg-text */
 }
 
-.footer-title { /* This class was not used in the provided HTML structure, but styled */
+/* This class definition was present but not used in an example HTML.
+   It's styled correctly if it were to be used. */
+.footer-title {
     font-size: 28px;
-    /* Original: color: var(--neon-blue); */
     color: var(--primary-color); /* Updated */
     font-weight: bold;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    padding-right: 20px;
+    padding-right: 20px; /* If it's a column title, might conflict with .footer-left etc. */
     max-width: 100%;
     line-height: 1.2;
-    /* Original: text-shadow: 0 0 8px var(--neon-blue); */
     text-shadow: 0 0 8px var(--primary-color); /* Updated */
 }
 
@@ -66,15 +61,14 @@
 .footer-left {
     max-width: 300px;
     margin-bottom: 20px;
+    padding: 0 15px; /* Added padding for consistency with other columns */
 }
 
-.footer-left h2 { /* Assuming this is the .logo text or a similar title */
-    /* Original: color: var(--neon-blue); */
+.footer-left h2 { /* Assuming this is for the logo or a main footer title in the left section */
     color: var(--primary-color); /* Updated */
     font-size: 28px;
     margin-bottom: 15px;
     font-weight: bold;
-    /* Original: text-shadow: 0 0 8px var(--neon-blue); */
     text-shadow: 0 0 8px var(--primary-color); /* Updated */
 }
 
@@ -93,9 +87,7 @@
 .footer-nav ul li a:hover,
 .footer-services ul li a:hover,
 .footer-contact p a:hover {
-    /* Original: color: var(--neon-pink); */
     color: var(--primary-color); /* Updated */
-    /* Original: text-shadow: 0 0 5px var(--neon-pink); */
     text-shadow: 0 0 5px var(--primary-color); /* Updated */
 }
 
@@ -108,7 +100,6 @@
     left: 0;
     width: 0;
     height: 2px;
-    /* Original: background-color: var(--neon-pink); */
     background-color: var(--primary-color); /* Updated */
     transition: width 0.3s ease;
 }
@@ -122,7 +113,6 @@
 /* Кнопка чату */
 .chat-btn {
     background: transparent;
-    /* Original: border: 2px solid var(--neon-purple); */
     border: 2px solid var(--primary-color); /* Updated */
     color: var(--text-primary); /* Already themed */
     padding: 10px 20px;
@@ -135,8 +125,8 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    /* Original: box-shadow: 0 0 10px var(--neon-purple); */
     box-shadow: 0 0 10px var(--primary-color); /* Updated */
+    z-index: 1; /* Keep button content above ::before */
 }
 
 .chat-btn::before {
@@ -146,17 +136,14 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    /* Original: background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink)); */
     background: linear-gradient(45deg, var(--primary-color), var(--primary-dark)); /* Updated */
     transition: left 0.3s ease;
-    z-index: -1;
+    z-index: -1; /* Behind button text/icon */
 }
 
 .chat-btn:hover {
-    color: var(--text-primary); /* Already themed */
-    /* Original: border-color: var(--neon-pink); */
+    color: var(--text-primary); /* Already themed - ensure contrast if background changes significantly */
     border-color: var(--primary-dark); /* Updated */
-    /* Original: box-shadow: 0 0 20px var(--neon-pink); */
     box-shadow: 0 0 20px var(--primary-dark); /* Updated */
 }
 
@@ -169,22 +156,20 @@
 .footer-services,
 .footer-contact {
     flex: 1;
-    min-width: 200px;
+    min-width: 200px; /* Minimum width before wrapping */
     margin-bottom: 20px;
-    padding: 0 15px; /* Added padding for spacing between columns */
+    padding: 0 15px; /* Horizontal padding for column content */
 }
 
 .footer-nav h4,
 .footer-services h4,
 .footer-contact h4 {
-    /* Original: color: var(--neon-purple); */
     color: var(--primary-color); /* Updated */
     margin-bottom: 15px;
     font-size: 16px;
     font-weight: bold;
     position: relative;
-    display: inline-block;
-    /* Original: text-shadow: 0 0 5px var(--neon-purple); */
+    display: inline-block; /* So ::after is positioned relative to text width */
     text-shadow: 0 0 5px var(--primary-color); /* Updated */
 }
 
@@ -193,13 +178,11 @@
 .footer-contact h4::after {
     content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -5px; /* Position underline below text */
     left: 0;
-    width: 30px;
+    width: 30px; /* Short underline */
     height: 2px;
-    /* Original: background-color: var(--neon-blue); */
     background-color: var(--primary-dark); /* Updated */
-    /* Original: box-shadow: 0 0 5px var(--neon-blue); */
     box-shadow: 0 0 5px var(--primary-dark); /* Updated */
 }
 
@@ -226,29 +209,28 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center; /* Added for vertical alignment */
+    align-items: center;
     padding: 20px;
     font-size: 14px;
     border-top: 1px solid var(--border-color); /* Already themed */
-    background: var(--header-bg); /* Already themed */
-    margin-top: 20px; /* Ensure separation from content */
+    background: var(--header-bg); /* Or --bg-secondary for a different shade */
+    margin-top: 20px; /* Space between main content and bottom bar */
     width: 100%;
-    box-sizing: border-box; /* Ensure padding is included in width */
+    box-sizing: border-box;
 }
 
 /* Великий текст на фоні */
 .footer-bg-text {
     position: absolute;
-    bottom: -20px;
+    bottom: -20px; /* Adjust for visual preference */
     left: 0;
     width: 100%;
     font-size: 180px;
     font-weight: bold;
-    /* Original: color: rgba(157, 80, 255, 0.05); */
     color: color-mix(in srgb, var(--primary-color) 5%, transparent); /* Updated */
     text-align: center;
-    z-index: 1;
-    pointer-events: none; /* Ensure text is not interactive */
+    z-index: 1; /* Behind .footer-content but above .footer's own background */
+    pointer-events: none;
 }
 
 /* Адаптивність */
@@ -256,27 +238,28 @@
     .footer-content {
         flex-direction: column;
         text-align: center;
-        padding-left: 15px; /* Keep horizontal padding */
+        padding-left: 15px;
         padding-right: 15px;
-        padding-top: 20px; /* Adjust padding */
+        padding-top: 20px;
     }
 
-    .footer-left {
-        margin-bottom: 30px;
-        max-width: 100%;
-    }
-
+    .footer-left,
     .footer-nav,
     .footer-services,
     .footer-contact {
-        padding: 0; /* Remove padding for columns on mobile if stacking */
-        min-width: 100%; /* Ensure full width */
+        max-width: 100%; /* Allow full width when stacked */
+        min-width: 100%;
+        padding: 0 0 20px 0; /* Adjust padding for stacked columns, add bottom margin */
     }
+    .footer-left {
+        padding-bottom: 30px; /* More space after logo section */
+    }
+
 
     .footer-nav h4::after,
     .footer-services h4::after,
     .footer-contact h4::after {
-        left: 50%;
+        left: 50%; /* Center the underlines */
         transform: translateX(-50%);
     }
 
@@ -289,7 +272,7 @@
         flex-direction: column;
         text-align: center;
         gap: 10px;
-        padding: 15px; /* Adjust padding */
+        padding: 15px;
     }
 }
 
