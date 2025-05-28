@@ -1,0 +1,6 @@
+[build]
+  command = "CI=false npm run build" # Або "CI=false yarn build" якщо ви використовуєте yarn
+  publish = "build" # Шлях до вашої папки збірки (зазвичай 'build' для CRA)
+
+[context.production.environment]
+  CI = "false" # Це також може бути додано тут, але попередній рядок з командою є більш прямим
