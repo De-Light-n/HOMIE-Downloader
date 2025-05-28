@@ -449,7 +449,8 @@ if __name__ == '__main__':
 
     try:
         use_reloader_flag = app.debug
-        app.run(host='0.0.0.0', port=5000, debug=app.debug, use_reloader=use_reloader_flag)
+        port = int(os.environ.get("PORT", 5000))
+        app.run(host='0.0.0.0', port=port, debug=app.debug, use_reloader=use_reloader_flag)
     except Exception as e_run:
         log_func = app.logger.critical if app.logger.hasHandlers() else print
         log_func(f"Critical error when starting Flask application: {e_run}\n{traceback.format_exc()}")
