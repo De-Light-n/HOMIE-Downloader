@@ -3,12 +3,13 @@ import os
 import re
 import uuid
 import traceback
-import logging # Import logging
+import logging
 from urllib.parse import quote as url_quote
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import yt_dlp as youtube_dl
 import imageio_ffmpeg
+import tempfile # Додаємо імпорт tempfile
 
 app = Flask(__name__)
 CORS(app)
@@ -17,10 +18,9 @@ CORS(app)
 DOWNLOAD_FOLDER = 'downloads'
 FFMPEG_EXE_PATH = None # Automatically determined
 
-# Нова змінна для шляху до файлу cookie.
-# Ви можете задати її через змінну середовища або вказати шлях безпосередньо.
-# Приклад: export YTDLP_COOKIE_FILE="/path/to/your/youtube_cookies.txt"
-YTDLP_COOKIE_FILE = os.environ.get('YTDLP_COOKIE_FILE', 'youtube_cookies.txt') # Припускаємо, що файл знаходиться в корені проєкту
+# Нова змінна для шляху до тимчасового файлу cookie
+# Вона буде встановлена після створення тимчасового файлу
+TEMP_COOKIE_FILE_PATH = None
 
 if not os.path.exists(DOWNLOAD_FOLDER):
     try:
@@ -52,6 +52,30 @@ print("Initializing FFmpeg path...")
 FFMPEG_EXE_PATH = get_ffmpeg_path_with_auto_download()
 print(f"Final FFmpeg path: {FFMPEG_EXE_PATH or 'Not defined/Not downloaded'}")
 
+# --- Cookie Handling ---
+def setup_cookies_from_env():
+    global TEMP_COOKIE_FILE_PATH
+    cookies_content = os.environ.get('YOUTUBE_COOKIES_CONTENT')
+    if cookies_content:
+        try:
+            # Створюємо тимчасовий файл і записуємо в нього вміст cookies
+            # Використовуємо mode 'w+' для читання та запису
+            # delete=False, щоб файл не був видалений відразу після закриття
+            fd, path = tempfile.mkstemp(suffix='.txt', prefix='yt_cookies_')
+            with os.fdopen(fd, 'w', encoding='utf-8') as tmp:
+                tmp.write(cookies_content)
+            TEMP_COOKIE_FILE_PATH = path
+            app.logger.info(f"Successfully created temporary cookie file at: {TEMP_COOKIE_FILE_PATH}")
+        except Exception as e:
+            app.logger.error(f"Failed to create temporary cookie file from environment variable: {e}")
+            TEMP_COOKIE_FILE_PATH = None
+    else:
+        app.logger.warning("YOUTUBE_COOKIES_CONTENT environment variable not set. Proceeding without cookies. This may lead to 'bot detection' errors.")
+
+# Викликаємо цю функцію при старті додатка
+setup_cookies_from_env()
+# --- End Cookie Handling ---
+
 
 # --- HELPER FUNCTIONS ---
 def get_url_type(url):
@@ -79,19 +103,18 @@ def get_video_info(url):
             'ffmpeg_location': FFMPEG_EXE_PATH,
             'extract_flat': 'in_playlist',
             'playlist_items': '1',
-            'retries': 5, # Збільшено кількість повторних спроб
-            'sleep_interval': 5, # Початковий інтервал очікування між спробами
-            'max_sleep_interval': 30, # Максимальний інтервал очікування
-            'youtube_include_dash_manifest': False, # Може допомогти з деякими проблемами YouTube
+            'retries': 5,
+            'sleep_interval': 5,
+            'max_sleep_interval': 30,
+            'youtube_include_dash_manifest': False,
         }
 
-        # Додаємо файл cookie, якщо він існує
-        if YTDLP_COOKIE_FILE and os.path.exists(YTDLP_COOKIE_FILE):
-            ydl_opts['cookiefile'] = YTDLP_COOKIE_FILE
-            app.logger.info(f"get_video_info [{request_id_info}]: Using cookies from: {YTDLP_COOKIE_FILE}")
-        elif YTDLP_COOKIE_FILE:
-            app.logger.warning(f"get_video_info [{request_id_info}]: Configured YTDLP_COOKIE_FILE '{YTDLP_COOKIE_FILE}' not found. Proceeding without cookies.")
-
+        # Додаємо файл cookie, якщо він був успішно створений
+        if TEMP_COOKIE_FILE_PATH and os.path.exists(TEMP_COOKIE_FILE_PATH):
+            ydl_opts['cookiefile'] = TEMP_COOKIE_FILE_PATH
+            app.logger.info(f"get_video_info [{request_id_info}]: Using temporary cookie file: {TEMP_COOKIE_FILE_PATH}")
+        else:
+            app.logger.warning(f"get_video_info [{request_id_info}]: Temporary cookie file not available. Proceeding without cookies. This may lead to 'bot detection' errors.")
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -179,7 +202,9 @@ def get_video_info(url):
         if "unsupported url" in err_msg or "not a valid url" in err_msg or "no supported media" in err_msg or "valid url" in err_msg:
             return {'error_type': 'InvalidURL', 'message': 'The provided URL is unsupported, invalid, or does not contain media.'}
         if "this video is unavailable" in err_msg or "private video" in err_msg or "video is private" in err_msg or "age restricted" in err_msg or "sign in to confirm you’re not a bot" in err_msg:
-            return {'error_type': 'VideoUnavailable', 'message': 'This video/audio is unavailable (private, deleted, age-restricted), or requires authentication (e.g., to confirm you are not a bot). Try using cookies.'}
+            return {'error_type': 'VideoUnavailable', 'message': 'This video/audio is unavailable (private, deleted, age-restricted), or requires authentication (e.g., to confirm you are not a bot). Please ensure your YouTube cookies are up-to-date and from a logged-in account, provided via YOUTUBE_COOKIES_CONTENT environment variable.'}
+        if "http error 429" in err_msg:
+            return {'error_type': 'TooManyRequests', 'message': 'Too many requests to YouTube. Please try again later. If this persists, ensure your cookies are valid.'}
         return None
     except Exception as e:
         app.logger.error(f"get_video_info [{request_id_info}]: General error for {url}: {type(e)} - {str(e)}\n{traceback.format_exc()}")
@@ -194,7 +219,9 @@ def video_preview():
     video_info_data = get_video_info(video_url)
 
     if not video_info_data: return jsonify({'error': 'Failed to get information. Check the URL or try again later.'}), 500
-    if video_info_data.get('error_type'): return jsonify({'error': video_info_data['message']}), 400 if video_info_data.get('error_type') == 'InvalidURL' else 404
+    if video_info_data.get('error_type'):
+        status_code = 400 if video_info_data.get('error_type') == 'InvalidURL' else (403 if video_info_data.get('error_type') in ['VideoUnavailable', 'TooManyRequests'] else 500)
+        return jsonify({'error': video_info_data['message']}), status_code
 
     if isinstance(video_info_data.get('views'), (int, float)):
         views = video_info_data['views']
@@ -233,11 +260,21 @@ def download_video():
     if not video_url: return jsonify({'error': 'URL not provided'}), 400
 
     try:
-        info_opts_for_meta = {'skip_download': True, 'logger': app.logger, 'no_warnings': True}
-        # Додаємо файл cookie для отримання метаінформації також
-        if YTDLP_COOKIE_FILE and os.path.exists(YTDLP_COOKIE_FILE):
-            info_opts_for_meta['cookiefile'] = YTDLP_COOKIE_FILE
-            app.logger.info(f"download_video [{request_id}]: Using cookies for meta-info from: {YTDLP_COOKIE_FILE}")
+        info_opts_for_meta = {
+            'skip_download': True,
+            'logger': app.logger,
+            'no_warnings': True,
+            'retries': 5,
+            'sleep_interval': 5,
+            'max_sleep_interval': 30,
+            'youtube_include_dash_manifest': False,
+        }
+        # Додаємо файл cookie для отримання метаінформації
+        if TEMP_COOKIE_FILE_PATH and os.path.exists(TEMP_COOKIE_FILE_PATH):
+            info_opts_for_meta['cookiefile'] = TEMP_COOKIE_FILE_PATH
+            app.logger.info(f"download_video [{request_id}]: Using temporary cookie file for meta-info: {TEMP_COOKIE_FILE_PATH}")
+        else:
+            app.logger.warning(f"download_video [{request_id}]: Temporary cookie file not available for meta-info. Proceeding without cookies. This may lead to 'bot detection' errors.")
 
         with youtube_dl.YoutubeDL(info_opts_for_meta) as ydl_meta:
             info = ydl_meta.extract_info(video_url, download=False)
@@ -267,18 +304,18 @@ def download_video():
             'quiet': False, 'no_warnings': False, 'verbose': app.debug,
             'format_sort_force': True,
             'prefer_free_formats': True,
-            'retries': 5, # Збільшено кількість повторних спроб
-            'sleep_interval': 5, # Початковий інтервал очікування між спробами
-            'max_sleep_interval': 30, # Максимальний інтервал очікування
-            'youtube_include_dash_manifest': False, # Може допомогти з деякими проблемами YouTube
+            'retries': 5,
+            'sleep_interval': 5,
+            'max_sleep_interval': 30,
+            'youtube_include_dash_manifest': False,
         }
 
-        # Додаємо файл cookie для завантаження також
-        if YTDLP_COOKIE_FILE and os.path.exists(YTDLP_COOKIE_FILE):
-            ydl_opts_download['cookiefile'] = YTDLP_COOKIE_FILE
-            app.logger.info(f"download_video [{request_id}]: Using cookies for download from: {YTDLP_COOKIE_FILE}")
-        elif YTDLP_COOKIE_FILE:
-            app.logger.warning(f"download_video [{request_id}]: Configured YTDLP_COOKIE_FILE '{YTDLP_COOKIE_FILE}' not found. Proceeding without cookies.")
+        # Додаємо файл cookie для завантаження
+        if TEMP_COOKIE_FILE_PATH and os.path.exists(TEMP_COOKIE_FILE_PATH):
+            ydl_opts_download['cookiefile'] = TEMP_COOKIE_FILE_PATH
+            app.logger.info(f"download_video [{request_id}]: Using temporary cookie file for download: {TEMP_COOKIE_FILE_PATH}")
+        else:
+            app.logger.warning(f"download_video [{request_id}]: Temporary cookie file not available for download. Proceeding without cookies. This may lead to 'bot detection' errors.")
 
 
         file_label_part = ""
@@ -410,6 +447,14 @@ def download_video():
         })
 
     except youtube_dl.utils.DownloadError as e:
+        err_msg = str(e).lower()
+        app.logger.error(f"download_video [{request_id}]: yt-dlp error (DownloadError) for {video_url}: {type(e)} - {str(e)}")
+        if "unsupported url" in err_msg or "not a valid url" in err_msg or "no supported media" in err_msg or "valid url" in err_msg:
+            return jsonify({'error': 'The provided URL is unsupported, invalid, or does not contain media.'}), 400
+        if "this video is unavailable" in err_msg or "private video" in err_msg or "video is private" in err_msg or "age restricted" in err_msg or "sign in to confirm you’re not a bot" in err_msg:
+            return jsonify({'error': 'This video/audio is unavailable (private, deleted, age-restricted), or requires authentication (e.g., to confirm you are not a bot). Please ensure your YouTube cookies are up-to-date and from a logged-in account, provided via YOUTUBE_COOKIES_CONTENT environment variable.'}), 403
+        if "http error 429" in err_msg:
+            return jsonify({'error': 'Too many requests to YouTube. Please try again later. If this persists, ensure your cookies are valid.'}), 429
         return jsonify({'error': f'yt-dlp error: {str(e)}'}), 500
     except Exception as e:
         app.logger.error(f"download_video [{request_id}]: General error for {video_url}: {type(e)} - {str(e)}\n{traceback.format_exc()}")
@@ -442,7 +487,7 @@ if __name__ == '__main__':
     current_debug_mode = flask_debug_env == "1" if flask_debug_env is not None else False
     log_level_name_env = os.environ.get("FLASK_LOG_LEVEL", "INFO").upper()
     if current_debug_mode and log_level_name_env == "INFO": log_level = logging.DEBUG
-    else: log_level = getattr(logging, log_level_name_env, logging.INFO)
+    else: log_level = getattr(logging.INFO, log_level_name_env, logging.INFO) # Fix for getattr order
 
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - [%(process)d:%(threadName)s] - %(module)s.%(funcName)s:%(lineno)d - %(message)s'
