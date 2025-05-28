@@ -1,0 +1,265 @@
+:root[data-theme="oceanic-bliss"] {
+    --bg-primary: #F0F8FF;
+    --bg-secondary: #E0FFFF;
+    --header-bg: #F0F8FF;
+    --text-primary: #005073;
+    --text-secondary: #107dac;
+    --border-color: #70C1B3;
+    --primary-color: #20A4F3;
+    --primary-dark: #187BCD;
+    --user-icon-bg: #B2DFDB;
+    --font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root[data-theme="crimson-night"] {
+    --bg-primary: #121212;
+    --bg-secondary: #1E1E1E;
+    --header-bg: #121212;
+    --text-primary: #EAEAEA;
+    --text-secondary: #A0A0A0;
+    --border-color: #4A0404;
+    --primary-color: #DC143C;
+    --primary-dark: #B22222;
+    --user-icon-bg: #2B2B2B;
+    --font-family: 'Georgia', Times, 'Times New Roman', serif;
+}
+
+:root[data-theme="halloween"] {
+    --bg-primary: #1A1A1A;
+    --bg-secondary: #0D0D0D;
+    --header-bg: #1A1A1A;
+    --text-primary: #F0F0F0;
+    --text-secondary: #FF8C00;
+    --border-color: #8C3B00;
+    --primary-color: #FF6600;
+    --primary-dark: #CC5200;
+    --user-icon-bg: #262626;
+    --font-family: 'Creepster', cursive;
+}
+
+:root[data-theme="horror"] {
+    --bg-primary: #0A0000;
+    --bg-secondary: #000000;
+    --header-bg: #0A0000;
+    --text-primary: #E0E0E0;
+    --text-secondary: #8B0000;
+    --border-color: #400000;
+    --primary-color: #FF0000;
+    --primary-dark: #B30000;
+    --user-icon-bg: #1C1C1C;
+    --font-family: 'Special Elite', 'Courier New', Courier, monospace;
+}
+
+:root[data-theme="hello-kitty"] {
+    --bg-primary: #FFF0F5;
+    --bg-secondary: #FFFAFA;
+    --header-bg: #FFF0F5;
+    --text-primary: #C71585;
+    --text-secondary: #FF69B4;
+    --border-color: #FFB6C1;
+    --primary-color: #FF1493;
+    --primary-dark: #DB7093;
+    --user-icon-bg: #FFE4E1;
+    --font-family: 'Pacifico', 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+}
+
+:root[data-theme="cyberpunk-neon"] {
+    --bg-primary: #0C001F;
+    --bg-secondary: #05000F;
+    --header-bg: #100028;
+    --text-primary: #00FFFF;
+    --text-secondary: #FF00FF;
+    --border-color: #FFFF00;
+    --primary-color: #39FF14;
+    --primary-dark: #2FDD0D;
+    --user-icon-bg: #20003B;
+    --font-family: 'Orbitron', 'Share Tech Mono', 'Lucida Console', Monaco, monospace, sans-serif;
+}
+
+:root[data-theme="noir-cinema"] {
+    --bg-primary: #0A0A0A;
+    --bg-secondary: #141414;
+    --header-bg: #0A0A0A;
+    --text-primary: #C8C8C8;
+    --text-secondary: #666666;
+    --border-color: #222222;
+    --primary-color: #E0E0E0;
+    --primary-dark: #B0B0B0;
+    --user-icon-bg: #1F1F1F;
+    --font-family: 'Times New Roman', Times, serif;
+}
+
+:root[data-theme="sunset-glow"] {
+    --bg-primary: #2B1B3D;
+    --bg-secondary: #4A2A4D;
+    --header-bg: #2B1B3D;
+    --text-primary: #FFDAB9;
+    --text-secondary: #E6A4B4;
+    --border-color: #C7758E;
+    --primary-color: #FF8C69;
+    --primary-dark: #E07B60;
+    --user-icon-bg: #523055;
+    --font-family: 'Merriweather', serif;
+}
+
+:root[data-theme="vintage-paper"] {
+    --bg-primary: #F5F5DC;
+    --bg-secondary: #EDE0C8;
+    --header-bg: #F5F5DC;
+    --text-primary: #5D4037;
+    --text-secondary: #8D6E63;
+    --border-color: #A1887F;
+    --primary-color: #795548;
+    --primary-dark: #5D4037;
+    --user-icon-bg: #D7CCC8;
+    --font-family: 'Crimson Text', serif;
+}
+
+:root[data-theme="deep-forest"] {
+    --bg-primary: #1A2E24;
+    --bg-secondary: #2F4239;
+    --header-bg: #1A2E24;
+    --text-primary: #B0C4B1;
+    --text-secondary: #829086;
+    --border-color: #4A5D51;
+    --primary-color: #6B8E23;
+    --primary-dark: #557C00;
+    --user-icon-bg: #3C5242;
+    --font-family: 'Cabin', sans-serif;
+}
+
+
+
+/* --- HORROR THEMES ROUND 2 CSS START --- */
+:root[data-theme="static-void"] {
+    --bg-primary: #050505;
+    --bg-secondary: #101010;
+    --header-bg: #080808;
+    --text-primary: #99FF99;
+    --text-secondary: #66BB66;
+    --border-color: #333333;
+    --primary-color: #FF0033;
+    --primary-dark: #CC0022;
+    --user-icon-bg: #1A1A1A;
+    --font-family: 'VT323', monospace;
+}
+
+:root[data-theme="eldritch-depths"] {
+    --bg-primary: #0D1A1C;
+    --bg-secondary: #14252A;
+    --header-bg: #0D1A1C;
+    --text-primary: #76B3A1;
+    --text-secondary: #4D7C7A;
+    --border-color: #2A3F43;
+    --primary-color: #8B008B; /* DarkMagenta */
+    --primary-dark: #6A006A;
+    --user-icon-bg: #1F3034;
+    --font-family: 'IM Fell English SC', serif;
+}
+/* --- HORROR THEMES ROUND 2 CSS END --- */
+
+
+/* Глобальні стилі */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-family, 'Roboto', sans-serif);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100%;
+    overflow-x: hidden;
+    position: relative;
+    background-image: linear-gradient(45deg, var(--bg-primary), var(--bg-secondary));
+    background-attachment: fixed;
+}
+
+
+/* --- Рухомі елементи фону --- */
+.background-animation-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.floating-element {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    will-change: transform, opacity;
+}
+
+.orb1 {
+    width: 35vw;
+    height: 35vw;
+    max-width: 550px;
+    max-height: 550px;
+    background: var(--primary-color);
+    filter: blur(100px);
+    animation: driftAndPulse 40s infinite linear alternate;
+    left: 5%;
+    top: 10%;
+}
+
+.orb2 {
+    width: 25vw;
+    height: 25vw;
+    max-width: 400px;
+    max-height: 400px;
+    background: var(--primary-dark);
+    filter: blur(80px);
+    animation: driftAndPulse 30s infinite linear alternate;
+    animation-delay: -15s;
+    right: 10%;
+    bottom: 5%;
+}
+
+.orb3 {
+    width: 18vw;
+    height: 18vw;
+    max-width: 250px;
+    max-height: 250px;
+    background: var(--text-secondary);
+    filter: blur(60px);
+    animation: driftAndPulse 50s infinite linear alternate;
+    animation-delay: -5s;
+    left: 45%;
+    top: 40%;
+}
+
+.glowEffect, .purpleGlow, .pinkGlow, .blueGlow, .neonBackground {
+    display: none;
+}
+
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px var(--primary-color); }
+    50% { box-shadow: 0 0 10px var(--primary-color); }
+    100% { box-shadow: 0 0 5px var(--primary-color); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+@keyframes driftAndPulse {
+    0% { transform: translate(0px, 0px) scale(0.9) rotate(0deg); opacity: calc(var(--base-opacity, 0.15) * 0.6); }
+    25% { transform: translate(3vw, -5vh) scale(1) rotate(30deg); opacity: calc(var(--base-opacity, 0.15) * 0.9); }
+    50% { transform: translate(-2vw, 4vh) scale(1.1) rotate(-20deg); opacity: var(--base-opacity, 0.15); }
+    75% { transform: translate(-4vw, -3vh) scale(0.95) rotate(15deg); opacity: calc(var(--base-opacity, 0.15) * 0.9); }
+    100% { transform: translate(0px, 0px) scale(0.9) rotate(0deg); opacity: calc(var(--base-opacity, 0.15) * 0.6); }
+}

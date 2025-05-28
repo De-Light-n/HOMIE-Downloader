@@ -1,3 +1,4 @@
+/* SearchBar.module.css */
 .searchForm {
     display: flex;
     width: 100%;
@@ -5,14 +6,18 @@
     position: relative;
     transition: all 0.3s ease;
     border-radius: 50vh;
-    background: rgba(30, 0, 50, 0.5);
+    /* Original: background: rgba(30, 0, 50, 0.5); */
+    background: color-mix(in srgb, var(--bg-primary) 50%, transparent); /* Assuming rgb(30,0,50) is close to bg-primary */
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(157, 80, 255, 0.3);
+    /* Original: border: 1px solid rgba(157, 80, 255, 0.3); */
+    border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
     justify-self: center;
 }
 
 .searchForm.focused {
-    box-shadow: 0 0 0 2px #9d50ff, 0 0 20px rgba(157, 80, 255, 0.3);
+    /* Original: box-shadow: 0 0 0 2px #9d50ff, 0 0 20px rgba(157, 80, 255, 0.3); */
+    box-shadow: 0 0 0 2px var(--primary-color), 0 0 20px color-mix(in srgb, var(--primary-color) 30%, transparent);
+    animation: pulse 1.5s infinite; /* Moved animation here as it's tied to focus */
 }
 
 .searchContainer {
@@ -31,18 +36,21 @@
     background: transparent;
     border: none;
     font-size: 1rem;
-    color: white;
+    /* Original: color: white; */
+    color: var(--text-primary);
     outline: none;
     width: 100%;
 }
 
 .searchInput::placeholder {
-    color: #a5a5a5;
+    /* Original: color: #a5a5a5; */
+    color: var(--text-secondary);
     opacity: 0.8;
 }
 
 .searchIcon {
-    color: #c792ea;
+    /* Original: color: #c792ea; */
+    color: var(--text-secondary); /* Or var(--primary-color) if it's an accent */
     margin-right: 0.6rem;
     transition: color 0.2s;
 }
@@ -50,7 +58,8 @@
 .clearButton {
     background: none;
     border: none;
-    color: #a5a5a5;
+    /* Original: color: #a5a5a5; */
+    color: var(--text-secondary);
     cursor: pointer;
     padding: 0.5rem;
     margin-right: 0.5rem;
@@ -62,8 +71,10 @@
 }
 
 .clearButton:hover {
-    color: white;
-    background-color: rgba(157, 80, 255, 0.2);
+    /* Original: color: white; */
+    color: var(--text-primary);
+    /* Original: background-color: rgba(157, 80, 255, 0.2); */
+    background-color: color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
 .searchButton {
@@ -71,8 +82,10 @@
     align-items: center;
     gap: 0.6rem;
     padding: 0 1.8rem;
-    background: linear-gradient(45deg, #6a00ff, #a100ff);
-    color: white;
+    /* Original: background: linear-gradient(45deg, #6a00ff, #a100ff); */
+    background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+    /* Original: color: white; */
+    color: var(--text-primary);
     border: none;
     border-radius: 0 30px 30px 0;
     cursor: pointer;
@@ -82,32 +95,32 @@
     overflow: hidden;
 }
 
-.searchButton:hover {
-    background: linear-gradient(45deg, #7a1aff, #b11aff);
+.searchButton:not(:disabled):hover { /* Combined hover state for clarity */
+    /* Original: background: linear-gradient(45deg, #7a1aff, #b11aff); */
+    background: linear-gradient(45deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 80%, var(--text-primary) 20%)); /* Lighter gradient */
     transform: translateX(2px);
-    box-shadow: 0 0 15px rgba(157, 80, 255, 0.3);
+    /* Original: box-shadow: 0 0 15px rgba(157, 80, 255, 0.3); */
+    box-shadow: 0 0 15px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .searchButton:disabled {
-    background: rgba(30, 0, 50, 0.3);
-    color: #a5a5a5;
+    /* Original: background: rgba(30, 0, 50, 0.3); */
+    background: color-mix(in srgb, var(--bg-primary) 30%, transparent);
+    /* Original: color: #a5a5a5; */
+    color: var(--text-secondary);
     cursor: not-allowed;
-}
-
-.searchButton:not(:disabled):hover {
-    transform: translateX(2px);
-    box-shadow: 0 0 15px rgba(157, 80, 255, 0.3);
+    /* Ensure no transform or shadow when disabled */
+    transform: none;
+    box-shadow: none;
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(157, 80, 255, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(157, 80, 255, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(157, 80, 255, 0); }
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 40%, transparent); }
+    70% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--primary-color) 0%, transparent); }
+    100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-color) 0%, transparent); }
 }
 
-.searchForm.focused {
-    animation: pulse 1.5s infinite;
-}
+/* .searchForm.focused animation is now part of .searchForm.focused rule */
 
 @media (max-width: 768px) {
     .searchForm {
@@ -124,12 +137,13 @@
 }
 
 .videoPreviewContainer {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-secondary); /* Already themed */
     border-radius: 12px;
     margin-top: 1.5rem;
     padding: 2rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Generic shadow, kept */
+    /* Original: border: 1px solid rgba(255, 255, 255, 0.1); */
+    border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent); /* Light faint border */
     backdrop-filter: blur(8px);
     transition: all 0.3s ease;
     width: 100%;
@@ -147,7 +161,7 @@
     border-radius: 8px;
     overflow: hidden;
     height: 150px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Generic shadow, kept */
     transition: transform 0.3s ease;
 }
 
@@ -175,18 +189,55 @@
 
 .videoInfo h3 {
     margin: 0 0 1rem 0;
-    color: var(--text-primary);
+    color: var(--text-primary); /* Already themed */
     font-size: 1.4rem;
     font-weight: 600;
     line-height: 1.4;
 }
 
-.videoInfo p {
-    margin: 0 0 1rem 0;
-    color: var(--text-secondary);
+.descriptionContainer { /* Added this rule based on usage */
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.videoDescription {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-secondary); /* Already themed */
     font-size: 1rem;
     line-height: 1.6;
     opacity: 0.9;
+    max-height: 6.4em; /* Equivalent to 4 lines if line-height is 1.6 */
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.videoDescription.expanded {
+    max-height: none; /* Or a sufficiently large value like 100em */
+}
+
+.toggleDescriptionButton {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: none;
+    border: none;
+    color: var(--primary-color); /* Already themed */
+    cursor: pointer;
+    padding: 0.2rem 0;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.toggleDescriptionButton:hover {
+    color: var(--primary-dark); /* Already themed */
+}
+
+.toggleDescriptionButton svg {
+    transition: transform 0.3s ease;
+}
+
+.toggleDescriptionButton.expanded svg {
+    transform: rotate(180deg);
 }
 
 .videoStats {
@@ -199,32 +250,144 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--text-secondary);
+    color: var(--text-secondary); /* Already themed */
     font-size: 0.9rem;
 }
+
+.detailsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-left: auto; /* Вирівнює праворуч */
+  
+}
+
+.detailsButton p{
+    margin: 1vh;
+}
+
+.detailsButton:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.detailsButton:active {
+  transform: scale(0.95);
+}
+
+.downloadTypeSelector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+.typeButton {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 2px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.typeButton:hover {
+  background-color: var(--bg-primary);
+  transform: scale(1.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.typeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.typeButton.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.typeButton.active:hover {
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.typeButton svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease;
+}
+
+.typeButton:hover svg {
+  transform: scale(1.1);
+}
+
+.typeButton span {
+  display: none;
+}
+
 
 .downloadOptions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    /* Original: border-top: 1px solid rgba(255, 255, 255, 0.1); */
+    border-top: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent); /* Light faint border */
+    gap: 1rem;
 }
+
+.downloadOptions > * {
+    flex: 1;
+}
+
+.downloadOptions > select { /* Assuming .qualitySelect is the select here */
+    flex: 1;
+    max-width: 200px; /* Or adjust as needed */
+}
+
+.downloadOptions > button { /* Assuming .downloadButton and .fullDetailsButton */
+    flex: 1;
+    max-width: 200px; /* Or adjust as needed */
+}
+
 
 .qualitySelect {
     padding: 0.7rem 1rem;
     border-radius: 8px;
-    background-color: rgba(30, 0, 50, 0.7);
-    color: white;
-    border: 1px solid rgba(157, 80, 255, 0.5);
+    /* Original: background-color: rgba(30, 0, 50, 0.7); */
+    background-color: color-mix(in srgb, var(--bg-primary) 70%, transparent);
+    /* Original: color: white; */
+    color: var(--text-primary);
+    /* Original: border: 1px solid rgba(157, 80, 255, 0.5); */
+    border: 1px solid color-mix(in srgb, var(--primary-color) 50%, transparent);
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
     min-width: 120px;
     appearance: none;
+    /* Original: background-image with #9d50ff */
     background-image:
-            linear-gradient(45deg, transparent 50%, #9d50ff 50%),
-            linear-gradient(135deg, #9d50ff 50%, transparent 50%);
+            linear-gradient(45deg, transparent 50%, var(--primary-color) 50%),
+            linear-gradient(135deg, var(--primary-color) 50%, transparent 50%);
     background-position:
             calc(100% - 20px) calc(1em + 2px),
             calc(100% - 15px) calc(1em + 2px);
@@ -232,76 +395,39 @@
             5px 5px,
             5px 5px;
     background-repeat: no-repeat;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Generic shadow, kept */
 }
 
 .qualitySelect:hover {
-    border-color: #9d50ff;
-    box-shadow: 0 0 10px rgba(157, 80, 255, 0.5);
+    /* Original: border-color: #9d50ff; */
+    border-color: var(--primary-color);
+    /* Original: box-shadow: 0 0 10px rgba(157, 80, 255, 0.5); */
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 50%, transparent);
 }
 
 .qualitySelect:focus {
     outline: none;
-    border-color: #9d50ff;
-    box-shadow: 0 0 0 2px rgba(157, 80, 255, 0.3), 0 0 15px rgba(157, 80, 255, 0.4);
+    /* Original: border-color: #9d50ff; */
+    border-color: var(--primary-color);
+    /* Original: box-shadow with rgba(157, 80, 255, 0.3) and rgba(157, 80, 255, 0.4) */
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 30%, transparent), 0 0 15px color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
 .qualitySelect option {
-    background-color: #1e0032;
-    color: white;
+    /* Original: background-color: #1e0032; */
+    background-color: var(--bg-primary); /* Could be var(--user-icon-bg) for more distinction */
+    /* Original: color: white; */
+    color: var(--text-primary);
     padding: 0.5rem;
 }
 
 .qualitySelect optgroup {
-    background-color: #2a0046;
-    color: #c792ea;
+    /* Original: background-color: #2a0046; */
+    background-color: var(--user-icon-bg); /* Could be var(--bg-secondary) */
+    /* Original: color: #c792ea; */
+    color: var(--text-secondary);
     font-weight: bold;
     padding: 0.5rem;
-}
-
-.descriptionContainer {
-    position: relative;
-    margin-bottom: 1rem;
-}
-
-.videoDescription {
-    margin: 0 0 0.5rem 0;
-    color: var(--text-secondary);
-    font-size: 1rem;
-    line-height: 1.6;
-    opacity: 0.9;
-    max-height: 6.4em;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-}
-
-.videoDescription.expanded {
-    max-height: none;
-}
-
-.toggleDescriptionButton {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    cursor: pointer;
-    padding: 0.2rem 0;
-    font-size: 0.9rem;
-    transition: color 0.2s;
-}
-
-.toggleDescriptionButton:hover {
-    color: var(--primary-dark);
-}
-
-.toggleDescriptionButton svg {
-    transition: transform 0.3s ease;
-}
-
-.toggleDescriptionButton.expanded svg {
-    transform: rotate(180deg);
 }
 
 .fullDetailsButton {
@@ -309,9 +435,11 @@
     align-items: center;
     gap: 0.7rem;
     padding: 0.9rem 1.5rem;
-    background: rgba(157, 80, 255, 0.1);
-    color: var(--primary-color);
-    border: 1px solid rgba(157, 80, 255, 0.3);
+    /* Original: background: rgba(157, 80, 255, 0.1); */
+    background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+    color: var(--primary-color); /* Already themed */
+    /* Original: border: 1px solid rgba(157, 80, 255, 0.3); */
+    border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -320,72 +448,63 @@
 }
 
 .fullDetailsButton:hover {
-    background: rgba(157, 80, 255, 0.2);
-    border-color: var(--primary-color);
+    /* Original: background: rgba(157, 80, 255, 0.2); */
+    background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+    border-color: var(--primary-color); /* Already themed */
     transform: translateY(-2px);
-}
-
-.downloadOptions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    gap: 1rem;
-}
-
-.downloadOptions > * {
-    flex: 1;
-}
-
-.downloadOptions > select {
-    flex: 1;
-    max-width: 150px;
-}
-
-.downloadOptions > button {
-    flex: 1;
-    max-width: 200px;
 }
 
 /* Updated loading preview styles */
 .loadingPreview {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    background-color: rgba(30, 0, 50, 0.7);
+    /* Original: background-color: rgba(30, 0, 50, 0.7); */
+    background-color: color-mix(in srgb, var(--bg-primary) 70%, transparent);
     border-radius: 12px;
     margin-top: 1.5rem;
-    border: 1px solid rgba(157, 80, 255, 0.3);
+    /* Original: border: 1px solid rgba(157, 80, 255, 0.3); */
+    border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
     width: 100%;
     max-width: 800px;
     min-height: 150px;
-    box-shadow: 0 0 20px rgba(106, 0, 255, 0.2);
+    /* Original: box-shadow: 0 0 20px rgba(106, 0, 255, 0.2); */
+    box-shadow: 0 0 20px color-mix(in srgb, var(--primary-dark) 20%, transparent);
 }
+
+.loadingPreview p {
+    margin-bottom: 2vh;
+}
+
 .downloadButton {
     display: flex;
     align-items: center;
+    justify-content: center; /* Added for better centering of icon and text */
     gap: 0.7rem;
     padding: 0.9rem 2rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); /* Already themed */
+    /* Original: color: white; */
+    color: var(--text-primary);
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 1rem;
     font-weight: 500;
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    /* Original shadow was red-ish, changing to primary-color based shadow */
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .downloadButton:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker));
+    /* Original shadow was red-ish, changing to primary-color based shadow */
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--primary-color) 40%, transparent);
+    /* Original: background: linear-gradient(135deg, var(--primary-dark), var(--primary-darker)); */
+    background: linear-gradient(135deg, var(--primary-dark), color-mix(in srgb, var(--primary-dark) 80%, #000000 20%)); /* Darker gradient */
 }
 
 .downloadButton:active {
     transform: translateY(0);
 }
-

@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# Homie Downloader - Python Server
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Це Python/Flask сервер для завантаження відео з YouTube.
 
-## Available Scripts
+## Налаштування та запуск
 
-In the project directory, you can run:
+1.  **Клонуйте репозиторій (якщо потрібно):**
+    ```bash
+    git clone <URL_ВАШОГО_РЕПОЗИТОРІЯ>
+    cd <шлях_до_папки_сервера> 
+    cd homie-downloader/src/server_python
+    ```
 
-### `npm start`
+2.  **Створіть та активуйте віртуальне оточення:**
+3. ЗАЙТИ В ПАПКУ ДЛЯ СЕРВЕРА server_python
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+    Створити оточення:
+    ```bash
+    python -m venv .venv
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+    Перейти в оточення:
+    # Windows PowerShell:
+    # .\.venv\Scripts\Activate.ps1
 
-### `npm test`
+    # Windows CMD:
+    # .\.venv\Scripts\activate.bat
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    # Linux/macOS:
+    # source .venv/bin/activate
+    ```
 
-### `npm run build`
+3.  **Встановіть залежності:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4.  **Запустіть Flask-сервер:**
+    ```bash
+    python app.py 
+    # Або flask run, якщо ви налаштували змінні середовища FLASK_APP та FLASK_ENV
+    ```
+    Сервер буде доступний за адресою `http://127.0.0.1:5000` (або як налаштовано у вашому `app.py`).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Використання
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Сервер надає наступні API ендпоінти:
+*   `GET /api/video/preview?url=<youtube_video_url>`: Отримати інформацію про відео.
+*   `POST /api/video/download`: Завантажити відео. Тіло запиту: `{ "url": "<youtube_video_url>", "quality": "<бажана_якість>" }`
+*   `GET /download/<filename>`: Завантажити збережений файл.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Папка `downloads`
+Завантажені відео тимчасово зберігаються у папці `downloads`, яка створюється автоматично. Ця папка не повинна бути частиною репозиторію.

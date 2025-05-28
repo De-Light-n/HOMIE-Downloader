@@ -1,14 +1,12 @@
 import styles from './VideoRow.module.css';
 import VideoCard from '../VideoCard/VideoCard';
-import { FiChevronDown, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // FiChevronDown removed
 import { useRef, useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy, limit, startAfter, where } from 'firebase/firestore';
 import { db } from '../Firebase/firebase';
 
 const VideoRow = ({ title, type, index, category }) => {
     const rowRef = useRef(null);
-    const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(true);
     const [allVideos, setAllVideos] = useState([]);
     const [visibleVideos, setVisibleVideos] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,6 +15,9 @@ const VideoRow = ({ title, type, index, category }) => {
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
+    const [isLeftScrollPossible, setIsLeftScrollPossible] = useState(false);
+    const [isRightScrollPossible, setIsRightScrollPossible] = useState(true);
+
     // Функція для створення базового запиту з фільтруванням
     const createBaseQuery = (collectionRef) => {
         let baseQuery = query(
@@ -24,14 +25,12 @@ const VideoRow = ({ title, type, index, category }) => {
             orderBy('timestamp', 'desc')
         );
 
-        // Фільтрувати за категорією, якщо вказано
         if (category) {
             baseQuery = query(
                 baseQuery,
                 where('category', '==', category)
             );
         }
-
         return baseQuery;
     };
 
@@ -52,17 +51,16 @@ const VideoRow = ({ title, type, index, category }) => {
 
     // Обробка даних відео відповідно до структури Firebase
     const processVideoData = async (querySnapshot) => {
-        // Створюємо мапу для відстеження унікальних відео
         const uniqueVideos = new Map();
-
         querySnapshot.docs.forEach(doc => {
             const docData = doc.data();
-            const VideoName = docData.videoTitle;
+            const VideoName = docData.videoTitle; // Using videoTitle for initial uniqueness within a batch
+            if (uniqueVideos.has(VideoName) && type !== 'recent-downloads' && type !== 'recent-searches') { // Allow duplicates for history-like types if needed, otherwise ensure unique by title
+                // For history, same video could be actioned multiple times, but row usually shows unique videos
+                // If strict uniqueness by title is always desired, remove conditional
+            }
 
-            // Якщо це відео вже є в нашій мапі - пропускаємо
-            if (uniqueVideos.has(VideoName)) return;
-
-            uniqueVideos.set(VideoName, {
+            uniqueVideos.set(VideoName, { // If titles can be non-unique, use doc.id as key
                 id: doc.id,
                 videoTitle: docData.videoTitle || '',
                 videoThumbnail: docData.thumbnail || '',
@@ -72,19 +70,21 @@ const VideoRow = ({ title, type, index, category }) => {
                 duration: docData.duration || '',
                 description: docData.videoDescription || '',
                 likes: docData.likes || '',
-                qualities: ['720p'], // Якість за замовчуванням
+                qualities: ['720p'],
                 url: docData.query || '',
                 categories: docData.category ? [docData.category] : ['Other']
             });
         });
-
-        // Перетворюємо мапу назад у масив
         return Array.from(uniqueVideos.values());
     };
 
     // Завантаження початкових даних
     useEffect(() => {
         const fetchInitialData = async () => {
+            setLoading(true);
+            setError(null);
+            setLastVisibleDoc(null);
+            setHasMore(true); // Assume more initially
             try {
                 const collectionRef = getCollectionForType();
                 if (!collectionRef) {
@@ -95,11 +95,7 @@ const VideoRow = ({ title, type, index, category }) => {
                 let baseQuery = createBaseQuery(collectionRef);
                 baseQuery = getAdditionalFilters(baseQuery);
 
-                const q = query(
-                    baseQuery,
-                    limit(10)
-                );
-
+                const q = query(baseQuery, limit(10));
                 const querySnapshot = await getDocs(q);
 
                 const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -108,21 +104,21 @@ const VideoRow = ({ title, type, index, category }) => {
 
                 const data = await processVideoData(querySnapshot);
                 setAllVideos(data);
-                setVisibleVideos(data.slice(0, 5));
-                setLoading(false);
+                setVisibleVideos(data.slice(0, 5)); // Show first 5
             } catch (err) {
                 console.error(`Помилка завантаження ${type}:`, err);
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
 
         fetchInitialData();
-    }, [type, category]);
+    }, [type, category]); // type and category are dependencies for re-fetching
 
     // Завантаження додаткових відео
     const loadMoreVideos = async () => {
-        if (!lastVisibleDoc || !hasMore || loadingMore) return;
+        if (!lastVisibleDoc || !hasMore || loadingMore || loading) return;
 
         setLoadingMore(true);
         try {
@@ -135,12 +131,7 @@ const VideoRow = ({ title, type, index, category }) => {
             let baseQuery = createBaseQuery(collectionRef);
             baseQuery = getAdditionalFilters(baseQuery);
 
-            const q = query(
-                baseQuery,
-                startAfter(lastVisibleDoc),
-                limit(10)
-            );
-
+            const q = query(baseQuery, startAfter(lastVisibleDoc), limit(10));
             const querySnapshot = await getDocs(q);
 
             const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -149,14 +140,24 @@ const VideoRow = ({ title, type, index, category }) => {
 
             const newData = await processVideoData(querySnapshot);
 
-            // Перевіряємо на дублікати при додаванні нових відео
-            const existingVideoIds = new Set(allVideos.map(video => video.videoId));
-            const uniqueNewVideos = newData.filter(video => !existingVideoIds.has(video.videoId));
+            const existingVideoIds = new Set(allVideos.map(video => video.id)); // Use 'id' (doc.id) for uniqueness
+            const uniqueNewVideos = newData.filter(video => !existingVideoIds.has(video.id));
 
             setAllVideos(prev => [...prev, ...uniqueNewVideos]);
-            setVisibleVideos(prev => [...prev, ...uniqueNewVideos.slice(0, 5)]);
+            // Show the first few newly loaded videos automatically
+            if (uniqueNewVideos.length > 0) {
+                // Only add to visibleVideos if they were actually "shown" by showMore or this explicit load
+                const currentlyVisibleCount = visibleVideos.length;
+                const allLoadedCount = allVideos.length + uniqueNewVideos.length; // count before adding new
+                // If all previously loaded videos were visible, then add new ones
+                if(currentlyVisibleCount === allVideos.length) {
+                    setVisibleVideos(prev => [...prev, ...uniqueNewVideos.slice(0, 5)]);
+                }
+            }
+
         } catch (err) {
             console.error("Помилка завантаження додаткових відео:", err);
+            setError(err.message); // Optionally set error for load more
         } finally {
             setLoadingMore(false);
         }
@@ -164,36 +165,80 @@ const VideoRow = ({ title, type, index, category }) => {
 
     // Показати більше вже завантажених відео
     const showMore = () => {
-        const nextVideos = allVideos.slice(visibleVideos.length, visibleVideos.length + 5);
-        setVisibleVideos(prev => [...prev, ...nextVideos]);
+        const currentVisibleCount = visibleVideos.length;
+        const nextVideos = allVideos.slice(currentVisibleCount, currentVisibleCount + 5);
+        if (nextVideos.length > 0) {
+            setVisibleVideos(prev => [...prev, ...nextVideos]);
+        }
     };
 
-    // Обробка прокрутки
-    const scrollHandler = (direction) => {
-        if (!rowRef.current) return;
+    const updateArrowStates = () => {
+        if (!rowRef.current) {
+            setIsLeftScrollPossible(false);
+            setIsRightScrollPossible(false); // Default to false if no ref
+            return;
+        }
 
         const container = rowRef.current;
-        const scrollAmount = direction === 'left' ? -400 : 400;
-        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        const canScrollPhysicallyLeft = container.scrollLeft > 0;
+        setIsLeftScrollPossible(canScrollPhysicallyLeft);
 
-        setTimeout(() => {
-            setShowLeftArrow(container.scrollLeft > 0);
-            setShowRightArrow(
-                container.scrollLeft < container.scrollWidth - container.clientWidth
-            );
-        }, 300);
+        const canScrollPhysicallyRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 1); // -1 for precision
+        const canShowMoreLoaded = visibleVideos.length < allVideos.length;
+        const canLoadMoreFromBackend = hasMore && !loadingMore && !loading; // Ensure initial load is not happening
+
+        setIsRightScrollPossible(canScrollPhysicallyRight || canShowMoreLoaded || canLoadMoreFromBackend);
     };
 
-    // Оновлення стрілок прокрутки при початковому рендері
+    // Update arrow states based on data changes and scroll position
     useEffect(() => {
-        if (rowRef.current) {
-            const container = rowRef.current;
-            setShowLeftArrow(container.scrollLeft > 0);
-            setShowRightArrow(
-                container.scrollWidth > container.clientWidth
-            );
+        updateArrowStates();
+        // Adding a listener for scroll events on the container to update arrows during manual scroll
+        const container = rowRef.current;
+        if (container) {
+            container.addEventListener('scroll', updateArrowStates);
+            // Call updateArrowStates after a short delay to ensure layout is stable
+            const timer = setTimeout(updateArrowStates, 100);
+            return () => {
+                container.removeEventListener('scroll', updateArrowStates);
+                clearTimeout(timer);
+            };
         }
-    }, [visibleVideos]);
+    }, [visibleVideos, allVideos, hasMore, loadingMore, loading]);
+
+
+    // Обробка прокрутки та завантаження/показу нових відео
+    const handleArrowClick = (direction) => {
+        if (!rowRef.current) return;
+        const container = rowRef.current;
+
+        if (direction === 'left') {
+            if (isLeftScrollPossible) {
+                container.scrollBy({ left: -400, behavior: 'smooth' });
+            }
+        } else if (direction === 'right') {
+            const canScrollPhysicallyRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 1);
+
+            if (canScrollPhysicallyRight) {
+                container.scrollBy({ left: 400, behavior: 'smooth' });
+            } else {
+                // At the end of physical scroll, try to show more or load more
+                if (loading) return; // Don't do anything if initial load is in progress
+
+                if (!loadingMore) {
+                    if (visibleVideos.length < allVideos.length) {
+                        showMore();
+                    } else if (hasMore) {
+                        loadMoreVideos();
+                    }
+                }
+            }
+        }
+        // updateArrowStates will be called by scroll event or by useEffect after state changes
+        // For immediate feedback after action that doesn't scroll (showMore, loadMore):
+        setTimeout(updateArrowStates, 50); // Small delay for state updates to propagate
+    };
+
 
     if (loading && allVideos.length === 0) {
         return (
@@ -225,7 +270,7 @@ const VideoRow = ({ title, type, index, category }) => {
                     </h2>
                 </div>
                 <div className={styles.errorMessage}>
-                    Помилка завантаження: {error}
+                    Download error: {error}
                 </div>
             </div>
         );
@@ -241,7 +286,7 @@ const VideoRow = ({ title, type, index, category }) => {
                     </h2>
                 </div>
                 <div className={styles.emptyMessage}>
-                    Відео не знайдено
+                    Video not found
                 </div>
             </div>
         );
@@ -253,17 +298,22 @@ const VideoRow = ({ title, type, index, category }) => {
                 <h2 className={styles.sectionTitle}>
                     <span className={styles.titleDecorator}></span>
                     {title}
+                    {loadingMore && <span className={styles.loadingMoreIndicator}> Loading...</span>}
                 </h2>
                 <div className={styles.controls}>
                     <button
-                        className={`${styles.arrowButton} ${!showLeftArrow && styles.hidden}`}
-                        onClick={() => scrollHandler('left')}
+                        className={styles.arrowButton}
+                        onClick={() => handleArrowClick('left')}
+                        disabled={!isLeftScrollPossible || loadingMore}
+                        aria-label="Scroll left"
                     >
                         <FiChevronLeft size={24} />
                     </button>
                     <button
-                        className={`${styles.arrowButton} ${!showRightArrow && styles.hidden}`}
-                        onClick={() => scrollHandler('right')}
+                        className={styles.arrowButton}
+                        onClick={() => handleArrowClick('right')}
+                        disabled={!isRightScrollPossible || loadingMore}
+                        aria-label="Scroll right / Load more"
                     >
                         <FiChevronRight size={24} />
                     </button>
@@ -275,7 +325,7 @@ const VideoRow = ({ title, type, index, category }) => {
                     <div className={styles.videoRow}>
                         {visibleVideos.map((item) => (
                             <VideoCard
-                                key={item.id}
+                                key={item.id} // Ensure unique key, doc.id is good
                                 video={{
                                     id: item.id,
                                     title: item.videoTitle,
@@ -294,23 +344,7 @@ const VideoRow = ({ title, type, index, category }) => {
                         ))}
                     </div>
                 </div>
-
-                {(hasMore || visibleVideos.length < allVideos.length) && (
-                    <button
-                        onClick={visibleVideos.length < allVideos.length ? showMore : loadMoreVideos}
-                        className={styles.loadMoreButton}
-                        disabled={loadingMore}
-                    >
-                        {loadingMore ? (
-                            <span>Завантаження...</span>
-                        ) : (
-                            <>
-                                <span>Показати більше</span>
-                                <FiChevronDown className={styles.loadMoreIcon} />
-                            </>
-                        )}
-                    </button>
-                )}
+                {/* "Show more" button is removed */}
             </div>
         </div>
     );

@@ -1,0 +1,116 @@
+.guide-page {
+    font-family: var(--font-family, "Inter", Arial, sans-serif); /* Updated to use theme font with Inter as fallback */
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+    padding-top: 80px; /* Ensure this doesn't conflict with a theme-defined header height if applicable */
+    background-color: transparent; /* Allows global animated background to show */
+    position: relative;
+    z-index: 1; /* Above global background animations, below modals/popups */
+    min-height: 100vh;
+}
+
+.guide-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px; /* Standard horizontal padding */
+    position: relative; /* For potential child absolute positioning */
+}
+
+.guide-section {
+    margin-bottom: 60px;
+    max-width: 800px; /* Constrains content width for readability */
+    padding-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    position: relative;
+    padding-bottom: 10px;
+    text-shadow: 0 0 8px var(--primary-color); /* Subtle glow effect */
+}
+
+.section-title:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--primary-dark);
+    box-shadow: 0 0 5px var(--primary-dark); /* Glow for the underline */
+}
+
+.text-holder {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.text-holder h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--primary-dark); /* Using a darker shade of primary for subheadings */
+    text-shadow: 0 0 5px var(--primary-dark);
+}
+
+.features-list,
+.faq-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-item,
+.faq-item {
+    background: var(--header-bg); /* Or var(--bg-secondary) / var(--user-icon-bg) for themed cards */
+    padding: 25px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.feature-item:hover,
+.faq-item:hover {
+    transform: translateY(-5px);
+    background: var(--primary-dark); /* Changes background on hover */
+    box-shadow: 0 0 15px var(--primary-dark);
+    color: var(--text-primary); /* Ensure this text color contrasts well with var(--primary-dark) across themes.
+                                   A --text-on-primary-dark variable might be needed if contrast issues arise. */
+}
+
+.feature-item h3,
+.faq-item h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .guide-section {
+        max-width: 100%; /* Full width on smaller screens */
+        padding-left: 15px; /* Ensure content doesn't touch edges */
+        padding-right: 15px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .text-holder {
+        font-size: 1rem;
+    }
+
+    .features-list,
+    .faq-list {
+        grid-template-columns: 1fr; /* Single column layout */
+    }
+}

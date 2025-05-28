@@ -2,23 +2,28 @@
     position: relative;
     min-height: 100vh;
     overflow-x: hidden;
+    font-family: var(--font-family, 'Roboto', sans-serif); /* Added theme font */
 }
 
 /* Контент */
 .contentWrapper {
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Ensures content is above the global background animation */
 }
 
+/* Combined .mainContent definitions */
 .mainContent {
     padding-top: 90px;
     padding-bottom: 4rem;
     display: flex;
     flex-direction: column;
     gap: 4rem;
+    position: relative; /* Keep this if elements within mainContent need z-index context relative to it */
+    z-index: 1; /* Adjust if needed, contentWrapper is already z-index: 2 */
 }
 
-/* Анімація руху фону */
+/* Анімація руху фону - This keyframes is defined but not explicitly used by elements in this file.
+   It might be used globally or by components not shown. Keeping it as is. */
 @keyframes float {
     0% { transform: translate(0, 0) rotate(0deg); }
     25% { transform: translate(50px, 50px) rotate(90deg); }
@@ -27,39 +32,30 @@
     100% { transform: translate(0, 0) rotate(360deg); }
 }
 
-
-.mainContent {
-    padding-top: 90px;
-    padding-bottom: 4rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4rem;
-    position: relative;
-    z-index: 1;
-}
-
 .loadingContainer {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #000000;
-    position: relative;
-    z-index: 100;
+    background: var(--bg-primary);
+    position: relative; /* This was 'fixed' implicitly by context, changing to relative based on typical use */
+    z-index: 100; /* High z-index to be on top */
 }
 
 .ctaSection {
     text-align: center;
     margin-top: 3rem;
     padding: 3rem 2rem;
-    background: rgba(30, 0, 50, 0.6);
+    /* background: rgba(var(--primary-dark), 0.6); -- Incorrect usage */
+    background: color-mix(in srgb, var(--primary-dark) 60%, transparent); /* Updated */
     border-radius: 16px;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     backdrop-filter: blur(12px);
-    border: 1px solid #8a2be2;
-    box-shadow: 0 0 25px rgba(138, 43, 226, 0.5);
+    border: 1px solid var(--primary-color);
+    /* box-shadow: 0 0 25px rgba(var(--primary-color), 0.5); -- Incorrect usage */
+    box-shadow: 0 0 25px color-mix(in srgb, var(--primary-color) 50%, transparent); /* Updated */
     position: relative;
     overflow: hidden;
 }
@@ -71,66 +67,30 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(138, 43, 226, 0.15) 0%, transparent 70%);
+    /* background: radial-gradient(circle, rgba(var(--primary-color), 0.15) 0%, transparent 70%); -- Incorrect usage */
+    background: radial-gradient(circle, color-mix(in srgb, var(--primary-color) 15%, transparent) 0%, transparent 70%); /* Updated */
     animation: rotate 20s linear infinite;
-    z-index: -1;
+    z-index: -1; /* Behind ctaSection content but above its background */
 }
 
 .ctaTitle {
     font-size: 2.2rem;
     margin-bottom: 1rem;
-    background: linear-gradient(90deg, #9d50ff, #ff00ff);
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary-color));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 15px rgba(157, 80, 255, 0.4);
+    /* text-shadow: 0 0 15px rgba(var(--primary-dark), 0.4); -- Incorrect usage */
+    text-shadow: 0 0 15px color-mix(in srgb, var(--primary-dark) 40%, transparent); /* Updated */
     font-weight: 700;
     letter-spacing: 1px;
 }
 
 .ctaSubtitle {
     font-size: 1.1rem;
-    color: #c792ea;
+    color: var(--text-secondary);
     margin-bottom: 2rem;
     opacity: 0.9;
-}
-
-.exploreButton {
-    padding: 1rem 3rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    background: linear-gradient(45deg, #6a00ff, #a100ff);
-    color: white;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 20px rgba(106, 0, 255, 0.6);
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.exploreButton::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, #8a2be2, #ff00ff);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-}
-
-.exploreButton:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 30px rgba(138, 43, 226, 0.8);
-}
-
-.exploreButton:hover::before {
-    opacity: 1;
 }
 
 @keyframes rotate {
@@ -146,7 +106,7 @@
 
     .ctaSection {
         padding: 2rem 1.5rem;
-        margin: 1rem;
+        margin: 1rem; /* Ensures some margin on smaller screens */
     }
 
     .ctaTitle {
@@ -154,11 +114,6 @@
     }
 
     .ctaSubtitle {
-        font-size: 1rem;
-    }
-
-    .exploreButton {
-        padding: 0.9rem 2.2rem;
         font-size: 1rem;
     }
 }
@@ -175,9 +130,8 @@
     margin: 0 auto 3rem;
     padding: 0 20px;
     position: relative;
-    z-index: 3;
-    justify-self: center;
-
+    z-index: 3; /* Ensure search bar is above .mainContent if overlapping */
+    justify-self: center; /* This property is for grid/flex items, might not have effect here directly */
 }
 
 @media (max-width: 768px) {

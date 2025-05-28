@@ -1,0 +1,290 @@
+/* Footer.css */
+
+/* Загальний стиль футера */
+.footer {
+    background-color: var(--bg-primary); /* Already themed */
+    color: var(--text-primary); /* Already themed */
+    padding-bottom: 0; /* Bottom padding handled by .footer-bottom */
+    position: relative;
+    overflow: hidden; /* For .footer-bg-text containment */
+    font-family: var(--font-family, 'Inter', Arial, sans-serif); /* Updated */
+    border-top: 1px solid var(--border-color); /* Already themed */
+    margin-top: auto; /* Pushes footer to bottom in flex layouts */
+    z-index: 1; /* Above global background, below modals etc. */
+}
+
+/* Верхній рядок футера */
+.footer-top {
+    background: var(--header-bg); /* Already themed */
+    padding: 40px 0;
+    text-align: center;
+    font-weight: bold;
+    color: var(--primary-color); /* Updated */
+    font-size: 28px;
+    text-shadow: 0 0 10px var(--primary-color); /* Updated */
+    transition: all 0.3s ease;
+}
+
+.footer-top:hover {
+    color: var(--primary-dark); /* Updated */
+    text-shadow: 0 0 15px var(--primary-dark); /* Updated */
+    box-shadow: 0 0 20px var(--primary-dark); /* Updated */
+}
+
+/* Контент футера */
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 40px;
+    position: relative;
+    z-index: 2; /* Above .footer-bg-text */
+}
+
+/* This class definition was present but not used in an example HTML.
+   It's styled correctly if it were to be used. */
+.footer-title {
+    font-size: 28px;
+    color: var(--primary-color); /* Updated */
+    font-weight: bold;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding-right: 20px; /* If it's a column title, might conflict with .footer-left etc. */
+    max-width: 100%;
+    line-height: 1.2;
+    text-shadow: 0 0 8px var(--primary-color); /* Updated */
+}
+
+/* Ліва частина футера */
+.footer-left {
+    max-width: 300px;
+    margin-bottom: 20px;
+    padding: 0 15px; /* Added padding for consistency with other columns */
+}
+
+.footer-left h2 { /* Assuming this is for the logo or a main footer title in the left section */
+    color: var(--primary-color); /* Updated */
+    font-size: 28px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--primary-color); /* Updated */
+}
+
+/* Стилі для посилань з анімацією підкреслення */
+.footer-nav ul li a,
+.footer-services ul li a,
+.footer-contact p a {
+    position: relative;
+    color: var(--text-secondary); /* Already themed */
+    text-decoration: none;
+    display: inline-block;
+    padding-bottom: 3px;
+    transition: all 0.3s ease;
+}
+
+.footer-nav ul li a:hover,
+.footer-services ul li a:hover,
+.footer-contact p a:hover {
+    color: var(--primary-color); /* Updated */
+    text-shadow: 0 0 5px var(--primary-color); /* Updated */
+}
+
+.footer-nav ul li a::after,
+.footer-services ul li a::after,
+.footer-contact p a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color); /* Updated */
+    transition: width 0.3s ease;
+}
+
+.footer-nav ul li a:hover::after,
+.footer-services ul li a:hover::after,
+.footer-contact p a:hover::after {
+    width: 100%;
+}
+
+/* Кнопка чату */
+.chat-btn {
+    background: transparent;
+    border: 2px solid var(--primary-color); /* Updated */
+    color: var(--text-primary); /* Already themed */
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 10px var(--primary-color); /* Updated */
+    z-index: 1; /* Keep button content above ::before */
+}
+
+.chat-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-dark)); /* Updated */
+    transition: left 0.3s ease;
+    z-index: -1; /* Behind button text/icon */
+}
+
+.chat-btn:hover {
+    color: var(--text-primary); /* Already themed - ensure contrast if background changes significantly */
+    border-color: var(--primary-dark); /* Updated */
+    box-shadow: 0 0 20px var(--primary-dark); /* Updated */
+}
+
+.chat-btn:hover::before {
+    left: 0;
+}
+
+/* Колонки навігації */
+.footer-nav,
+.footer-services,
+.footer-contact {
+    flex: 1;
+    min-width: 200px; /* Minimum width before wrapping */
+    margin-bottom: 20px;
+    padding: 0 15px; /* Horizontal padding for column content */
+}
+
+.footer-nav h4,
+.footer-services h4,
+.footer-contact h4 {
+    color: var(--primary-color); /* Updated */
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    display: inline-block; /* So ::after is positioned relative to text width */
+    text-shadow: 0 0 5px var(--primary-color); /* Updated */
+}
+
+.footer-nav h4::after,
+.footer-services h4::after,
+.footer-contact h4::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* Position underline below text */
+    left: 0;
+    width: 30px; /* Short underline */
+    height: 2px;
+    background-color: var(--primary-dark); /* Updated */
+    box-shadow: 0 0 5px var(--primary-dark); /* Updated */
+}
+
+/* Списки */
+.footer-nav ul,
+.footer-services ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-nav ul li,
+.footer-services ul li {
+    margin-bottom: 10px;
+}
+
+/* Контактні дані */
+.footer-contact p {
+    margin: 8px 0;
+    color: var(--text-secondary); /* Already themed */
+}
+
+/* Нижня частина футера */
+.footer-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    font-size: 14px;
+    border-top: 1px solid var(--border-color); /* Already themed */
+    background: var(--header-bg); /* Or --bg-secondary for a different shade */
+    margin-top: 20px; /* Space between main content and bottom bar */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Великий текст на фоні */
+.footer-bg-text {
+    position: absolute;
+    bottom: -20px; /* Adjust for visual preference */
+    left: 0;
+    width: 100%;
+    font-size: 180px;
+    font-weight: bold;
+    color: color-mix(in srgb, var(--primary-color) 5%, transparent); /* Updated */
+    text-align: center;
+    z-index: 1; /* Behind .footer-content but above .footer's own background */
+    pointer-events: none;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 20px;
+    }
+
+    .footer-left,
+    .footer-nav,
+    .footer-services,
+    .footer-contact {
+        max-width: 100%; /* Allow full width when stacked */
+        min-width: 100%;
+        padding: 0 0 20px 0; /* Adjust padding for stacked columns, add bottom margin */
+    }
+    .footer-left {
+        padding-bottom: 30px; /* More space after logo section */
+    }
+
+
+    .footer-nav h4::after,
+    .footer-services h4::after,
+    .footer-contact h4::after {
+        left: 50%; /* Center the underlines */
+        transform: translateX(-50%);
+    }
+
+    .footer-bg-text {
+        font-size: 100px;
+        bottom: -10px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-top {
+        font-size: 22px;
+        padding: 30px 0;
+    }
+    .footer-left h2 {
+        font-size: 22px;
+    }
+    .footer-bg-text {
+        font-size: 70px;
+    }
+}

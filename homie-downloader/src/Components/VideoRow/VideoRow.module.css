@@ -1,3 +1,4 @@
+/* VideoRow.module.css */
 .videoRowSection {
     margin-bottom: 4rem;
     position: relative;
@@ -21,11 +22,11 @@
     margin: 0;
     letter-spacing: 1px;
     text-transform: uppercase;
-    background: linear-gradient(90deg, #9d50ff, #ff00ff);
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 10px rgba(157, 80, 255, 0.3);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .sectionTitle::before {
@@ -33,10 +34,23 @@
     display: block;
     width: 10px;
     height: 10px;
-    background: #9d50ff;
+    background: var(--primary-color);
     border-radius: 50%;
-    box-shadow: 0 0 15px #9d50ff;
+    box-shadow: 0 0 15px var(--primary-color);
 }
+
+.loadingMoreIndicator {
+    font-size: 0.9rem;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-secondary); /* Or primary-color for emphasis */
+    margin-left: 0.5rem;
+    background: none; /* Reset background if inheriting from .sectionTitle */
+    -webkit-text-fill-color: var(--text-secondary); /* Reset fill color */
+    text-shadow: none; /* Reset text shadow */
+}
+
 
 .controls {
     display: flex;
@@ -47,9 +61,9 @@
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background: rgba(157, 80, 255, 0.25);
-    border: 1px solid rgba(157, 80, 255, 0.6);
-    color: #e2c4ff;
+    background: color-mix(in srgb, var(--primary-color) 25%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary-color) 60%, transparent);
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -58,17 +72,32 @@
     backdrop-filter: blur(5px);
 }
 
-.arrowButton:hover {
-    background: rgba(157, 80, 255, 0.5);
-    color: white;
+.arrowButton:hover:not(:disabled) { /* Apply hover styles only if not disabled */
+    background: color-mix(in srgb, var(--primary-color) 50%, transparent);
+    color: var(--text-primary);
     transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(157, 80, 255, 0.6);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--primary-color) 60%, transparent);
 }
 
-.arrowButton.hidden {
-    opacity: 0;
-    pointer-events: none;
+/* Removed .arrowButton.hidden as buttons are always visible */
+
+.arrowButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    border-color: color-mix(in srgb, var(--primary-color) 30%, transparent);
+    color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+    transform: none; /* Reset transform for disabled state */
+    box-shadow: none; /* Reset box-shadow for disabled state */
 }
+
+.arrowButton:disabled:hover { /* Ensure hover doesn't override disabled styles */
+    background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+    color: color-mix(in srgb, var(--text-secondary) 60%, transparent);
+    transform: none;
+    box-shadow: none;
+}
+
 
 .videoRowContainer {
     overflow-x: auto;
@@ -78,8 +107,8 @@
     mask-image: linear-gradient(
             to right,
             transparent,
-            black 40px,
-            black calc(100% - 40px),
+            var(--text-primary) 40px,
+            var(--text-primary) calc(100% - 40px),
             transparent
     );
 }
@@ -124,8 +153,8 @@
         mask-image: linear-gradient(
                 to right,
                 transparent,
-                black 20px,
-                black calc(100% - 20px),
+                var(--text-primary) 20px,
+                var(--text-primary) calc(100% - 20px),
                 transparent
         );
     }
@@ -139,6 +168,7 @@
         height: 38px;
     }
 }
+
 .videoCardSkeleton {
     width: 300px;
     height: 250px;
@@ -146,9 +176,9 @@
     border-radius: 12px;
     background: linear-gradient(
             90deg,
-            rgba(30, 0, 50, 0.3),
-            rgba(157, 80, 255, 0.2),
-            rgba(30, 0, 50, 0.3)
+            color-mix(in srgb, var(--user-icon-bg) 50%, transparent),
+            color-mix(in srgb, var(--primary-color) 30%, transparent),
+            color-mix(in srgb, var(--user-icon-bg) 50%, transparent)
     );
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
@@ -170,81 +200,16 @@
     }
 }
 
-/* Додаємо нові стилі */
 .videoRowWrapper {
     position: relative;
-    padding-right: 120px; /* Місце для кнопки */
+    /* padding-right for load more button is no longer needed */
 }
 
-.videoRowContainer {
-    overflow-x: auto;
-    scrollbar-width: none; /* Для Firefox */
-    -ms-overflow-style: none; /* Для IE/Edge */
-}
+/* Styles for Load More functionality (button itself removed) */
+/* .loadMoreButton, .loadMoreIcon, .loadingMore (class for button's spinner) are removed */
 
-.videoRowContainer::-webkit-scrollbar {
-    display: none; /* Для Chrome/Safari */
-}
-
-.loadMoreButton {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 10px 15px;
-    background-color: #3f51b5;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    min-width: 140px;
-    justify-content: center;
-}
-
-.loadMoreButton:hover {
-    background-color: #303f9f;
-    transform: translateY(-50%) scale(1.05);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-}
-
-.loadMoreButton:disabled {
-    background-color: #9fa8da;
-    cursor: not-allowed;
-    transform: translateY(-50%);
-    box-shadow: none;
-}
-
-.loadMoreButton:active {
-    transform: translateY(-50%) scale(0.98);
-}
-
-.loadMoreIcon {
-    transition: transform 0.3s ease;
-}
-
-.loadMoreButton:hover .loadMoreIcon {
-    transform: translateY(2px);
-}
-
-/* Анімація завантаження */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loadingMore {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
+.errorMessage, .emptyMessage {
+    padding: 0 2.5rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
 }

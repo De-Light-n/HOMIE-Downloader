@@ -1,0 +1,259 @@
+.about-us-page {
+    font-family: var(--font-family, "Inter", Arial, sans-serif); /* Updated */
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+    padding-top: 80px; /* Assumes 80px header */
+    background-color: transparent; /* Allows global animated background to show */
+    position: relative;
+    z-index: 1; /* Above global background, below modals */
+}
+
+.about-us {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px; /* Added padding for content spacing */
+    position: relative;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.about-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    text-shadow: 0 0 5px var(--primary-dark);
+}
+
+.intro-block,
+.mission-block,
+.content-block,
+.team-block,
+.why-us-block {
+    margin-bottom: 60px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    position: relative;
+    padding-bottom: 10px;
+    text-shadow: 0 0 4px var(--primary-dark);
+}
+
+.section-title:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--primary-color);
+    box-shadow: 0 0 3px var(--primary-dark);
+}
+
+.text-holder {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.features-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.feature-item {
+    background: var(--header-bg); /* Or var(--bg-secondary) / var(--user-icon-bg) */
+    padding: 25px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    background: var(--primary-dark);
+    box-shadow: 0 0 15px var(--primary-dark);
+    color: var(--text-primary); /* Ensure contrast with var(--primary-dark) */
+}
+
+.feature-item h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.team-members {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.team-member {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 30px;
+    background: var(--header-bg); /* Or var(--bg-secondary) / var(--user-icon-bg) */
+    border-radius: 12px;
+    gap: 30px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.team-member:nth-child(odd) {
+    flex-direction: row;
+}
+
+.team-member:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.team-member:hover {
+    box-shadow: 0 0 15px var(--primary-dark);
+}
+
+.team-member__content {
+    flex: 1;
+}
+
+.team-member__image {
+    width: 24vh; /* Consider using fixed px or rem for more consistent sizing */
+    height: 36vh;/* Consider using fixed px or rem for more consistent sizing, or aspect-ratio */
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-dark);
+}
+
+.team-member h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    text-shadow: 0 0 3px var(--primary-dark);
+}
+
+.team-member__role {
+    font-size: 1.1rem;
+    color: var(--primary-color); /* Or var(--text-secondary) for role */
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.team-member p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.testimonials-section {
+    padding: 60px 0;
+    background: transparent; /* Allows global background to show */
+    position: relative;
+    overflow: hidden; /* To contain the scrolling track */
+}
+
+.testimonials-scroller {
+    width: 100%;
+    border: 2px solid var(--primary-color);
+    border-radius: 16px;
+    box-shadow: 0 0 5px var(--primary-dark);
+    overflow: hidden; /* Important for the scrolling animation */
+}
+
+.testimonials-track {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+    animation: scrollLeft 40s linear infinite;
+}
+
+.testimonial-card {
+    flex: 0 0 400px; /* Fixed width for each card */
+    background: var(--header-bg); /* Or var(--bg-secondary) / var(--user-icon-bg) */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 5px var(--border-color); /* Subtle shadow based on border color */
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+}
+
+.testimonial-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--primary-dark);
+}
+
+.stars {
+    color: #ffc107; /* Standard gold color for stars, usually fine across themes */
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.testimonial-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.author {
+    font-weight: 600;
+    color: var(--primary-color); /* Author name in primary theme color */
+    font-style: italic;
+}
+
+@keyframes scrollLeft {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* This should be -(total width of cards + total gap width for one set)
+           If you have N cards and N-1 gaps, for a seamless loop, you often duplicate the track content.
+           If duplicated, then translateX(- (N * card_width + (N-1) * gap_width) ) might be more appropriate.
+           -50% assumes the track content is duplicated once in the HTML/JS.
+        */
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .testimonial-card {
+        flex: 0 0 300px; /* Smaller cards on tablets/mobile */
+        padding: 20px;
+    }
+
+    .testimonials-track {
+        gap: 20px;
+    }
+
+    .team-member {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .team-member:nth-child(odd),
+    .team-member:nth-child(even) {
+        flex-direction: column; /* Ensure consistent stacking on mobile */
+    }
+
+    .team-member__image {
+        margin: 0 auto 20px; /* Center image when stacked */
+        width: 20vh; /* Adjust size for mobile if needed */
+        height: 30vh;
+    }
+}

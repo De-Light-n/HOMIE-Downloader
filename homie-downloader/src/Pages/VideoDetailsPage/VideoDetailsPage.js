@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FiDownload, FiThumbsUp, FiEye, FiClock, FiArrowLeft } from 'react-icons/fi';
 import styles from './VideoDetailsPage.module.css';
 import { useState } from "react";
-import '../../Styles/Background.css';
+import '../../Styles/themes.css';
 
 const VideoDetailsPage = () => {
     const { state } = useLocation();
