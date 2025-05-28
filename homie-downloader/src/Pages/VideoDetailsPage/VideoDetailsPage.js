@@ -32,7 +32,7 @@ const VideoDetailsPage = () => {
     const handleDownload = async () => {
         if (!videoUrl) return;
         try {
-            const response = await fetch('/api/video/download', {
+            const response = await fetch('https://homie-downloader-4.onrender.com/api/video/download', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -157,7 +157,7 @@ const SearchBar = () => {
     setSelectedFormat("");
     try {
       const response = await fetch(
-        `/api/video/preview?url=${encodeURIComponent(url)}`
+        `https://homie-downloader-4.onrender.com/api/video/preview?url=${encodeURIComponent(url)}`
       );
       const data = await response.json();
 
@@ -284,7 +284,7 @@ const SearchBar = () => {
       });
       await updateAnalytics("download", videoPreview?.title || "");
 
-      const response = await fetch("/api/video/download", {
+      const response = await fetch("https://homie-downloader-4.onrender.com/api/video/download", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -303,7 +303,7 @@ const SearchBar = () => {
       if (data.success && data.download_url) {
         const link = document.createElement("a");
         const serverBaseUrl =
-          process.env.NODE_ENV === "development" ? "http://localhost:5000" : "";
+          process.env.NODE_ENV === "development" ? "https://homie-downloader-4.onrender.com" : "http://localhost:5000";
         link.href = `${serverBaseUrl}${data.download_url}`;
         console.log("Attempting download from:", link.href);
 
