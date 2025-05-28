@@ -303,7 +303,7 @@ const SearchBar = () => {
       if (data.success && data.download_url) {
         const link = document.createElement("a");
         const serverBaseUrl =
-          process.env.NODE_ENV === "development" ? "https://homie-downloader-4.onrender.com" : "http://localhost:5000";
+          process.env.NODE_ENV === "development" ? "https://homie-downloader-4.onrender.com" : "https://homie-downloader-4.onrender.com";
         link.href = `${serverBaseUrl}${data.download_url}`;
         console.log("Attempting download from:", link.href);
 
