@@ -3,6 +3,7 @@ import os
 import re
 import uuid
 import traceback
+import logging # Import logging
 from urllib.parse import quote as url_quote
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
@@ -15,6 +16,11 @@ CORS(app)
 # --- CONFIGURATION ---
 DOWNLOAD_FOLDER = 'downloads'
 FFMPEG_EXE_PATH = None # Automatically determined
+
+# Нова змінна для шляху до файлу cookie.
+# Ви можете задати її через змінну середовища або вказати шлях безпосередньо.
+# Приклад: export YTDLP_COOKIE_FILE="/path/to/your/youtube_cookies.txt"
+YTDLP_COOKIE_FILE = os.environ.get('YTDLP_COOKIE_FILE', 'youtube_cookies.txt') # Припускаємо, що файл знаходиться в корені проєкту
 
 if not os.path.exists(DOWNLOAD_FOLDER):
     try:
@@ -73,7 +79,20 @@ def get_video_info(url):
             'ffmpeg_location': FFMPEG_EXE_PATH,
             'extract_flat': 'in_playlist',
             'playlist_items': '1',
+            'retries': 5, # Збільшено кількість повторних спроб
+            'sleep_interval': 5, # Початковий інтервал очікування між спробами
+            'max_sleep_interval': 30, # Максимальний інтервал очікування
+            'youtube_include_dash_manifest': False, # Може допомогти з деякими проблемами YouTube
         }
+
+        # Додаємо файл cookie, якщо він існує
+        if YTDLP_COOKIE_FILE and os.path.exists(YTDLP_COOKIE_FILE):
+            ydl_opts['cookiefile'] = YTDLP_COOKIE_FILE
+            app.logger.info(f"get_video_info [{request_id_info}]: Using cookies from: {YTDLP_COOKIE_FILE}")
+        elif YTDLP_COOKIE_FILE:
+            app.logger.warning(f"get_video_info [{request_id_info}]: Configured YTDLP_COOKIE_FILE '{YTDLP_COOKIE_FILE}' not found. Proceeding without cookies.")
+
+
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
 
@@ -159,8 +178,8 @@ def get_video_info(url):
         app.logger.error(f"get_video_info [{request_id_info}]: yt-dlp error (DownloadError) for {url}: {type(e)} - {str(e)}")
         if "unsupported url" in err_msg or "not a valid url" in err_msg or "no supported media" in err_msg or "valid url" in err_msg:
             return {'error_type': 'InvalidURL', 'message': 'The provided URL is unsupported, invalid, or does not contain media.'}
-        if "this video is unavailable" in err_msg or "private video" in err_msg or "video is private" in err_msg or "age restricted" in err_msg:
-            return {'error_type': 'VideoUnavailable', 'message': 'This video/audio is unavailable (private, deleted, age-restricted).'}
+        if "this video is unavailable" in err_msg or "private video" in err_msg or "video is private" in err_msg or "age restricted" in err_msg or "sign in to confirm you’re not a bot" in err_msg:
+            return {'error_type': 'VideoUnavailable', 'message': 'This video/audio is unavailable (private, deleted, age-restricted), or requires authentication (e.g., to confirm you are not a bot). Try using cookies.'}
         return None
     except Exception as e:
         app.logger.error(f"get_video_info [{request_id_info}]: General error for {url}: {type(e)} - {str(e)}\n{traceback.format_exc()}")
@@ -215,6 +234,11 @@ def download_video():
 
     try:
         info_opts_for_meta = {'skip_download': True, 'logger': app.logger, 'no_warnings': True}
+        # Додаємо файл cookie для отримання метаінформації також
+        if YTDLP_COOKIE_FILE and os.path.exists(YTDLP_COOKIE_FILE):
+            info_opts_for_meta['cookiefile'] = YTDLP_COOKIE_FILE
+            app.logger.info(f"download_video [{request_id}]: Using cookies for meta-info from: {YTDLP_COOKIE_FILE}")
+
         with youtube_dl.YoutubeDL(info_opts_for_meta) as ydl_meta:
             info = ydl_meta.extract_info(video_url, download=False)
         if not info: return jsonify({'error': 'Failed to get info about URL.'}), 500
@@ -222,7 +246,7 @@ def download_video():
         if '_type' in info and info['_type'] == 'playlist' and info.get('entries'):
             info = info['entries'][0]
 
-        source_type = info.get('extractor_key', '').lower() or get_url_type(video_url) # Fixed: was 'url' instead of 'video_url'
+        source_type = info.get('extractor_key', '').lower() or get_url_type(video_url)
 
         raw_title = info.get('title', info.get('track', 'downloaded_content'))
         if not raw_title and info.get('description'): raw_title = info.get('description').split('\n')[0][:70]
@@ -243,7 +267,19 @@ def download_video():
             'quiet': False, 'no_warnings': False, 'verbose': app.debug,
             'format_sort_force': True,
             'prefer_free_formats': True,
+            'retries': 5, # Збільшено кількість повторних спроб
+            'sleep_interval': 5, # Початковий інтервал очікування між спробами
+            'max_sleep_interval': 30, # Максимальний інтервал очікування
+            'youtube_include_dash_manifest': False, # Може допомогти з деякими проблемами YouTube
         }
+
+        # Додаємо файл cookie для завантаження також
+        if YTDLP_COOKIE_FILE and os.path.exists(YTDLP_COOKIE_FILE):
+            ydl_opts_download['cookiefile'] = YTDLP_COOKIE_FILE
+            app.logger.info(f"download_video [{request_id}]: Using cookies for download from: {YTDLP_COOKIE_FILE}")
+        elif YTDLP_COOKIE_FILE:
+            app.logger.warning(f"download_video [{request_id}]: Configured YTDLP_COOKIE_FILE '{YTDLP_COOKIE_FILE}' not found. Proceeding without cookies.")
+
 
         file_label_part = ""
         output_final_extension = None
