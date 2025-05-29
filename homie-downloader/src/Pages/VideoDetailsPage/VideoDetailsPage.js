@@ -46,7 +46,7 @@ const VideoDetailsPage = () => {
             const data = await response.json();
             if (data.success && data.download_url) {
                 const link = document.createElement('a');
-                link.href = `http://127.0.0.1:5000${data.download_url}`;
+                link.href = `https://homie-downloader-4.onrender.com${data.download_url}`;
                 link.setAttribute('download', data.filename);
                 document.body.appendChild(link);
                 link.click();
