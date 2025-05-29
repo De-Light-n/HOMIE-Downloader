@@ -56,7 +56,7 @@ function Footer() {
                         <a href="mailto:support@homiedownloader.com">support@homiedownloader.com</a>
                     </p>
                     <p>
-                        St. Pidarasiv, 3 <br/>
+                        St. homie, 3 <br/>
                         Lviv, Ukraine<br/>
                     </p>
                 </div>
