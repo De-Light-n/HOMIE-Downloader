@@ -344,7 +344,6 @@ const VideoRow = ({ title, type, index, category }) => {
                         ))}
                     </div>
                 </div>
-                {/* "Show more" button is removed */}
             </div>
         </div>
     );

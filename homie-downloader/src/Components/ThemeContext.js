@@ -26,7 +26,6 @@ const themes = [
     { name: 'sunset-glow', styles: sunsetGlowTheme },
     { name: 'vintage-paper', styles: vintagePaperTheme },
     { name: 'deep-forest', styles: deepForestTheme },
-    // --- HORROR THEMES ROUND 2 ADDED TO THEMES ARRAY ---
     { name: 'static-void', styles: staticVoidTheme },
     { name: 'eldritch-depths', styles: eldritchDepthsTheme },
 ];

@@ -26,6 +26,9 @@ import { db, auth } from "../Firebase/firebase";
 import styles from "./SearchBar.module.css";
 import Loader from "./Loader";
 
+// Шлях до вашої картинки для помилок (з папки public)
+const ERROR_IMAGE_PATH = "/OKAK.png"; // <--- ЗАМІНІТЬ НА ВАШ ШЛЯХ, ЯКЩО ПОТРІБНО
+
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -36,7 +39,7 @@ const SearchBar = () => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState("");
-  const [showPreview, setShowPreview] = useState(true);
+  const [showPreview, setShowPreview] = useState(true); // Використовується для приховування прев'ю під час завантаження
   const descriptionRef = useRef(null);
   const navigate = useNavigate();
 
@@ -60,9 +63,10 @@ const SearchBar = () => {
   };
 
   const detectVideoCategory = (title, description) => {
+    // ... (без змін)
     if (!title && !description) return "Other";
     const text = `${title} ${description}`.toLowerCase();
-    const categories = {};
+    const categories = {}; // Додайте ваші категорії та ключові слова
     for (const [category, keywords] of Object.entries(categories)) {
       if (keywords.some((keyword) => text.includes(keyword))) return category;
     }
@@ -70,13 +74,14 @@ const SearchBar = () => {
   };
 
   const saveAction = async (actionData) => {
+    // ... (без змін)
     try {
       const user = auth.currentUser;
       let category = "Other";
       if (actionData.videoTitle || actionData.videoDescription) {
         category = detectVideoCategory(
-          actionData.videoTitle || "",
-          actionData.videoDescription || ""
+            actionData.videoTitle || "",
+            actionData.videoDescription || ""
         );
       }
       const data = Object.entries({
@@ -86,9 +91,9 @@ const SearchBar = () => {
         userId: user?.uid || "anonymous",
         userEmail: user?.email || null,
       }).reduce(
-        (acc, [key, value]) =>
-          value !== undefined ? { ...acc, [key]: value } : acc,
-        {}
+          (acc, [key, value]) =>
+              value !== undefined ? { ...acc, [key]: value } : acc,
+          {}
       );
       await addDoc(collection(db, "userActions"), data);
     } catch (e) {
@@ -97,10 +102,11 @@ const SearchBar = () => {
   };
 
   const updateAnalytics = async (
-    actionType,
-    videoTitle = "",
-    queryVal = ""
+      actionType,
+      videoTitle = "",
+      queryVal = ""
   ) => {
+    // ... (без змін)
     try {
       const user = auth.currentUser;
       if (!user) return;
@@ -108,8 +114,8 @@ const SearchBar = () => {
       const analyticsRef = doc(db, "userAnalytics", user.uid);
       const analyticsSnap = await getDoc(analyticsRef);
       let analyticsData = analyticsSnap.exists()
-        ? analyticsSnap.data()
-        : {
+          ? analyticsSnap.data()
+          : {
             timeSpent: 0,
             searches: [],
             downloads: [],
@@ -146,18 +152,23 @@ const SearchBar = () => {
     } else {
       setVideoPreview(null);
       setShowPreview(true);
-      if (query.trim() === "") setError("");
+      // Не скидаємо помилку тут, якщо вона стосується невалідної URL,
+      // щоб вона відображалася, доки користувач не введе нове посилання або не очистить поле.
+      // setError(""); // Можливо, це треба прибрати, щоб помилка про невалідну URL залишалась
+      if (query.trim() === "") setError(""); // Скидаємо помилку тільки якщо поле порожнє
     }
   }, [query]);
 
   const fetchVideoPreview = async (url) => {
     setIsLoadingPreview(true);
-    setError("");
-    setVideoPreview(null);
+    setError(""); // Скидаємо попередні помилки перед новим запитом
+    setVideoPreview(null); // Скидаємо попереднє прев'ю
     setSelectedFormat("");
+    setShowPreview(true); // Переконуємося, що зона прев'ю/помилки активна
+
     try {
       const response = await fetch(
-        `https://homie-downloader-4.onrender.com/api/video/preview?url=${encodeURIComponent(url)}`
+          `https://homie-downloader-4.onrender.com/api/video/preview?url=${encodeURIComponent(url)}`
       );
       const data = await response.json();
 
@@ -167,19 +178,19 @@ const SearchBar = () => {
 
       setVideoPreview(data);
       if (
-        downloadType === "video" &&
-        data.qualities_video &&
-        data.qualities_video.length > 0
+          downloadType === "video" &&
+          data.qualities_video &&
+          data.qualities_video.length > 0
       ) {
         setSelectedFormat(data.qualities_video[0]);
       } else if (
-        downloadType === "audio" &&
-        data.qualities_audio &&
-        data.qualities_audio.length > 0
+          downloadType === "audio" &&
+          data.qualities_audio &&
+          data.qualities_audio.length > 0
       ) {
         setSelectedFormat(data.qualities_audio[0]);
       } else if (data.qualities_video && data.qualities_video.length > 0) {
-        setSelectedFormat(data.qualities_video[0]);
+        setSelectedFormat(data.qualities_video[0]); // Fallback
       }
 
       setShowFullDescription(false);
@@ -199,40 +210,44 @@ const SearchBar = () => {
     } catch (err) {
       console.error("Error fetching preview:", err);
       setError(err.message || "Failed to fetch video information.");
-      setVideoPreview(null);
+      setVideoPreview(null); // Важливо, щоб при помилці прев'ю було null
     } finally {
       setIsLoadingPreview(false);
     }
   };
 
   useEffect(() => {
-    if (videoPreview) {
+    if (videoPreview && !error) { // Додано !error, щоб не змінювати формат при помилці
       if (
-        downloadType === "video" &&
-        videoPreview.qualities_video &&
-        videoPreview.qualities_video.length > 0
+          downloadType === "video" &&
+          videoPreview.qualities_video &&
+          videoPreview.qualities_video.length > 0
       ) {
         setSelectedFormat(videoPreview.qualities_video[0]);
       } else if (
-        downloadType === "audio" &&
-        videoPreview.qualities_audio &&
-        videoPreview.qualities_audio.length > 0
+          downloadType === "audio" &&
+          videoPreview.qualities_audio &&
+          videoPreview.qualities_audio.length > 0
       ) {
         setSelectedFormat(videoPreview.qualities_audio[0]);
       } else {
         setSelectedFormat("");
       }
     }
-  }, [downloadType, videoPreview]);
+  }, [downloadType, videoPreview, error]);
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); // Скидаємо помилку перед пошуком
+    setVideoPreview(null); // Скидаємо прев'ю
+    setShowPreview(true); // Показуємо зону прев'ю/помилки
+
     if (query.trim()) {
       if (!isValidPlatformUrl(query)) {
         setError(
-          "Please insert a valid media link or try a search (search not yet implemented)."
+            "Please insert a valid media link. Example: https://www.youtube.com/watch?v=..."
         );
+        // Не викликаємо fetchVideoPreview тут, помилка вже встановлена
         await saveAction({
           type: "search_attempt_invalid_url",
           query: query,
@@ -241,6 +256,8 @@ const SearchBar = () => {
         await updateAnalytics("search");
         return;
       }
+      // Якщо URL валідна, useEffect спрацює і викличе fetchVideoPreview
+      // fetchVideoPreview(query); // Зайвий виклик, useEffect це зробить
       await saveAction({
         type: "search_valid_url",
         query: query,
@@ -257,12 +274,13 @@ const SearchBar = () => {
     setError("");
     setSelectedFormat("");
     setDownloadType("video");
-    setShowPreview(true);
+    setShowPreview(true); // Показувати зону після очищення
+    setIsLoadingPreview(false); // Зупинити індикатор завантаження, якщо він був активний
   };
 
   const handleDownload = async () => {
     if (!query || !videoPreview) {
-      setError("Please insert a link and get media information.");
+      setError("Please insert a link and get media information first.");
       return;
     }
     if (!selectedFormat) {
@@ -271,8 +289,9 @@ const SearchBar = () => {
     }
 
     setIsDownloading(true);
-    setShowPreview(false);
-    setError("");
+    setShowPreview(false); // Приховуємо прев'ю, показуємо лоадер завантаження
+    setError(""); // Скидаємо помилки перед завантаженням
+
     try {
       await saveAction({
         type: "download_initiate",
@@ -303,13 +322,12 @@ const SearchBar = () => {
       if (data.success && data.download_url) {
         const link = document.createElement("a");
         const serverBaseUrl =
-          process.env.NODE_ENV === "development" ? "https://homie-downloader-4.onrender.com" : "https://homie-downloader-4.onrender.com";
+            process.env.NODE_ENV === "development" ? "https://homie-downloader-4.onrender.com" : "https://homie-downloader-4.onrender.com";
         link.href = `${serverBaseUrl}${data.download_url}`;
-        console.log("Attempting download from:", link.href);
 
         link.setAttribute(
-          "download",
-          data.filename ||
+            "download",
+            data.filename ||
             (downloadType === "video" ? "video.mp4" : "audio.mp3")
         );
         document.body.appendChild(link);
@@ -318,6 +336,9 @@ const SearchBar = () => {
           if (link.parentNode) {
             document.body.removeChild(link);
           }
+          // Після успішного завантаження можна повернути прев'ю або очистити
+          // clearInput(); // або
+          setShowPreview(true);
         }, 150);
       } else {
         throw new Error(data.error || "Failed to retrieve download link.");
@@ -325,7 +346,7 @@ const SearchBar = () => {
     } catch (err) {
       console.error("Download error:", err);
       setError(err.message || "Error downloading content. Please try again.");
-      setShowPreview(true);
+      setShowPreview(true); // Показуємо зону з помилкою замість прев'ю
     } finally {
       setIsDownloading(false);
     }
@@ -333,7 +354,6 @@ const SearchBar = () => {
 
   const handleViewFullDetails = () => {
     if (videoPreview && query) {
-      // Передаємо qualities_video як qualities для сумісності з VideoDetailsPage
       const modifiedVideoData = {
         ...videoPreview,
         qualities: videoPreview.qualities_video || [],
@@ -351,185 +371,219 @@ const SearchBar = () => {
   const descriptionStyle = {};
 
   const currentFormatOptions =
-    downloadType === "video"
-      ? videoPreview?.qualities_video || []
-      : videoPreview?.qualities_audio || [];
+      videoPreview && !error // Перевіряємо, що є прев'ю і немає помилки
+          ? downloadType === "video"
+              ? videoPreview.qualities_video || []
+              : videoPreview.qualities_audio || []
+          : [];
 
-  return (
-    <div className={styles.searchWrapper}>
-      <form
-        onSubmit={handleSearch}
-        className={`${styles.searchForm} ${isFocused ? styles.focused : ""}`}
-      >
-        <div className={styles.searchContainer}>
-          <FiSearch className={styles.searchIcon} size={20} />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder="Insert video or audio link..."
-            className={styles.searchInput}
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={clearInput}
-              className={styles.clearButton}
-            >
-              <FiX size={18} />
-            </button>
-          )}
-        </div>
-      </form>
+  // Рендеринг контенту: лоадер, помилка або прев'ю
+  const renderContent = () => {
+    // 1. Лоадер отримання прев'ю
+    if (isLoadingPreview) {
+      return (
+          <div className={styles.loadingPreview}>
+            <p>We are looking for your request, please wait!</p>
+            <Loader />
+          </div>
+      );
+    }
 
-      {error && <p className={styles.errorMessage}>{error}</p>}
+    // 2. Лоадер завантаження файлу
+    if (isDownloading) {
+      return (
+          <div className={styles.loadingPreview}>
+            <p>Preparing your download, please wait!</p>
+            <Loader />
+          </div>
+      );
+    }
 
-      {isLoadingPreview && (
-        <div className={styles.loadingPreview}>
-          <p>We are looking for your request, please wait!</p>
-          <Loader />
-        </div>
-      )}
-      
-      {isDownloading && (
-        <div className={styles.loadingPreview}>
-          <p>Loading, please wait!</p>
-          <Loader />
-        </div>
-      )}
+    // 3. Відображення помилки (якщо є 'error' і ми не в процесі завантаження)
+    // Ця помилка може бути від невалідного URL, помилки API прев'ю або помилки API завантаження.
+    if (error) {
+      return (
+          <div className={styles.errorDisplayContainer}>
+            <img
+                src={ERROR_IMAGE_PATH}
+                alt="Error Occurred"
+                className={styles.errorImagePlaceholder}
+            />
+            <p className={styles.errorMessageSpecific}>{error}</p>
+          </div>
+      );
+    }
 
-      {showPreview && videoPreview && !isLoadingPreview && !isDownloading && (
-        <div className={styles.videoPreviewContainer}>
-          <div className={styles.videoPreviewContent}>
-            <div className={styles.videoThumbnail}>
-              <img
-                src={videoPreview.thumbnail || "/default-thumbnail.png"}
-                alt="Прев'ю"
-              />
-              {videoPreview.source_type && (
-                <div className={styles.platformIconContainer}>
-                  {getUrlPlatformIcon(videoPreview.source_type)}
-                </div>
-              )}
-            </div>
-            <div className={styles.videoInfo}>
-              <h3>{videoPreview.title || "Name not found"}</h3>
-              {videoPreview.uploader && (
-                <p className={styles.videoUploader}>
-                  Автор: {videoPreview.uploader}
-                </p>
-              )}
-              <div className={styles.descriptionContainer}>
-                <p
-                  ref={descriptionRef}
-                  className={styles.videoDescription}
-                  style={descriptionStyle}
-                >
-                  {videoPreview.description || "There is no description."}
-                </p>
+    // 4. Відображення прев'ю відео (якщо є 'videoPreview', немає помилок і 'showPreview' true)
+    if (showPreview && videoPreview) {
+      return (
+          <div className={styles.videoPreviewContainer}>
+            <div className={styles.videoPreviewContent}>
+              <div className={styles.videoThumbnail}>
+                <img
+                    src={videoPreview.thumbnail || "/default-thumbnail.png"} // Має бути картинка за замовчуванням
+                    alt={videoPreview.title || "Video thumbnail"}
+                    onError={(e) => { e.target.onerror = null; e.target.src="/default-thumbnail.png"; }} // Обробка помилки завантаження thumbnail
+                />
+                {videoPreview.source_type && (
+                    <div className={styles.platformIconContainer}>
+                      {getUrlPlatformIcon(videoPreview.source_type)}
+                    </div>
+                )}
               </div>
-              <div className={styles.videoStats}>
-                {videoPreview.likes !== "N/A" &&
-                  videoPreview.likes !== undefined && (
-                    <span className={styles.videoStat}>
+              <div className={styles.videoInfo}>
+                <h3>{videoPreview.title || "Name not found"}</h3>
+                {videoPreview.uploader && (
+                    <p className={styles.videoUploader}>
+                      Author: {videoPreview.uploader}
+                    </p>
+                )}
+                <div className={styles.descriptionContainer}>
+                  <p
+                      ref={descriptionRef}
+                      className={styles.videoDescription}
+                      style={descriptionStyle}
+                  >
+                    {videoPreview.description || "There is no description."}
+                  </p>
+                </div>
+                <div className={styles.videoStats}>
+                  {videoPreview.likes !== "N/A" &&
+                      videoPreview.likes !== undefined && (
+                          <span className={styles.videoStat}>
                       <FiThumbsUp /> {videoPreview.likes}
                     </span>
-                  )}
-                {videoPreview.views !== "N/A" &&
-                  videoPreview.views !== undefined && (
-                    <span className={styles.videoStat}>
+                      )}
+                  {videoPreview.views !== "N/A" &&
+                      videoPreview.views !== undefined && (
+                          <span className={styles.videoStat}>
                       <FiEye /> {videoPreview.views}
                     </span>
-                  )}
-                {videoPreview.duration !== "N/A" && (
-                  <span className={styles.videoStat}>
+                      )}
+                  {videoPreview.duration !== "N/A" && (
+                      <span className={styles.videoStat}>
                     {videoPreview.duration}
                   </span>
-                )}
-                <button
-                  onClick={handleViewFullDetails}
-                  className={styles.detailsButton}
-                  aria-label="More details"
-                >
-                  <FiExternalLink size={16} />
-                  <p>Details</p>
-                </button>
+                  )}
+                  <button
+                      onClick={handleViewFullDetails}
+                      className={styles.detailsButton}
+                      aria-label="More details"
+                  >
+                    <FiExternalLink size={16} />
+                    <span>Details</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className={styles.downloadOptions}>
-            <div className={styles.downloadTypeSelector}>
+            <div className={styles.downloadOptions}>
+              <div className={styles.downloadTypeSelector}>
+                <button
+                    className={`${styles.typeButton} ${
+                        downloadType === "video" ? styles.active : ""
+                    }`}
+                    onClick={() => setDownloadType("video")}
+                    disabled={
+                        !videoPreview?.qualities_video ||
+                        videoPreview.qualities_video.length === 0
+                    }
+                    aria-label="Video"
+                >
+                  <FiVideo />
+                  <span>Video</span>
+                </button>
+                <button
+                    className={`${styles.typeButton} ${
+                        downloadType === "audio" ? styles.active : ""
+                    }`}
+                    onClick={() => setDownloadType("audio")}
+                    disabled={
+                        !videoPreview?.qualities_audio ||
+                        videoPreview.qualities_audio.length === 0
+                    }
+                    aria-label="Audio"
+                >
+                  <FiMusic />
+                  <span>Audio</span>
+                </button>
+              </div>
+              {currentFormatOptions.length > 0 ? (
+                  <select
+                      value={selectedFormat}
+                      onChange={(e) => setSelectedFormat(e.target.value)}
+                      className={styles.qualitySelect}
+                  >
+                    {currentFormatOptions.map((format) => (
+                        <option key={format} value={format}>
+                          {format}
+                        </option>
+                    ))}
+                  </select>
+              ) : (
+                  <p className={styles.noFormatsAvailable}>
+                    {downloadType === "video"
+                        ? "No video qualities available."
+                        : "No audio formats available."}
+                  </p>
+              )}
+
               <button
-                className={`${styles.typeButton} ${
-                  downloadType === "video" ? styles.active : ""
-                }`}
-                onClick={() => setDownloadType("video")}
-                disabled={
-                  isDownloading ||
-                  !videoPreview?.qualities_video ||
-                  videoPreview.qualities_video.length === 0
-                }
-                aria-label="Video"
+                  onClick={handleDownload}
+                  className={styles.downloadButton}
+                  disabled={
+                      !selectedFormat ||
+                      currentFormatOptions.length === 0
+                  }
               >
-                <FiVideo />
-                <span>Відео</span>
-              </button>
-              <button
-                className={`${styles.typeButton} ${
-                  downloadType === "audio" ? styles.active : ""
-                }`}
-                onClick={() => setDownloadType("audio")}
-                disabled={
-                  isDownloading ||
-                  !videoPreview?.qualities_audio ||
-                  videoPreview.qualities_audio.length === 0
-                }
-                aria-label="Audio"
-              >
-                <FiMusic />
-                <span>Аудіо</span>
+                <FiDownload size={18} />
+                <span>Download</span>
               </button>
             </div>
-            {currentFormatOptions.length > 0 ? (
-              <select
-                value={selectedFormat}
-                onChange={(e) => setSelectedFormat(e.target.value)}
-                className={styles.qualitySelect}
-                disabled={isDownloading}
-              >
-                {currentFormatOptions.map((format) => (
-                  <option key={format} value={format}>
-                    {format}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <p className={styles.noFormatsAvailable}>
-                {downloadType === "video"
-                  ? "No video qualities available."
-                  : "No audio formats available."}
-              </p>
-            )}
-
-            <button
-              onClick={handleDownload}
-              className={styles.downloadButton}
-              disabled={
-                isDownloading ||
-                !selectedFormat ||
-                currentFormatOptions.length === 0
-              }
-            >
-              <FiDownload size={18} />
-              <span>Download</span>
-            </button>
           </div>
-        </div>
-      )}
-    </div>
+      );
+    }
+
+    // 5. Нічого не показувати (початковий стан або після очищення без помилок)
+    return null;
+  };
+
+
+  return (
+      <div className={styles.searchWrapper}>
+        <form
+            onSubmit={handleSearch}
+            className={`${styles.searchForm} ${isFocused ? styles.focused : ""}`}
+        >
+          <div className={styles.searchContainer}>
+            <FiSearch className={styles.searchIcon} size={20} />
+            <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="Insert video or audio link..."
+                className={styles.searchInput}
+            />
+            {query && (
+                <button
+                    type="button"
+                    onClick={clearInput}
+                    className={styles.clearButton}
+                >
+                  <FiX size={18} />
+                </button>
+            )}
+          </div>
+          {/* Можна додати кнопку пошуку сюди, якщо потрібно */}
+          {/* <button type="submit" className={styles.submitSearchButton}>Search</button> */}
+        </form>
+
+        {/* Динамічний контент: лоадер, помилка або прев'ю */}
+        {renderContent()}
+
+      </div>
   );
 };
 

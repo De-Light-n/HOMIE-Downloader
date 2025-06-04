@@ -20,17 +20,6 @@ import ScrollToTop from './Components/ScrollToTop';
 import { ThemeProvider } from './Components/ThemeContext';
 
 import './Styles/themes.css';
-// TODO: Maybe Footer
-// TODO: Validation for login and signup forms
-// TODO: Info about us
-// TODO: Sorting and filtering videos
-// TODO: Maybe coments under video
-// TODO: IF we have time, add more themes
-// TODO: Перевести сайт на одну мову
-// TODO: в сторінці акаунта надпис My account без стилю
-// TODO: Забрати останній візит на сайт з акаунта
-// TODO: Доробити аналітику
-// TODO: ДОРОБИТИ ФУТЕР
 
 // Компонент, що містить логіку відображення Header, Routes та Footer
 function AppLayout() {
